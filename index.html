@@ -35,7 +35,7 @@
 
     body {
       display: grid;
-      grid-template-rows: 70px 126px 1fr 70px;
+      grid-template-rows: 48px 82px 1fr 62px;
       max-width: 980px;
       margin: 0 auto;
       background: var(--paper);
@@ -44,9 +44,9 @@
 
     .topbar {
       display: grid;
-      grid-template-columns: 70px 1fr auto;
+      grid-template-columns: 46px 1fr auto;
       align-items: center;
-      padding: 10px 18px;
+      padding: 2px 10px;
       border-bottom: 1px solid var(--line);
       background: #f8fafc;
     }
@@ -54,44 +54,32 @@
     .hamburger, .icon-btn {
       border: 0;
       background: transparent;
-      font-size: 28px;
+      font-size: 22px;
       color: var(--ink);
       cursor: pointer;
-      min-height: 48px;
-      min-width: 48px;
+      min-height: 34px;
+      min-width: 34px;
       border-radius: 14px;
     }
 
     .hamburger:active, .icon-btn:active, .person:active, .add-btn:active { background: #e2e8f0; }
 
-    .weather {
-      font-weight: 800;
-      font-size: 18px;
-      color: var(--ink);
-    }
+    .weather { font-weight: 800; font-size: 14px; color: var(--ink); }
 
     .clock-area {
       display: flex;
       align-items: center;
       justify-content: flex-end;
-      gap: 14px;
+      gap: 8px;
       font-weight: 800;
     }
 
-    .family-name {
-      font-size: 13px;
-      color: var(--muted);
-      font-weight: 700;
-    }
-
-    .clock {
-      font-size: clamp(30px, 5vw, 50px);
-      letter-spacing: -1px;
-    }
+    .family-name { font-size: 11px; color: var(--muted); font-weight: 700; }
+    .clock { font-size: clamp(22px, 3.8vw, 34px); letter-spacing: -1px; }
 
     .date-row {
       display: grid;
-      grid-template-columns: 80px 1fr 80px;
+      grid-template-columns: 52px 1fr 52px;
       align-items: center;
       border-bottom: 1px solid var(--line);
       background: #ffffff;
@@ -101,9 +89,9 @@
 
     .view-pills {
       display: flex;
-      gap: 5px;
+      gap: 4px;
       justify-content: center;
-      margin-bottom: 8px;
+      margin-bottom: 2px;
     }
 
     .pill {
@@ -111,31 +99,23 @@
       background: #f8fafc;
       color: var(--muted);
       border-radius: 999px;
-      padding: 4px 9px;
+      padding: 4px 10px;
       font-size: 11px;
-      font-weight: 800;
+      font-weight: 900;
+      cursor: pointer;
     }
 
     .pill.active { color: #0369a1; background: #e0f2fe; border-color: #bae6fd; }
 
-    .date-title {
-      font-size: clamp(20px, 3.2vw, 34px);
-      font-weight: 900;
-    }
-
-    .date-subtitle {
-      margin-top: 3px;
-      color: var(--muted);
-      font-weight: 700;
-      font-size: 13px;
-    }
+    .date-title { font-size: clamp(17px, 2.8vw, 28px); font-weight: 900; }
+    .date-subtitle { margin-top: 1px; color: var(--muted); font-weight: 700; font-size: 11px; }
 
     .people-row {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
-      gap: 7px;
+      gap: 4px;
       align-items: center;
-      padding: 10px 14px;
+      padding: 4px 8px;
       border-bottom: 1px solid var(--line);
       background: #ffffff;
     }
@@ -151,14 +131,14 @@
     }
 
     .avatar {
-      width: clamp(48px, 7vw, 76px);
-      height: clamp(48px, 7vw, 76px);
+      width: clamp(38px, 5vw, 58px);
+      height: clamp(38px, 5vw, 58px);
       border-radius: 999px;
       object-fit: cover;
-      border: 4px solid var(--line);
+      border: 2px solid var(--line);
       background: #e5e7eb;
       display: block;
-      margin: 0 auto 6px;
+      margin: 0 auto 2px;
     }
 
     .person.active .avatar { border-color: currentColor; }
@@ -172,7 +152,7 @@
 
     .person-name {
       color: var(--ink);
-      font-size: 12px;
+      font-size: 10px;
       font-weight: 900;
       white-space: nowrap;
       overflow: hidden;
@@ -180,6 +160,7 @@
     }
 
     .todo-count {
+      display:none;
       margin-top: 4px;
       display: inline-block;
       border-radius: 999px;
@@ -190,19 +171,8 @@
       font-weight: 800;
     }
 
-    .schedule-wrap {
-      min-height: 0;
-      overflow: hidden;
-      position: relative;
-      background: #ffffff;
-    }
-
-    .timeline {
-      height: 100%;
-      overflow-y: auto;
-      padding: 0 18px 90px 18px;
-      scroll-behavior: smooth;
-    }
+    .schedule-wrap { min-height: 0; overflow: hidden; position: relative; background: #ffffff; }
+    .timeline { height: 100%; overflow-y: auto; padding: 0 8px 70px 8px; scroll-behavior: smooth; }
 
     .all-day {
       display: grid;
@@ -211,21 +181,8 @@
       min-height: 76px;
     }
 
-    .all-day-label, .hour-label {
-      color: var(--muted);
-      font-size: 11px;
-      padding-top: 10px;
-      font-weight: 800;
-    }
-
-    .all-day-events {
-      padding: 8px 0;
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      align-content: flex-start;
-    }
-
+    .all-day-label, .hour-label { color: var(--muted); font-size: 11px; padding-top: 10px; font-weight: 800; }
+    .all-day-events { padding: 8px 0; display: flex; gap: 8px; flex-wrap: wrap; align-content: flex-start; }
     .day-grid { position: relative; }
 
     .hour-row {
@@ -235,14 +192,7 @@
       border-bottom: 1px solid var(--line);
     }
 
-    .event-layer {
-      position: absolute;
-      top: 0;
-      left: 56px;
-      right: 0;
-      height: 1332px;
-      pointer-events: none;
-    }
+    .event-layer { position: absolute; top: 0; left: 56px; right: 0; height: 1332px; pointer-events: none; }
 
     .event-card {
       position: absolute;
@@ -257,14 +207,7 @@
       line-height: 1.12;
     }
 
-    .event-time {
-      display: block;
-      font-size: 11px;
-      opacity: 0.96;
-      font-weight: 800;
-      margin-top: 2px;
-    }
-
+    .event-time { display: block; font-size: 11px; opacity: 0.96; font-weight: 800; margin-top: 2px; }
     .event-card.mom, .tag.mom { background: var(--mom); }
     .event-card.dad, .tag.dad { background: var(--dad); }
     .event-card.child1, .tag.child1 { background: var(--child1); }
@@ -273,36 +216,22 @@
     .event-card.child4, .tag.child4 { background: var(--child4); color: #1f2937; }
     .event-card.family, .tag.family { background: var(--family); }
 
-    .now-line {
-      position: absolute;
-      left: 56px;
-      right: 0;
-      height: 2px;
-      background: #0f172a;
-      z-index: 3;
-    }
+    .now-line { position: absolute; left: 56px; right: 0; height: 2px; background: #0f172a; z-index: 3; }
+    .now-dot { position: absolute; left: -5px; top: -4px; width: 10px; height: 10px; border-radius: 50%; background: #0f172a; }
 
-    .now-dot {
-      position: absolute;
-      left: -5px;
-      top: -4px;
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: #0f172a;
-    }
+    .tag { border-radius: 4px; color: white; padding: 5px 8px; font-size: 12px; font-weight: 900; }
 
-    .tag {
-      border-radius: 4px;
-      color: white;
-      padding: 5px 8px;
-      font-size: 12px;
-      font-weight: 900;
-    }
+    .week-view { display: none; height: 100%; overflow: auto; padding: 12px 14px 90px; }
+    .week-view.active { display: grid; grid-template-columns: repeat(7, minmax(120px, 1fr)); gap: 10px; }
+    .day-view.hidden { display: none; }
+    .week-day { border: 1px solid var(--line); border-radius: 16px; background: #f8fafc; overflow: hidden; min-height: 360px; }
+    .week-day-header { padding: 10px; font-weight: 900; background: #e0f2fe; color: #0369a1; text-align: center; }
+    .week-event { margin: 8px; border-radius: 8px; padding: 8px; color: white; font-size: 12px; font-weight: 900; }
+    .week-event.child4 { color: #1f2937; }
 
     .bottom-nav {
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       border-top: 1px solid var(--line);
       background: #ffffff;
       z-index: 5;
@@ -319,6 +248,7 @@
       font-weight: 900;
       border: 0;
       background: transparent;
+      cursor: pointer;
     }
 
     .nav-item.active { color: #0284c7; }
@@ -359,63 +289,33 @@
     .panel h2 { margin: 0 0 10px; }
     .panel p { color: var(--muted); line-height: 1.4; }
 
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-    }
-
+    .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
     label { font-weight: 900; font-size: 13px; }
     input, textarea, select {
-      width: 100%;
-      margin-top: 5px;
-      border: 1px solid #cbd5e1;
-      border-radius: 12px;
-      padding: 11px;
-      font-size: 15px;
-      font-family: inherit;
+      width: 100%; margin-top: 5px; border: 1px solid #cbd5e1; border-radius: 12px;
+      padding: 11px; font-size: 15px; font-family: inherit;
     }
-
     textarea { min-height: 100px; }
 
-    .panel-actions {
-      margin-top: 14px;
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
+    .panel-actions { margin-top: 14px; display: flex; gap: 8px; flex-wrap: wrap; }
     .panel-actions button {
-      border: 0;
-      border-radius: 14px;
-      background: #0f172a;
-      color: white;
-      padding: 12px 16px;
-      font-weight: 900;
-      cursor: pointer;
+      border: 0; border-radius: 14px; background: #0f172a; color: white;
+      padding: 12px 16px; font-weight: 900; cursor: pointer;
     }
 
-    .photo-collage {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin-top: 10px;
-    }
+    .photo-collage { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; }
+    .photo-collage img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 14px; background: #e5e7eb; }
 
-    .photo-collage img {
-      width: 100%;
-      aspect-ratio: 1 / 1;
-      object-fit: cover;
-      border-radius: 14px;
-      background: #e5e7eb;
-    }
+    .simple-list { display: grid; gap: 10px; margin-top: 12px; }
+    .simple-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px; border: 1px solid var(--line); border-radius: 14px; background: #f8fafc; font-weight: 800; }
+    .simple-item button { border: 0; border-radius: 10px; background: #ef4444; color: white; padding: 8px 10px; font-weight: 900; cursor: pointer; }
 
     @media (max-width: 700px) {
-      body { grid-template-rows: 66px 112px 1fr 66px; }
+      body { grid-template-rows: 44px 78px 1fr 58px; }
       .people-row { gap: 3px; padding: 7px; }
-      .topbar { padding: 8px 10px; }
+      .topbar { padding: 6px 10px; }
       .weather { font-size: 15px; }
-      .clock { font-size: 34px; }
+      .clock { font-size: 32px; }
       .family-name { display: none; }
       .avatar { width: 48px; height: 48px; border-width: 3px; }
       .person-name { font-size: 10px; }
@@ -424,6 +324,7 @@
       .event-card { font-size: 11px; padding: 5px 6px; }
       .form-grid { grid-template-columns: 1fr; }
       .add-btn { right: 18px; }
+      .week-view.active { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -440,7 +341,10 @@
   <section class="date-row">
     <button class="icon-btn" id="prevDay" aria-label="Previous day">‹</button>
     <div class="date-center">
-      <div class="view-pills"><span class="pill active">D</span><span class="pill">W</span><span class="pill">M</span></div>
+      <div class="view-pills">
+        <button class="pill active" id="dayViewBtn">DAY</button>
+        <button class="pill" id="weekViewBtn">WEEK</button>
+      </div>
       <div class="date-title" id="dateTitle">Today</div>
       <div class="date-subtitle" id="dateSubtitle">Daily family schedule</div>
     </div>
@@ -450,7 +354,7 @@
   <section class="people-row" id="peopleRow"></section>
 
   <main class="schedule-wrap">
-    <div class="timeline" id="timeline">
+    <div class="timeline day-view" id="timeline">
       <section class="all-day">
         <div class="all-day-label">ALL-DAY</div>
         <div class="all-day-events" id="allDayEvents"></div>
@@ -460,68 +364,35 @@
         <div class="event-layer" id="eventLayer"></div>
       </section>
     </div>
+    <section class="week-view" id="weekView"></section>
   </main>
 
   <button class="add-btn" id="addBtn" title="Open Google Calendar">+</button>
 
   <nav class="bottom-nav">
     <button class="nav-item" id="photosBtn"><span>☼</span><span>Photos</span></button>
-    <button class="nav-item active"><span>▣</span><span>Calendar</span></button>
-    <button class="nav-item"><span>☕</span><span>Meals</span></button>
-    <button class="nav-item"><span>✓</span><span>Lists</span></button>
-    <button class="nav-item"><span>◷</span><span>Routines</span></button>
+    <button class="nav-item active" id="calendarBtn"><span>▣</span><span>Calendar</span></button>
+    <button class="nav-item" id="mealsBtn"><span>☕</span><span>Meals</span></button>
+    <button class="nav-item" id="listsBtn"><span>✓</span><span>Lists</span></button>
   </nav>
 
   <section class="panel" id="settingsPanel">
     <h2>Settings</h2>
     <p>
-      This version is built to look like a wall-mounted family command center. Weather loads automatically from Open-Meteo using your saved latitude and longitude. Calendar events can load from multiple Google Calendar IDs after you add a Google API key.
+      Weather loads automatically from Open-Meteo using your saved latitude and longitude. Calendar events can load from multiple Google Calendar IDs after you add a Google API key.
     </p>
     <div class="form-grid">
-      <div>
-        <label>Family display name</label>
-        <input id="familyNameInput" placeholder="Green Family" />
-      </div>
-      <div>
-        <label>Google API key</label>
-        <input id="apiKeyInput" placeholder="Paste Google API key" />
-      </div>
-      <div>
-        <label>Weather latitude</label>
-        <input id="latitudeInput" placeholder="40.6127" />
-      </div>
-      <div>
-        <label>Weather longitude</label>
-        <input id="longitudeInput" placeholder="-112.3044" />
-      </div>
-      <div>
-        <label>Google Calendar IDs, one per line</label>
-        <textarea id="calendarIdsInput" placeholder="family@gmail.com&#10;work_calendar_id@group.calendar.google.com"></textarea>
-      </div>
-      <div>
-        <label>Mom photo URL</label>
-        <input id="momPhotoInput" placeholder="photos/mom.jpg or https://..." />
-      </div>
-      <div>
-        <label>Dad photo URL</label>
-        <input id="dadPhotoInput" placeholder="photos/dad.jpg or https://..." />
-      </div>
-      <div>
-        <label>Child 1 photo URL</label>
-        <input id="child1PhotoInput" placeholder="photos/child1.jpg or https://..." />
-      </div>
-      <div>
-        <label>Child 2 photo URL</label>
-        <input id="child2PhotoInput" placeholder="photos/child2.jpg or https://..." />
-      </div>
-      <div>
-        <label>Child 3 photo URL</label>
-        <input id="child3PhotoInput" placeholder="photos/child3.jpg or https://..." />
-      </div>
-      <div>
-        <label>Child 4 photo URL</label>
-        <input id="child4PhotoInput" placeholder="photos/child4.jpg or https://..." />
-      </div>
+      <div><label>Family display name</label><input id="familyNameInput" placeholder="Green Family" /></div>
+      <div><label>Google API key</label><input id="apiKeyInput" placeholder="Paste Google API key" /></div>
+      <div><label>Weather latitude</label><input id="latitudeInput" placeholder="40.6127" /></div>
+      <div><label>Weather longitude</label><input id="longitudeInput" placeholder="-112.3044" /></div>
+      <div><label>Google Calendar IDs, one per line</label><textarea id="calendarIdsInput" placeholder="family@gmail.com&#10;work_calendar_id@group.calendar.google.com"></textarea></div>
+      <div><label>Mom photo URL</label><input id="momPhotoInput" placeholder="photos/mom.jpg or https://..." /></div>
+      <div><label>Dad photo URL</label><input id="dadPhotoInput" placeholder="photos/dad.jpg or https://..." /></div>
+      <div><label>Child 1 photo URL</label><input id="child1PhotoInput" placeholder="photos/child1.jpg or https://..." /></div>
+      <div><label>Child 2 photo URL</label><input id="child2PhotoInput" placeholder="photos/child2.jpg or https://..." /></div>
+      <div><label>Child 3 photo URL</label><input id="child3PhotoInput" placeholder="photos/child3.jpg or https://..." /></div>
+      <div><label>Child 4 photo URL</label><input id="child4PhotoInput" placeholder="photos/child4.jpg or https://..." /></div>
     </div>
     <div class="panel-actions">
       <button id="saveSettings">Save</button>
@@ -532,16 +403,36 @@
 
   <section class="panel" id="photosPanel">
     <h2>Family Photos</h2>
-    <p>
-      Google Photos does not work like a simple public calendar embed. The practical setup is either: use image URLs from a shared album export, place family photos in a local folder beside this file, or later connect the Google Photos API.
-    </p>
+    <p>Use local photo files, direct image links, or later connect the Google Photos API.</p>
     <div class="photo-collage" id="photoCollage"></div>
     <div class="panel-actions"><button id="closePhotos">Close</button></div>
   </section>
 
+  <section class="panel" id="mealsPanel">
+    <h2>Meals</h2>
+    <p>Add simple meal plans for the week. These save on this device/browser.</p>
+    <div class="form-grid">
+      <div><label>Day</label><select id="mealDayInput"><option>Sunday</option><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option></select></div>
+      <div><label>Meal</label><input id="mealTextInput" placeholder="Tacos, spaghetti, leftovers..." /></div>
+    </div>
+    <div class="panel-actions"><button id="addMealBtn">Add Meal</button><button id="closeMeals">Close</button></div>
+    <div class="simple-list" id="mealsList"></div>
+  </section>
+
+  <section class="panel" id="listsPanel">
+    <h2>Lists</h2>
+    <p>Add grocery, chore, or reminder items. These save on this device/browser.</p>
+    <div class="form-grid">
+      <div><label>Item</label><input id="listTextInput" placeholder="Milk, take trash out, pay bill..." /></div>
+      <div><label>Category</label><select id="listCategoryInput"><option>Grocery</option><option>Chore</option><option>Reminder</option><option>Other</option></select></div>
+    </div>
+    <div class="panel-actions"><button id="addListItemBtn">Add Item</button><button id="closeLists">Close</button></div>
+    <div class="simple-list" id="listsList"></div>
+  </section>
+
   <script>
-    const HOUR_HEIGHT = 74;
-    const START_HOUR = 6;
+    const HOUR_HEIGHT = 52;
+    const START_HOUR = 5;
     const END_HOUR = 24;
 
     const defaultPeople = [
@@ -573,6 +464,7 @@
 
     const state = {
       selectedDate: new Date(),
+      viewMode: localStorage.getItem("viewMode") || "day",
       activePerson: "all",
       familyName: localStorage.getItem("familyName") || "Green Family",
       apiKey: localStorage.getItem("googleApiKey") || "",
@@ -581,68 +473,31 @@
       longitude: localStorage.getItem("weatherLongitude") || "-112.3044",
       weather: "Loading weather...",
       people: JSON.parse(localStorage.getItem("people") || JSON.stringify(defaultPeople)),
-      events: []
+      events: [],
+      meals: JSON.parse(localStorage.getItem("meals") || "[]"),
+      listItems: JSON.parse(localStorage.getItem("listItems") || "[]")
     };
 
     const el = (id) => document.getElementById(id);
 
-    function sameDay(a, b) {
-      return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
-    }
-
-    function addDays(date, days) {
-      const copy = new Date(date);
-      copy.setDate(copy.getDate() + days);
-      return copy;
-    }
-
-    function dateTitle(date) {
-      return date.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
-    }
-
-    function minutesFromTime(time) {
-      const [h, m] = time.split(":").map(Number);
-      return h * 60 + m;
-    }
-
-    function formatTime(time) {
-      const [h, m] = time.split(":").map(Number);
-      const date = new Date();
-      date.setHours(h, m, 0, 0);
-      return date.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }).replace(" ", "").toLowerCase();
-    }
-
-    function toGoogleTime(date, endOfDay = false) {
-      const d = new Date(date);
-      d.setHours(endOfDay ? 23 : 0, endOfDay ? 59 : 0, endOfDay ? 59 : 0, 0);
-      return d.toISOString();
-    }
-
-    function googleDateToLocalTime(dateObj) {
-      const raw = dateObj.dateTime || dateObj.date;
-      const d = new Date(raw);
-      const hh = String(d.getHours()).padStart(2, "0");
-      const mm = String(d.getMinutes()).padStart(2, "0");
-      return `${hh}:${mm}`;
-    }
+    function sameDay(a, b) { return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate(); }
+    function addDays(date, days) { const copy = new Date(date); copy.setDate(copy.getDate() + days); return copy; }
+    function startOfWeek(date) { const d = new Date(date); const day = d.getDay(); d.setDate(d.getDate() - day); d.setHours(0,0,0,0); return d; }
+    function dateTitle(date) { return date.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }); }
+    function weekTitle(date) { const start = startOfWeek(date); const end = addDays(start, 6); return `${start.toLocaleDateString("en-US", { month: "short", day: "numeric" })} - ${end.toLocaleDateString("en-US", { month: "short", day: "numeric" })}`; }
+    function minutesFromTime(time) { const [h, m] = time.split(":").map(Number); return h * 60 + m; }
+    function formatTime(time) { const [h, m] = time.split(":").map(Number); const date = new Date(); date.setHours(h, m, 0, 0); return date.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }).replace(" ", "").toLowerCase(); }
+    function toGoogleTime(date, endOfDay = false) { const d = new Date(date); d.setHours(endOfDay ? 23 : 0, endOfDay ? 59 : 0, endOfDay ? 59 : 0, 0); return d.toISOString(); }
+    function googleDateToLocalTime(dateObj) { const raw = dateObj.dateTime || dateObj.date; const d = new Date(raw); return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`; }
 
     async function loadWeather() {
-      const latitude = state.latitude || "40.6127";
-      const longitude = state.longitude || "-112.3044";
-      const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,weather_code&temperature_unit=fahrenheit`;
-
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${state.latitude}&longitude=${state.longitude}&current=temperature_2m,weather_code&temperature_unit=fahrenheit`;
       try {
         const response = await fetch(url);
         const data = await response.json();
-        const temp = Math.round(data.current.temperature_2m);
-        const code = data.current.weather_code;
-        const icon = getWeatherIcon(code);
-        state.weather = `${icon} ${temp}°`;
+        state.weather = `${getWeatherIcon(data.current.weather_code)} ${Math.round(data.current.temperature_2m)}°`;
         renderTop();
-      } catch (error) {
-        state.weather = "Weather unavailable";
-        renderTop();
-      }
+      } catch { state.weather = "Weather unavailable"; renderTop(); }
     }
 
     function getWeatherIcon(code) {
@@ -657,44 +512,38 @@
     }
 
     async function loadGoogleEvents() {
-      if (!state.apiKey || state.calendarIds.length === 0) {
-        state.events = sampleEvents;
-        renderSchedule();
-        return;
-      }
+      if (!state.apiKey || state.calendarIds.length === 0) { state.events = sampleEvents; renderSchedule(); return; }
 
       const allEvents = [];
+      const rangeStart = state.viewMode === "week" ? startOfWeek(state.selectedDate) : state.selectedDate;
+      const rangeEnd = state.viewMode === "week" ? addDays(startOfWeek(state.selectedDate), 7) : state.selectedDate;
+
       for (const calendarId of state.calendarIds) {
         const url = new URL(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events`);
         url.searchParams.set("key", state.apiKey);
         url.searchParams.set("singleEvents", "true");
         url.searchParams.set("orderBy", "startTime");
-        url.searchParams.set("timeMin", toGoogleTime(state.selectedDate, false));
-        url.searchParams.set("timeMax", toGoogleTime(state.selectedDate, true));
+        url.searchParams.set("timeMin", toGoogleTime(rangeStart, false));
+        url.searchParams.set("timeMax", toGoogleTime(rangeEnd, true));
 
         try {
           const response = await fetch(url);
           const data = await response.json();
           const lowerId = calendarId.toLowerCase();
-          const personKey = lowerId.includes("mom") ? "mom" :
-                            lowerId.includes("dad") ? "dad" :
-                            lowerId.includes("child1") ? "child1" :
-                            lowerId.includes("child2") ? "child2" :
-                            lowerId.includes("child3") ? "child3" :
-                            lowerId.includes("child4") ? "child4" : "family";
+          const personKey = lowerId.includes("mom") ? "mom" : lowerId.includes("dad") ? "dad" : lowerId.includes("child1") ? "child1" : lowerId.includes("child2") ? "child2" : lowerId.includes("child3") ? "child3" : lowerId.includes("child4") ? "child4" : "family";
 
           (data.items || []).forEach(item => {
+            const eventDate = new Date(item.start.dateTime || item.start.date);
             allEvents.push({
               title: item.summary || "Untitled",
               person: personKey,
+              date: eventDate.toISOString(),
               allDay: Boolean(item.start.date),
               start: item.start.dateTime ? googleDateToLocalTime(item.start) : undefined,
               end: item.end.dateTime ? googleDateToLocalTime(item.end) : undefined
             });
           });
-        } catch (error) {
-          console.error("Calendar load failed", calendarId, error);
-        }
+        } catch (error) { console.error("Calendar load failed", calendarId, error); }
       }
 
       state.events = allEvents.length ? allEvents : sampleEvents;
@@ -704,75 +553,68 @@
     function renderPeople() {
       el("peopleRow").innerHTML = state.people.map(person => {
         const count = state.events.filter(e => e.person === person.key).length;
-        return `
-          <button class="person ${state.activePerson === person.key ? "active" : ""}" data-key="${person.key}">
-            <img class="avatar" src="${person.photo}" alt="${person.name}" />
-            <div class="person-name">${person.name}</div>
-            <span class="todo-count">${count} items</span>
-          </button>
-        `;
+        return `<button class="person ${state.activePerson === person.key ? "active" : ""}" data-key="${person.key}"><img class="avatar" src="${person.photo}" alt="${person.name}" /><div class="person-name">${person.name}</div><span class="todo-count">${count} items</span></button>`;
       }).join("");
-
-      document.querySelectorAll(".person").forEach(btn => {
-        btn.addEventListener("click", () => {
-          const key = btn.dataset.key;
-          state.activePerson = state.activePerson === key ? "all" : key;
-          renderSchedule();
-        });
-      });
+      document.querySelectorAll(".person").forEach(btn => btn.addEventListener("click", () => { state.activePerson = state.activePerson === btn.dataset.key ? "all" : btn.dataset.key; renderSchedule(); }));
     }
 
     function renderHours() {
       let rows = "";
       for (let h = START_HOUR; h < END_HOUR; h++) {
-        const labelDate = new Date();
-        labelDate.setHours(h, 0, 0, 0);
-        rows += `
-          <div class="hour-row">
-            <div class="hour-label">${labelDate.toLocaleTimeString("en-US", { hour: "numeric" }).replace(" ", "")}</div>
-            <div class="hour-line"></div>
-          </div>
-        `;
+        const labelDate = new Date(); labelDate.setHours(h, 0, 0, 0);
+        rows += `<div class="hour-row"><div class="hour-label">${labelDate.toLocaleTimeString("en-US", { hour: "numeric" }).replace(" ", "")}</div><div class="hour-line"></div></div>`;
       }
       el("hourRows").innerHTML = rows;
       el("eventLayer").style.height = `${(END_HOUR - START_HOUR) * HOUR_HEIGHT}px`;
     }
 
+    function getFilteredEvents() { return state.activePerson === "all" ? state.events : state.events.filter(e => e.person === state.activePerson); }
+
     function renderSchedule() {
       renderPeople();
-      const filtered = state.activePerson === "all" ? state.events : state.events.filter(e => e.person === state.activePerson);
+      el("dayViewBtn").classList.toggle("active", state.viewMode === "day");
+      el("weekViewBtn").classList.toggle("active", state.viewMode === "week");
+      el("timeline").classList.toggle("hidden", state.viewMode !== "day");
+      el("weekView").classList.toggle("active", state.viewMode === "week");
+
+      if (state.viewMode === "week") { renderWeekView(); return; }
+
+      const filtered = getFilteredEvents();
       const allDay = filtered.filter(e => e.allDay);
       const timed = filtered.filter(e => !e.allDay && e.start && e.end);
-
       el("allDayEvents").innerHTML = allDay.map(e => `<span class="tag ${e.person}">${e.title}</span>`).join("") || `<span class="tag family">No all-day events</span>`;
 
       const widthPercent = timed.length > 5 ? 48 : 42;
       const layer = timed.map((event, index) => {
-        const startMinutes = minutesFromTime(event.start);
-        const endMinutes = minutesFromTime(event.end);
-        const top = ((startMinutes - START_HOUR * 60) / 60) * HOUR_HEIGHT;
-        const height = Math.max(36, ((endMinutes - startMinutes) / 60) * HOUR_HEIGHT - 4);
-        const col = index % 2;
-        const left = col === 0 ? 0 : 50;
-        return `
-          <div class="event-card ${event.person}" style="top:${top}px; left:${left}%; width:${widthPercent}%; height:${height}px;">
-            ${event.title}<span class="event-time">${formatTime(event.start)}–${formatTime(event.end)}</span>
-          </div>
-        `;
+        const top = ((minutesFromTime(event.start) - START_HOUR * 60) / 60) * HOUR_HEIGHT;
+        const height = Math.max(36, ((minutesFromTime(event.end) - minutesFromTime(event.start)) / 60) * HOUR_HEIGHT - 4);
+        const left = index % 2 === 0 ? 0 : 50;
+        return `<div class="event-card ${event.person}" style="top:${top}px; left:${left}%; width:${widthPercent}%; height:${height}px;">${event.title}<span class="event-time">${formatTime(event.start)}–${formatTime(event.end)}</span></div>`;
       }).join("");
 
       const now = new Date();
       let nowLine = "";
       if (sameDay(now, state.selectedDate)) {
         const nowTop = (((now.getHours() * 60 + now.getMinutes()) - START_HOUR * 60) / 60) * HOUR_HEIGHT;
-        if (nowTop >= 0 && nowTop <= (END_HOUR - START_HOUR) * HOUR_HEIGHT) {
-          nowLine = `<div class="now-line" style="top:${nowTop}px"><span class="now-dot"></span></div>`;
-        }
+        if (nowTop >= 0 && nowTop <= (END_HOUR - START_HOUR) * HOUR_HEIGHT) nowLine = `<div class="now-line" style="top:${nowTop}px"><span class="now-dot"></span></div>`;
       }
-
       el("eventLayer").innerHTML = layer + nowLine;
       el("dateTitle").textContent = dateTitle(state.selectedDate);
       el("dateSubtitle").textContent = sameDay(new Date(), state.selectedDate) ? "Today" : state.selectedDate.toLocaleDateString("en-US", { weekday: "long" });
+    }
+
+    function renderWeekView() {
+      const start = startOfWeek(state.selectedDate);
+      const filtered = getFilteredEvents();
+      el("dateTitle").textContent = weekTitle(state.selectedDate);
+      el("dateSubtitle").textContent = "Weekly family schedule";
+      el("weekView").innerHTML = Array.from({ length: 7 }).map((_, i) => {
+        const day = addDays(start, i);
+        const dayName = day.toLocaleDateString("en-US", { weekday: "short", month: "numeric", day: "numeric" });
+        const dayEvents = filtered.filter(e => !e.date || sameDay(new Date(e.date), day));
+        const eventHtml = dayEvents.map(e => `<div class="week-event ${e.person}" style="background: var(--${e.person});">${e.title}${e.start ? `<br><small>${formatTime(e.start)}</small>` : ""}</div>`).join("") || `<div class="week-event family" style="background: #cbd5e1; color:#334155;">No events</div>`;
+        return `<div class="week-day"><div class="week-day-header">${dayName}</div>${eventHtml}</div>`;
+      }).join("");
     }
 
     function renderTop() {
@@ -782,22 +624,16 @@
       el("clock").textContent = now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }).replace(" ", "").toLowerCase();
     }
 
-    function renderPhotos() {
-      el("photoCollage").innerHTML = state.people.map(p => `<img src="${p.photo}" alt="${p.name}" />`).join("");
-    }
+    function renderPhotos() { el("photoCollage").innerHTML = state.people.map(p => `<img src="${p.photo}" alt="${p.name}" />`).join(""); }
+    function renderMeals() { el("mealsList").innerHTML = state.meals.map((m, i) => `<div class="simple-item"><span><strong>${m.day}:</strong> ${m.text}</span><button onclick="deleteMeal(${i})">Delete</button></div>`).join("") || `<div class="simple-item">No meals added yet.</div>`; }
+    function renderListItems() { el("listsList").innerHTML = state.listItems.map((item, i) => `<div class="simple-item"><span><strong>${item.category}:</strong> ${item.text}</span><button onclick="deleteListItem(${i})">Delete</button></div>`).join("") || `<div class="simple-item">No list items added yet.</div>`; }
+    function deleteMeal(index) { state.meals.splice(index, 1); localStorage.setItem("meals", JSON.stringify(state.meals)); renderMeals(); }
+    function deleteListItem(index) { state.listItems.splice(index, 1); localStorage.setItem("listItems", JSON.stringify(state.listItems)); renderListItems(); }
 
     function openSettings() {
-      el("familyNameInput").value = state.familyName;
-      el("apiKeyInput").value = state.apiKey;
-      el("latitudeInput").value = state.latitude;
-      el("longitudeInput").value = state.longitude;
+      el("familyNameInput").value = state.familyName; el("apiKeyInput").value = state.apiKey; el("latitudeInput").value = state.latitude; el("longitudeInput").value = state.longitude;
       el("calendarIdsInput").value = state.calendarIds.join("\n");
-      el("momPhotoInput").value = state.people.find(p => p.key === "mom")?.photo || "";
-      el("dadPhotoInput").value = state.people.find(p => p.key === "dad")?.photo || "";
-      el("child1PhotoInput").value = state.people.find(p => p.key === "child1")?.photo || "";
-      el("child2PhotoInput").value = state.people.find(p => p.key === "child2")?.photo || "";
-      el("child3PhotoInput").value = state.people.find(p => p.key === "child3")?.photo || "";
-      el("child4PhotoInput").value = state.people.find(p => p.key === "child4")?.photo || "";
+      ["mom", "dad", "child1", "child2", "child3", "child4"].forEach(key => el(`${key}PhotoInput`).value = state.people.find(p => p.key === key)?.photo || "");
       el("settingsPanel").classList.add("open");
     }
 
@@ -807,45 +643,31 @@
       state.latitude = el("latitudeInput").value.trim() || "40.6127";
       state.longitude = el("longitudeInput").value.trim() || "-112.3044";
       state.calendarIds = el("calendarIdsInput").value.split("\n").map(x => x.trim()).filter(Boolean);
-
-      const photos = {
-        mom: el("momPhotoInput").value.trim(),
-        dad: el("dadPhotoInput").value.trim(),
-        child1: el("child1PhotoInput").value.trim(),
-        child2: el("child2PhotoInput").value.trim(),
-        child3: el("child3PhotoInput").value.trim(),
-        child4: el("child4PhotoInput").value.trim()
-      };
+      const photos = { mom: el("momPhotoInput").value.trim(), dad: el("dadPhotoInput").value.trim(), child1: el("child1PhotoInput").value.trim(), child2: el("child2PhotoInput").value.trim(), child3: el("child3PhotoInput").value.trim(), child4: el("child4PhotoInput").value.trim() };
       state.people = state.people.map(p => photos[p.key] ? { ...p, photo: photos[p.key] } : p);
-
-      localStorage.setItem("familyName", state.familyName);
-      localStorage.setItem("googleApiKey", state.apiKey);
-      localStorage.setItem("weatherLatitude", state.latitude);
-      localStorage.setItem("weatherLongitude", state.longitude);
-      localStorage.setItem("calendarIds", JSON.stringify(state.calendarIds));
-      localStorage.setItem("people", JSON.stringify(state.people));
-
-      el("settingsPanel").classList.remove("open");
-      renderTop();
-      loadWeather();
-      loadGoogleEvents();
+      localStorage.setItem("familyName", state.familyName); localStorage.setItem("googleApiKey", state.apiKey); localStorage.setItem("weatherLatitude", state.latitude); localStorage.setItem("weatherLongitude", state.longitude); localStorage.setItem("calendarIds", JSON.stringify(state.calendarIds)); localStorage.setItem("people", JSON.stringify(state.people));
+      el("settingsPanel").classList.remove("open"); renderTop(); loadWeather(); loadGoogleEvents();
     }
 
-    el("prevDay").addEventListener("click", () => { state.selectedDate = addDays(state.selectedDate, -1); loadGoogleEvents(); });
-    el("nextDay").addEventListener("click", () => { state.selectedDate = addDays(state.selectedDate, 1); loadGoogleEvents(); });
+    el("prevDay").addEventListener("click", () => { state.selectedDate = addDays(state.selectedDate, state.viewMode === "week" ? -7 : -1); loadGoogleEvents(); });
+    el("nextDay").addEventListener("click", () => { state.selectedDate = addDays(state.selectedDate, state.viewMode === "week" ? 7 : 1); loadGoogleEvents(); });
+    el("dayViewBtn").addEventListener("click", () => { state.viewMode = "day"; localStorage.setItem("viewMode", "day"); loadGoogleEvents(); });
+    el("weekViewBtn").addEventListener("click", () => { state.viewMode = "week"; localStorage.setItem("viewMode", "week"); loadGoogleEvents(); });
     el("settingsBtn").addEventListener("click", openSettings);
     el("closeSettings").addEventListener("click", () => el("settingsPanel").classList.remove("open"));
     el("saveSettings").addEventListener("click", saveSettings);
     el("resetSettings").addEventListener("click", () => { localStorage.clear(); location.reload(); });
     el("photosBtn").addEventListener("click", () => { renderPhotos(); el("photosPanel").classList.add("open"); });
     el("closePhotos").addEventListener("click", () => el("photosPanel").classList.remove("open"));
+    el("mealsBtn").addEventListener("click", () => { renderMeals(); el("mealsPanel").classList.add("open"); });
+    el("closeMeals").addEventListener("click", () => el("mealsPanel").classList.remove("open"));
+    el("listsBtn").addEventListener("click", () => { renderListItems(); el("listsPanel").classList.add("open"); });
+    el("closeLists").addEventListener("click", () => el("listsPanel").classList.remove("open"));
+    el("addMealBtn").addEventListener("click", () => { const text = el("mealTextInput").value.trim(); if (!text) return; state.meals.push({ day: el("mealDayInput").value, text }); localStorage.setItem("meals", JSON.stringify(state.meals)); el("mealTextInput").value = ""; renderMeals(); });
+    el("addListItemBtn").addEventListener("click", () => { const text = el("listTextInput").value.trim(); if (!text) return; state.listItems.push({ category: el("listCategoryInput").value, text }); localStorage.setItem("listItems", JSON.stringify(state.listItems)); el("listTextInput").value = ""; renderListItems(); });
     el("addBtn").addEventListener("click", () => window.open("https://calendar.google.com/calendar/u/0/r/eventedit", "_blank"));
 
-    renderHours();
-    renderTop();
-    loadWeather();
-    loadGoogleEvents();
-
+    renderHours(); renderTop(); loadWeather(); loadGoogleEvents();
     setInterval(renderTop, 30000);
     setInterval(loadWeather, 30 * 60 * 1000);
   </script>
