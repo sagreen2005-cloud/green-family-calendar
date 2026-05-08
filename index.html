@@ -16,6 +16,8 @@
       --dad: #f97316;
       --child1: #22c55e;
       --child2: #a855f7;
+      --child3: #3b82f6;
+      --child4: #eab308;
       --family: #06b6d4;
     }
 
@@ -34,7 +36,7 @@
     body {
       display: grid;
       grid-template-rows: 70px 126px 1fr 70px;
-      max-width: 900px;
+      max-width: 980px;
       margin: 0 auto;
       background: var(--paper);
       box-shadow: var(--shadow);
@@ -95,9 +97,7 @@
       background: #ffffff;
     }
 
-    .date-center {
-      text-align: center;
-    }
+    .date-center { text-align: center; }
 
     .view-pills {
       display: flex;
@@ -132,10 +132,10 @@
 
     .people-row {
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 10px;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 7px;
       align-items: center;
-      padding: 12px 18px;
+      padding: 10px 14px;
       border-bottom: 1px solid var(--line);
       background: #ffffff;
     }
@@ -151,8 +151,8 @@
     }
 
     .avatar {
-      width: clamp(58px, 8vw, 86px);
-      height: clamp(58px, 8vw, 86px);
+      width: clamp(48px, 7vw, 76px);
+      height: clamp(48px, 7vw, 76px);
       border-radius: 999px;
       object-fit: cover;
       border: 4px solid var(--line);
@@ -166,11 +166,13 @@
     .person[data-key="dad"] { color: var(--dad); }
     .person[data-key="child1"] { color: var(--child1); }
     .person[data-key="child2"] { color: var(--child2); }
+    .person[data-key="child3"] { color: var(--child3); }
+    .person[data-key="child4"] { color: var(--child4); }
     .person[data-key="family"] { color: var(--family); }
 
     .person-name {
       color: var(--ink);
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 900;
       white-space: nowrap;
       overflow: hidden;
@@ -183,7 +185,7 @@
       border-radius: 999px;
       background: #f1f5f9;
       color: var(--muted);
-      padding: 3px 8px;
+      padding: 3px 7px;
       font-size: 10px;
       font-weight: 800;
     }
@@ -224,19 +226,13 @@
       align-content: flex-start;
     }
 
-    .day-grid {
-      position: relative;
-    }
+    .day-grid { position: relative; }
 
     .hour-row {
       display: grid;
       grid-template-columns: 56px 1fr;
       height: 74px;
       border-bottom: 1px solid var(--line);
-    }
-
-    .hour-line {
-      position: relative;
     }
 
     .event-layer {
@@ -273,6 +269,8 @@
     .event-card.dad, .tag.dad { background: var(--dad); }
     .event-card.child1, .tag.child1 { background: var(--child1); }
     .event-card.child2, .tag.child2 { background: var(--child2); }
+    .event-card.child3, .tag.child3 { background: var(--child3); }
+    .event-card.child4, .tag.child4 { background: var(--child4); color: #1f2937; }
     .event-card.family, .tag.family { background: var(--family); }
 
     .now-line {
@@ -327,7 +325,7 @@
 
     .add-btn {
       position: fixed;
-      right: calc(50% - min(450px, 50vw) + 22px);
+      right: calc(50% - min(490px, 50vw) + 22px);
       bottom: 84px;
       width: 64px;
       height: 64px;
@@ -345,7 +343,7 @@
     .panel {
       position: fixed;
       inset: 14px;
-      max-width: 860px;
+      max-width: 940px;
       margin: 0 auto;
       z-index: 20;
       display: none;
@@ -414,11 +412,14 @@
 
     @media (max-width: 700px) {
       body { grid-template-rows: 66px 112px 1fr 66px; }
-      .people-row { gap: 5px; padding: 9px; }
+      .people-row { gap: 3px; padding: 7px; }
       .topbar { padding: 8px 10px; }
       .weather { font-size: 15px; }
       .clock { font-size: 34px; }
       .family-name { display: none; }
+      .avatar { width: 48px; height: 48px; border-width: 3px; }
+      .person-name { font-size: 10px; }
+      .todo-count { display: none; }
       .timeline { padding-left: 9px; padding-right: 9px; }
       .event-card { font-size: 11px; padding: 5px 6px; }
       .form-grid { grid-template-columns: 1fr; }
@@ -429,7 +430,7 @@
 <body>
   <header class="topbar">
     <button class="hamburger" id="settingsBtn" aria-label="Settings">☰</button>
-    <div class="weather" id="weatherText">☀ 68°</div>
+    <div class="weather" id="weatherText">Loading weather...</div>
     <div class="clock-area">
       <div class="family-name" id="familyName">Green Family</div>
       <div class="clock" id="clock">8:00am</div>
@@ -474,7 +475,7 @@
   <section class="panel" id="settingsPanel">
     <h2>Settings</h2>
     <p>
-      This version is built to look like a wall-mounted family command center. It supports multiple Google Calendar inputs through the Google Calendar API. For now, the page shows sample events until you add API credentials and calendar IDs.
+      This version is built to look like a wall-mounted family command center. Weather loads automatically from Open-Meteo using your saved latitude and longitude. Calendar events can load from multiple Google Calendar IDs after you add a Google API key.
     </p>
     <div class="form-grid">
       <div>
@@ -482,12 +483,16 @@
         <input id="familyNameInput" placeholder="Green Family" />
       </div>
       <div>
-        <label>Weather text</label>
-        <input id="weatherInput" placeholder="☀ 68°" />
-      </div>
-      <div>
         <label>Google API key</label>
         <input id="apiKeyInput" placeholder="Paste Google API key" />
+      </div>
+      <div>
+        <label>Weather latitude</label>
+        <input id="latitudeInput" placeholder="40.6127" />
+      </div>
+      <div>
+        <label>Weather longitude</label>
+        <input id="longitudeInput" placeholder="-112.3044" />
       </div>
       <div>
         <label>Google Calendar IDs, one per line</label>
@@ -508,6 +513,14 @@
       <div>
         <label>Child 2 photo URL</label>
         <input id="child2PhotoInput" placeholder="photos/child2.jpg or https://..." />
+      </div>
+      <div>
+        <label>Child 3 photo URL</label>
+        <input id="child3PhotoInput" placeholder="photos/child3.jpg or https://..." />
+      </div>
+      <div>
+        <label>Child 4 photo URL</label>
+        <input id="child4PhotoInput" placeholder="photos/child4.jpg or https://..." />
       </div>
     </div>
     <div class="panel-actions">
@@ -536,18 +549,24 @@
       { key: "dad", name: "Dad", photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop&crop=faces" },
       { key: "child1", name: "Child 1", photo: "https://images.unsplash.com/photo-1544717305-2782549b5136?w=200&h=200&fit=crop&crop=faces" },
       { key: "child2", name: "Child 2", photo: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=200&h=200&fit=crop&crop=faces" },
+      { key: "child3", name: "Child 3", photo: "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=200&h=200&fit=crop&crop=faces" },
+      { key: "child4", name: "Child 4", photo: "https://images.unsplash.com/photo-1503919545889-aef636e10ad4?w=200&h=200&fit=crop&crop=faces" },
       { key: "family", name: "Family", photo: "https://images.unsplash.com/photo-1511895426328-dc8714191300?w=200&h=200&fit=crop&crop=faces" }
     ];
 
     const sampleEvents = [
       { title: "School", person: "child1", allDay: true },
       { title: "Work", person: "dad", allDay: true },
+      { title: "School", person: "child3", allDay: true },
+      { title: "School", person: "child4", allDay: true },
       { title: "Soccer Practice", person: "child1", start: "07:30", end: "08:15" },
       { title: "School Dropoff", person: "family", start: "08:30", end: "08:50" },
       { title: "Work Call", person: "mom", start: "09:30", end: "10:00" },
       { title: "Therapy", person: "dad", start: "10:00", end: "10:45" },
       { title: "Dentist", person: "family", start: "11:00", end: "12:30" },
       { title: "Football", person: "child2", start: "15:30", end: "16:30" },
+      { title: "Piano", person: "child3", start: "17:00", end: "17:30" },
+      { title: "Homework", person: "child4", start: "17:30", end: "18:00" },
       { title: "Dinner", person: "family", start: "18:00", end: "18:45" },
       { title: "Church Activity", person: "family", start: "19:00", end: "20:00" }
     ];
@@ -556,42 +575,11 @@
       selectedDate: new Date(),
       activePerson: "all",
       familyName: localStorage.getItem("familyName") || "Green Family",
-      weather: "Loading weather...",
-      async function loadWeather() {
-  // Erda / Tooele area. Change these if needed.
-  const latitude = 40.6127;
-  const longitude = -112.3044;
-
-  const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,weather_code&temperature_unit=fahrenheit`;
-
-  try {
-    const response = await fetch(url);
-    const data = await response.json();
-
-    const temp = Math.round(data.current.temperature_2m);
-    const code = data.current.weather_code;
-
-    const icon = getWeatherIcon(code);
-    state.weather = `${icon} ${temp}°`;
-
-    renderTop();
-  } catch (error) {
-    state.weather = "Weather unavailable";
-    renderTop();
-  }
-}
-      function getWeatherIcon(code) {
-  if (code === 0) return "☀";
-  if ([1, 2].includes(code)) return "🌤";
-  if (code === 3) return "☁";
-  if ([45, 48].includes(code)) return "🌫";
-  if ([51, 53, 55, 61, 63, 65, 80, 81, 82].includes(code)) return "🌧";
-  if ([71, 73, 75, 77, 85, 86].includes(code)) return "❄";
-  if ([95, 96, 99].includes(code)) return "⛈";
-  return "🌡";
-}
       apiKey: localStorage.getItem("googleApiKey") || "",
       calendarIds: JSON.parse(localStorage.getItem("calendarIds") || "[]"),
+      latitude: localStorage.getItem("weatherLatitude") || "40.6127",
+      longitude: localStorage.getItem("weatherLongitude") || "-112.3044",
+      weather: "Loading weather...",
       people: JSON.parse(localStorage.getItem("people") || JSON.stringify(defaultPeople)),
       events: []
     };
@@ -638,6 +626,36 @@
       return `${hh}:${mm}`;
     }
 
+    async function loadWeather() {
+      const latitude = state.latitude || "40.6127";
+      const longitude = state.longitude || "-112.3044";
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,weather_code&temperature_unit=fahrenheit`;
+
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        const temp = Math.round(data.current.temperature_2m);
+        const code = data.current.weather_code;
+        const icon = getWeatherIcon(code);
+        state.weather = `${icon} ${temp}°`;
+        renderTop();
+      } catch (error) {
+        state.weather = "Weather unavailable";
+        renderTop();
+      }
+    }
+
+    function getWeatherIcon(code) {
+      if (code === 0) return "☀";
+      if ([1, 2].includes(code)) return "🌤";
+      if (code === 3) return "☁";
+      if ([45, 48].includes(code)) return "🌫";
+      if ([51, 53, 55, 61, 63, 65, 80, 81, 82].includes(code)) return "🌧";
+      if ([71, 73, 75, 77, 85, 86].includes(code)) return "❄";
+      if ([95, 96, 99].includes(code)) return "⛈";
+      return "🌡";
+    }
+
     async function loadGoogleEvents() {
       if (!state.apiKey || state.calendarIds.length === 0) {
         state.events = sampleEvents;
@@ -657,10 +675,13 @@
         try {
           const response = await fetch(url);
           const data = await response.json();
-          const personKey = calendarId.toLowerCase().includes("mom") ? "mom" :
-                            calendarId.toLowerCase().includes("dad") ? "dad" :
-                            calendarId.toLowerCase().includes("child1") ? "child1" :
-                            calendarId.toLowerCase().includes("child2") ? "child2" : "family";
+          const lowerId = calendarId.toLowerCase();
+          const personKey = lowerId.includes("mom") ? "mom" :
+                            lowerId.includes("dad") ? "dad" :
+                            lowerId.includes("child1") ? "child1" :
+                            lowerId.includes("child2") ? "child2" :
+                            lowerId.includes("child3") ? "child3" :
+                            lowerId.includes("child4") ? "child4" : "family";
 
           (data.items || []).forEach(item => {
             allEvents.push({
@@ -767,38 +788,46 @@
 
     function openSettings() {
       el("familyNameInput").value = state.familyName;
-      el("weatherInput").value = state.weather;
       el("apiKeyInput").value = state.apiKey;
+      el("latitudeInput").value = state.latitude;
+      el("longitudeInput").value = state.longitude;
       el("calendarIdsInput").value = state.calendarIds.join("\n");
       el("momPhotoInput").value = state.people.find(p => p.key === "mom")?.photo || "";
       el("dadPhotoInput").value = state.people.find(p => p.key === "dad")?.photo || "";
       el("child1PhotoInput").value = state.people.find(p => p.key === "child1")?.photo || "";
       el("child2PhotoInput").value = state.people.find(p => p.key === "child2")?.photo || "";
+      el("child3PhotoInput").value = state.people.find(p => p.key === "child3")?.photo || "";
+      el("child4PhotoInput").value = state.people.find(p => p.key === "child4")?.photo || "";
       el("settingsPanel").classList.add("open");
     }
 
     function saveSettings() {
       state.familyName = el("familyNameInput").value.trim() || "Green Family";
-      state.weather = el("weatherInput").value.trim() || "☀ 68°";
       state.apiKey = el("apiKeyInput").value.trim();
+      state.latitude = el("latitudeInput").value.trim() || "40.6127";
+      state.longitude = el("longitudeInput").value.trim() || "-112.3044";
       state.calendarIds = el("calendarIdsInput").value.split("\n").map(x => x.trim()).filter(Boolean);
 
       const photos = {
         mom: el("momPhotoInput").value.trim(),
         dad: el("dadPhotoInput").value.trim(),
         child1: el("child1PhotoInput").value.trim(),
-        child2: el("child2PhotoInput").value.trim()
+        child2: el("child2PhotoInput").value.trim(),
+        child3: el("child3PhotoInput").value.trim(),
+        child4: el("child4PhotoInput").value.trim()
       };
       state.people = state.people.map(p => photos[p.key] ? { ...p, photo: photos[p.key] } : p);
 
       localStorage.setItem("familyName", state.familyName);
-      localStorage.setItem("weatherText", state.weather);
       localStorage.setItem("googleApiKey", state.apiKey);
+      localStorage.setItem("weatherLatitude", state.latitude);
+      localStorage.setItem("weatherLongitude", state.longitude);
       localStorage.setItem("calendarIds", JSON.stringify(state.calendarIds));
       localStorage.setItem("people", JSON.stringify(state.people));
 
       el("settingsPanel").classList.remove("open");
       renderTop();
+      loadWeather();
       loadGoogleEvents();
     }
 
@@ -813,12 +842,12 @@
     el("addBtn").addEventListener("click", () => window.open("https://calendar.google.com/calendar/u/0/r/eventedit", "_blank"));
 
     renderHours();
-renderTop();
-loadWeather();
-loadGoogleEvents();
+    renderTop();
+    loadWeather();
+    loadGoogleEvents();
 
-setInterval(renderTop, 30000);
-setInterval(loadWeather, 30 * 60 * 1000);
+    setInterval(renderTop, 30000);
+    setInterval(loadWeather, 30 * 60 * 1000);
   </script>
 </body>
 </html>
