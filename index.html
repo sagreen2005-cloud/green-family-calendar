@@ -556,7 +556,40 @@
       selectedDate: new Date(),
       activePerson: "all",
       familyName: localStorage.getItem("familyName") || "Green Family",
-      weather: localStorage.getItem("weatherText") || "☀ 68°",
+      weather: "Loading weather...",
+      async function loadWeather() {
+  // Erda / Tooele area. Change these if needed.
+  const latitude = 40.6127;
+  const longitude = -112.3044;
+
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,weather_code&temperature_unit=fahrenheit`;
+
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+
+    const temp = Math.round(data.current.temperature_2m);
+    const code = data.current.weather_code;
+
+    const icon = getWeatherIcon(code);
+    state.weather = `${icon} ${temp}°`;
+
+    renderTop();
+  } catch (error) {
+    state.weather = "Weather unavailable";
+    renderTop();
+  }
+}
+      function getWeatherIcon(code) {
+  if (code === 0) return "☀";
+  if ([1, 2].includes(code)) return "🌤";
+  if (code === 3) return "☁";
+  if ([45, 48].includes(code)) return "🌫";
+  if ([51, 53, 55, 61, 63, 65, 80, 81, 82].includes(code)) return "🌧";
+  if ([71, 73, 75, 77, 85, 86].includes(code)) return "❄";
+  if ([95, 96, 99].includes(code)) return "⛈";
+  return "🌡";
+}
       apiKey: localStorage.getItem("googleApiKey") || "",
       calendarIds: JSON.parse(localStorage.getItem("calendarIds") || "[]"),
       people: JSON.parse(localStorage.getItem("people") || JSON.stringify(defaultPeople)),
@@ -780,9 +813,12 @@
     el("addBtn").addEventListener("click", () => window.open("https://calendar.google.com/calendar/u/0/r/eventedit", "_blank"));
 
     renderHours();
-    renderTop();
-    loadGoogleEvents();
-    setInterval(renderTop, 30000);
+renderTop();
+loadWeather();
+loadGoogleEvents();
+
+setInterval(renderTop, 30000);
+setInterval(loadWeather, 30 * 60 * 1000);
   </script>
 </body>
 </html>
