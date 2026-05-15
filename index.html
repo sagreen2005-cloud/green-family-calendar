@@ -523,6 +523,7 @@
       <div><label>Google Calendar IDs, one per line</label><textarea id="calendarIdsInput" placeholder="family@gmail.com&#10;work_calendar_id@group.calendar.google.com"></textarea></div>
       <div><label>Mom photo URL</label><input id="momPhotoInput" placeholder="photos/mom.jpg or https://..." /></div>
       <div><label>Dad photo URL</label><input id="dadPhotoInput" placeholder="photos/dad.jpg or https://..." /></div>
+      <div><label>Family photo URL</label><input id="familyPhotoInput" placeholder="Soccer ball is set by default" /></div>
     </div>
     <div class="panel-actions">
       <button id="saveSettings">Save</button>
@@ -566,9 +567,9 @@
     const END_HOUR = 24;
 
     const defaultPeople = [
-      { key: "mom", name: "Mom", photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop&crop=faces" },
-      { key: "dad", name: "Dad", photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop&crop=faces" },
-      { key: "family", name: "Family", photo: "https://images.unsplash.com/photo-1511895426328-dc8714191300?w=200&h=200&fit=crop&crop=faces" }
+      { key: "mom", name: "Mom", photo: "https://drive.google.com/uc?export=view&id=1eh2hfJR7NWA7bJfcX_21yI1ZGtNo24SQ" },
+      { key: "dad", name: "Dad", photo: "https://drive.google.com/uc?export=view&id=1bG3x7wokVjVPnOz5ES7G2MHKEFTPh14F" },
+      { key: "family", name: "Family", photo: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23e0f2fe'/%3E%3Ccircle cx='100' cy='100' r='72' fill='white' stroke='%231f2937' stroke-width='6'/%3E%3Cpolygon points='100,58 128,80 118,114 82,114 72,80' fill='%231f2937'/%3E%3Cpath d='M100 58 L100 28 M128 80 L166 66 M118 114 L140 154 M82 114 L60 154 M72 80 L34 66' stroke='%231f2937' stroke-width='6' fill='none'/%3E%3Cpath d='M100 28 C130 34 154 48 166 66 M166 66 C172 92 166 126 140 154 M140 154 C112 170 88 170 60 154 M60 154 C34 126 28 92 34 66 M34 66 C46 48 70 34 100 28' stroke='%231f2937' stroke-width='6' fill='none'/%3E%3C/svg%3E" }
     ];
 
 
@@ -584,8 +585,13 @@
       timezone: localStorage.getItem("timezone") || "America/Denver",
       weather: "Loading weather...",
       people: (() => {
-        const stored = JSON.parse(localStorage.getItem("people") || JSON.stringify(defaultPeople));
-        return stored.filter(p => ["mom", "dad", "family"].includes(p.key));
+        const stored = JSON.parse(localStorage.getItem("people") || "[]");
+        const allowed = ["mom", "dad", "family"];
+        const merged = defaultPeople.map(defaultPerson => {
+          const saved = stored.find(p => p.key === defaultPerson.key);
+          return saved && allowed.includes(saved.key) ? { ...saved, photo: defaultPerson.photo, name: defaultPerson.name } : defaultPerson;
+        });
+        return merged;
       })(),
       events: [],
       meals: JSON.parse(localStorage.getItem("meals") || "[]"),
@@ -777,7 +783,7 @@
       el("familyNameInput").value = state.familyName; el("apiKeyInput").value = state.apiKey; el("latitudeInput").value = state.latitude; el("longitudeInput").value = state.longitude;
       el("timezoneInput").value = state.timezone;
       el("calendarIdsInput").value = state.calendarIds.join("\n");
-      ["mom", "dad"].forEach(key => el(`${key}PhotoInput`).value = state.people.find(p => p.key === key)?.photo || "");
+      ["mom", "dad", "family"].forEach(key => el(`${key}PhotoInput`).value = state.people.find(p => p.key === key)?.photo || "");
       el("settingsPanel").classList.add("open");
     }
 
@@ -790,7 +796,8 @@
       state.calendarIds = el("calendarIdsInput").value.split("\n").map(x => x.trim()).filter(Boolean);
       const photos = {
         mom: el("momPhotoInput").value.trim(),
-        dad: el("dadPhotoInput").value.trim()
+        dad: el("dadPhotoInput").value.trim(),
+        family: el("familyPhotoInput").value.trim()
       };
       state.people = state.people.map(p => photos[p.key] ? { ...p, photo: photos[p.key] } : p);
       localStorage.setItem("familyName", state.familyName); localStorage.setItem("googleApiKey", state.apiKey); localStorage.setItem("weatherLatitude", state.latitude); localStorage.setItem("weatherLongitude", state.longitude); localStorage.setItem("timezone", state.timezone); localStorage.setItem("calendarIds", JSON.stringify(state.calendarIds)); localStorage.setItem("people", JSON.stringify(state.people));
