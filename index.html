@@ -585,7 +585,8 @@
       weather: "Loading weather...",
       people: (() => {
         const stored = JSON.parse(localStorage.getItem("people") || JSON.stringify(defaultPeople));
-        return stored;
+        return stored.filter(p => ["mom", "dad", "family"].includes(p.key));
+      })(),
       events: [],
       meals: JSON.parse(localStorage.getItem("meals") || "[]"),
       listItems: JSON.parse(localStorage.getItem("listItems") || "[]")
@@ -643,7 +644,7 @@
           const response = await fetch(url);
           const data = await response.json();
           const lowerId = calendarId.toLowerCase();
-          const personKey = lowerId.includes("mom") ? "mom" : lowerId.includes("dad") ? "dad" : lowerId.includes("child1") ? "child1" : lowerId.includes("child2") ? "child2" : lowerId.includes("child3") ? "child3" : lowerId.includes("child4") ? "child4" : "family";
+          const personKey = lowerId.includes("mom") ? "mom" : lowerId.includes("dad") ? "dad" : "family";
 
           (data.items || []).forEach(item => {
             const eventDate = new Date(item.start.dateTime || item.start.date);
@@ -776,7 +777,7 @@
       el("familyNameInput").value = state.familyName; el("apiKeyInput").value = state.apiKey; el("latitudeInput").value = state.latitude; el("longitudeInput").value = state.longitude;
       el("timezoneInput").value = state.timezone;
       el("calendarIdsInput").value = state.calendarIds.join("\n");
-      ["mom", "dad", "child1", "child2", "child3", "child4"].forEach(key => el(`${key}PhotoInput`).value = state.people.find(p => p.key === key)?.photo || "");
+      ["mom", "dad"].forEach(key => el(`${key}PhotoInput`).value = state.people.find(p => p.key === key)?.photo || "");
       el("settingsPanel").classList.add("open");
     }
 
@@ -787,7 +788,10 @@
       state.longitude = el("longitudeInput").value.trim() || "-112.3044";
       state.timezone = el("timezoneInput").value || "America/Denver";
       state.calendarIds = el("calendarIdsInput").value.split("\n").map(x => x.trim()).filter(Boolean);
-      const photos = { mom: el("momPhotoInput").value.trim(), dad: el("dadPhotoInput").value.trim(), child1: el("child1PhotoInput").value.trim(), child2: el("child2PhotoInput").value.trim(), child3: el("child3PhotoInput").value.trim(), child4: el("child4PhotoInput").value.trim() };
+      const photos = {
+        mom: el("momPhotoInput").value.trim(),
+        dad: el("dadPhotoInput").value.trim()
+      };
       state.people = state.people.map(p => photos[p.key] ? { ...p, photo: photos[p.key] } : p);
       localStorage.setItem("familyName", state.familyName); localStorage.setItem("googleApiKey", state.apiKey); localStorage.setItem("weatherLatitude", state.latitude); localStorage.setItem("weatherLongitude", state.longitude); localStorage.setItem("timezone", state.timezone); localStorage.setItem("calendarIds", JSON.stringify(state.calendarIds)); localStorage.setItem("people", JSON.stringify(state.people));
       el("settingsPanel").classList.remove("open"); renderTop(); loadWeather(); loadGoogleEvents();
