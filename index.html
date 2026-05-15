@@ -575,7 +575,7 @@
 
   <section class="panel" id="settingsPanel">
     <h2>Settings</h2>
-    <p>Connect your Google Calendar API key and calendar IDs. IDs containing mom, dad, quade, grayson, easton, or reese will be color-coded to that person. Calendars that do not match a person show as Family events. You can change each avatar below.</p>
+    <p>Connect your Google Calendar API key and calendar IDs. Events are color-coded by Google account email or by names in the title. Scott or sagreen2005@gmail.com shows as Dad. Robyn or ratgreen2010@gmail.com shows as Mom. Quade, Grayson, Easton, and Reese each get their own color. Tasks use the same person colors.</p>
     <div class="form-grid">
       <div><label>Family display name</label><input id="familyNameInput" placeholder="Green Family Command Center" /></div>
       <div><label>Google API key</label><input id="apiKeyInput" placeholder="Paste Google API key" /></div>
@@ -765,15 +765,65 @@
       };
     }
 
-    function classifyCalendar(calendarId) {
-      const lowerId = calendarId.toLowerCase();
-      if (lowerId.includes("mom")) return "mom";
-      if (lowerId.includes("dad")) return "dad";
-      if (lowerId.includes("quade")) return "quade";
-      if (lowerId.includes("grayson")) return "grayson";
-      if (lowerId.includes("easton")) return "easton";
-      if (lowerId.includes("reese")) return "reese";
-      return "family";
+    function classifyPersonValue(value) {
+      const text = String(value || "").toLowerCase();
+
+      if (
+        text.includes("sagreen2005@gmail.com") ||
+        text.includes("scott") ||
+        text.includes("dad")
+      ) return "dad";
+
+      if (
+        text.includes("ratgreen2010@gmail.com") ||
+        text.includes("robyn") ||
+        text.includes("mom")
+      ) return "mom";
+
+      if (text.includes("quade")) return "quade";
+      if (text.includes("grayson")) return "grayson";
+      if (text.includes("easton")) return "easton";
+      if (text.includes("reese")) return "reese";
+
+      return "";
+    }
+
+    function classifyEvent(calendarId, title, creatorEmail, organizerEmail) {
+      return (
+        classifyPersonValue(creatorEmail) ||
+        classifyPersonValue(organizerEmail) ||
+        classifyPersonValue(calendarId) ||
+        classifyPersonValue(title) ||
+        "family"
+      );
+    }
+
+    function cleanEventTitle(title) {
+      const rawTitle = String(title || "Untitled").trim();
+
+      const knownPrefixes = [
+        "Scott", "Dad",
+        "Robyn", "Mom",
+        "Quade",
+        "Grayson",
+        "Easton",
+        "Reese",
+        "Family"
+      ];
+
+      for (const prefix of knownPrefixes) {
+        const colonPattern = new RegExp(`^${prefix}\\s*:\\s*`, "i");
+        const dashPattern = new RegExp(`^${prefix}\\s*-\\s*`, "i");
+
+        if (colonPattern.test(rawTitle)) return rawTitle.replace(colonPattern, "").trim() || rawTitle;
+        if (dashPattern.test(rawTitle)) return rawTitle.replace(dashPattern, "").trim() || rawTitle;
+      }
+
+      return rawTitle;
+    }
+
+    function getTaskPersonKey(personName) {
+      return classifyPersonValue(personName) || "family";
     }
 
     function getPersonName(key) {
@@ -841,12 +891,15 @@
         try {
           const response = await fetch(url);
           const data = await response.json();
-          const personKey = classifyCalendar(calendarId);
-
           (data.items || []).forEach(item => {
             const eventDate = new Date(item.start.dateTime || item.start.date);
+            const creatorEmail = item.creator?.email || "";
+            const organizerEmail = item.organizer?.email || "";
+            const eventTitle = item.summary || "Untitled";
+            const personKey = classifyEvent(calendarId, eventTitle, creatorEmail, organizerEmail);
+
             allEvents.push({
-              title: item.summary || "Untitled",
+              title: cleanEventTitle(eventTitle),
               person: personKey,
               date: eventDate.toISOString(),
               allDay: Boolean(item.start.date),
@@ -862,10 +915,6 @@
 
       state.events = allEvents;
       renderCalendar();
-      
-      if (allEvents.length === 0) {
-  alert("No Google Calendar events loaded. Check API key, Calendar ID, and public calendar settings.");
-}
     }
 
     function getMealsForDay(day) {
@@ -885,25 +934,28 @@
     function getTasksForDay(day) {
       return state.tasks
         .filter(t => t.date && sameDay(new Date(t.date + "T00:00:00"), day))
-        .map(t => ({
-          title: `${t.person}: ${t.text} ☑️`,
-          assignedTo: t.person,
-          person: "chore",
-          date: day.toISOString(),
-          start: "",
-          end: "",
-          allDay: true,
-          source: "task"
-        }));
+        .map(t => {
+          const personKey = getTaskPersonKey(t.person);
+
+          return {
+            title: `${t.text} ☑️`,
+            assignedTo: t.person,
+            person: personKey,
+            date: day.toISOString(),
+            start: "",
+            end: "",
+            allDay: true,
+            source: "task"
+          };
+        });
     }
 
     function visibleEvents(events) {
       if (state.activePerson === "all") return events;
-      const activeName = getPersonName(state.activePerson);
+
       return events.filter(e =>
         e.person === state.activePerson ||
-        e.person === "meal" ||
-        (e.person === "chore" && e.assignedTo === activeName)
+        e.person === "meal"
       );
     }
 
