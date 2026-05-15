@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head> 
+<head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Family Command Calendar</title>
@@ -19,6 +19,13 @@
       --child3: #3b82f6;
       --child4: #eab308;
       --family: #06b6d4;
+      --mom-pastel: #fce7f3;
+      --dad-pastel: #ffedd5;
+      --child1-pastel: #dcfce7;
+      --child2-pastel: #f3e8ff;
+      --child3-pastel: #dbeafe;
+      --child4-pastel: #fef9c3;
+      --family-pastel: #cffafe;
     }
 
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -41,8 +48,8 @@
 
     body {
       display: grid;
-      grid-template-rows: 82px 1fr 62px;
-      max-width: 980px;
+      grid-template-rows: 100px 1fr 88px;
+      max-width: 1280px;
       margin: 0 auto;
       background: var(--paper);
       box-shadow: var(--shadow);
@@ -52,33 +59,33 @@
       display: grid;
       grid-template-columns: auto 1fr auto;
       align-items: center;
-      padding: 10px 14px;
+      padding: 12px 20px;
       background: linear-gradient(135deg, #f97316 0%, #ec4899 45%, #06b6d4 100%);
       border-bottom: none;
-      gap: 10px;
+      gap: 14px;
     }
 
     .topbar-left {
       display: flex;
       flex-direction: column;
       align-items: flex-start;
-      gap: 2px;
+      gap: 3px;
     }
 
     .hamburger, .icon-btn {
       border: 0;
       background: transparent;
-      font-size: 22px;
+      font-size: 28px;
       color: white;
       cursor: pointer;
-      min-height: 34px;
-      min-width: 34px;
-      border-radius: 14px;
+      min-height: 48px;
+      min-width: 48px;
+      border-radius: 16px;
     }
 
     .hamburger:active, .icon-btn:active, .person:active, .add-btn:active { background: rgba(255,255,255,0.2); }
 
-    .weather { font-weight: 800; font-size: 13px; color: rgba(255,255,255,0.9); }
+    .weather { font-weight: 800; font-size: 15px; color: rgba(255,255,255,0.9); }
 
     .clock-area {
       display: flex;
@@ -89,12 +96,12 @@
     }
 
     .family-name {
-      font-size: 15px;
+      font-size: 22px;
       color: white;
       font-weight: 900;
       text-align: center;
       letter-spacing: -0.3px;
-      text-shadow: 0 1px 4px rgba(0,0,0,0.15);
+      text-shadow: 0 1px 6px rgba(0,0,0,0.18);
     }
 
     .clock-wrap {
@@ -103,8 +110,8 @@
       align-items: flex-end;
     }
 
-    .clock { font-size: clamp(28px, 4.5vw, 42px); letter-spacing: -2px; color: white; font-weight: 900; line-height: 1; }
-    .clock-date { font-size: 11px; color: rgba(255,255,255,0.85); font-weight: 700; text-align: right; margin-top: 2px; }
+    .clock { font-size: clamp(36px, 5vw, 54px); letter-spacing: -2px; color: white; font-weight: 900; line-height: 1; }
+    .clock-date { font-size: 14px; color: rgba(255,255,255,0.85); font-weight: 700; text-align: right; margin-top: 3px; }
 
     .cal-layout {
       display: flex;
@@ -125,13 +132,13 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 8px 14px 4px;
+      padding: 12px 18px 6px;
       background: #fff;
       flex-shrink: 0;
     }
 
     .events-header-title {
-      font-size: 14px;
+      font-size: 18px;
       font-weight: 900;
       color: var(--ink);
     }
@@ -139,8 +146,29 @@
     .events-header-right {
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 6px;
     }
+
+    .last-updated {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 700;
+      margin-top: 2px;
+    }
+
+    .today-btn {
+      border: 2px solid #06b6d4;
+      background: transparent;
+      color: #06b6d4;
+      font-size: 13px;
+      font-weight: 900;
+      border-radius: 999px;
+      padding: 6px 14px;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .today-btn:hover { background: #06b6d4; color: white; }
 
     .date-row {
       display: grid;
@@ -180,9 +208,10 @@
     .people-row {
       display: flex;
       flex-direction: row;
-      gap: 4px;
+      gap: 8px;
       align-items: flex-start;
-      padding: 8px 12px 6px;
+      justify-content: center;
+      padding: 10px 16px 8px;
       border-bottom: 1px solid var(--line);
       background: #ffffff;
       flex-shrink: 0;
@@ -195,21 +224,21 @@
       background: transparent;
       cursor: pointer;
       text-align: center;
-      border-radius: 14px;
-      padding: 4px 6px;
+      border-radius: 16px;
+      padding: 6px 8px;
       min-width: 0;
       flex-shrink: 0;
     }
 
     .avatar {
-      width: 44px;
-      height: 44px;
+      width: 58px;
+      height: 58px;
       border-radius: 999px;
       object-fit: cover;
-      border: 2.5px solid var(--line);
+      border: 3px solid var(--line);
       background: #e5e7eb;
       display: block;
-      margin: 0 auto 3px;
+      margin: 0 auto 4px;
     }
 
     .person.active .avatar { border-color: currentColor; }
@@ -223,12 +252,12 @@
 
     .person-name {
       color: var(--ink);
-      font-size: 10px;
+      font-size: 13px;
       font-weight: 900;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      max-width: 60px;
+      max-width: 70px;
     }
 
     .todo-count { display: none; }
@@ -270,13 +299,20 @@
     }
 
     .event-time { display: block; font-size: 11px; opacity: 0.96; font-weight: 800; margin-top: 2px; }
-    .event-card.mom, .tag.mom { background: var(--mom); }
-    .event-card.dad, .tag.dad { background: var(--dad); }
-    .event-card.child1, .tag.child1 { background: var(--child1); }
-    .event-card.child2, .tag.child2 { background: var(--child2); }
-    .event-card.child3, .tag.child3 { background: var(--child3); }
-    .event-card.child4, .tag.child4 { background: var(--child4); color: #1f2937; }
-    .event-card.family, .tag.family { background: var(--family); }
+    .event-card.mom { background: var(--mom-pastel); border-left: 4px solid var(--mom); color: #831843; }
+    .event-card.dad { background: var(--dad-pastel); border-left: 4px solid var(--dad); color: #7c2d12; }
+    .event-card.child1 { background: var(--child1-pastel); border-left: 4px solid var(--child1); color: #14532d; }
+    .event-card.child2 { background: var(--child2-pastel); border-left: 4px solid var(--child2); color: #581c87; }
+    .event-card.child3 { background: var(--child3-pastel); border-left: 4px solid var(--child3); color: #1e3a8a; }
+    .event-card.child4 { background: var(--child4-pastel); border-left: 4px solid var(--child4); color: #713f12; }
+    .event-card.family { background: var(--family-pastel); border-left: 4px solid var(--family); color: #164e63; }
+    .tag.mom { background: var(--mom-pastel); color: #831843; }
+    .tag.dad { background: var(--dad-pastel); color: #7c2d12; }
+    .tag.child1 { background: var(--child1-pastel); color: #14532d; }
+    .tag.child2 { background: var(--child2-pastel); color: #581c87; }
+    .tag.child3 { background: var(--child3-pastel); color: #1e3a8a; }
+    .tag.child4 { background: var(--child4-pastel); color: #713f12; }
+    .tag.family { background: var(--family-pastel); color: #164e63; }
 
     .now-line { position: absolute; left: 56px; right: 0; height: 2px; background: #0f172a; z-index: 3; }
     .now-dot { position: absolute; left: -5px; top: -4px; width: 10px; height: 10px; border-radius: 50%; background: #0f172a; }
@@ -293,10 +329,12 @@
 
     .bottom-nav {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      border-top: 1px solid var(--line);
-      background: #ffffff;
+      grid-template-columns: repeat(3, 1fr);
+      border-top: none;
+      background: linear-gradient(135deg, #f97316 0%, #ec4899 45%, #06b6d4 100%);
       z-index: 5;
+      padding: 8px 14px 10px;
+      gap: 8px;
     }
 
     .nav-item {
@@ -304,16 +342,30 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 4px;
-      color: var(--muted);
-      font-size: 12px;
+      gap: 5px;
+      color: rgba(255,255,255,0.65);
+      font-size: 15px;
       font-weight: 900;
       border: 0;
       background: transparent;
       cursor: pointer;
+      border-radius: 18px;
+      padding: 8px 6px;
+      transition: background 0.15s, color 0.15s;
     }
 
-    .nav-item.active { color: #0284c7; }
+    .nav-item span:first-child { font-size: 30px; line-height: 1; }
+
+    .nav-item.active {
+      color: #ffffff;
+      background: rgba(255,255,255,0.22);
+      text-shadow: 0 1px 4px rgba(0,0,0,0.15);
+    }
+
+    .nav-item:not(.active):hover {
+      background: rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.9);
+    }
 
     .add-btn {
       position: fixed;
@@ -403,8 +455,12 @@
   <div class="cal-layout">
     <div class="cal-right">
       <div class="events-header">
-        <span class="events-header-title">Today's Events</span>
+        <div>
+          <span class="events-header-title">Today's Events</span>
+          <div class="last-updated" id="lastUpdated"></div>
+        </div>
         <div class="events-header-right">
+          <button class="today-btn" id="todayBtn">Today</button>
           <button class="icon-btn" id="prevDay" aria-label="Previous day" style="font-size:18px;color:var(--ink);">‹</button>
           <button class="icon-btn" id="nextDay" aria-label="Next day" style="font-size:18px;color:var(--ink);">›</button>
         </div>
@@ -444,7 +500,6 @@
   <button class="add-btn" id="addBtn" title="Open Google Calendar">+</button>
 
   <nav class="bottom-nav">
-    <button class="nav-item" id="photosBtn"><span>☼</span><span>Photos</span></button>
     <button class="nav-item active" id="calendarBtn"><span>▣</span><span>Calendar</span></button>
     <button class="nav-item" id="mealsBtn"><span>☕</span><span>Meals</span></button>
     <button class="nav-item" id="listsBtn"><span>✓</span><span>Lists</span></button>
@@ -460,6 +515,15 @@
       <div><label>Google API key</label><input id="apiKeyInput" placeholder="Paste Google API key" /></div>
       <div><label>Weather latitude</label><input id="latitudeInput" placeholder="40.6127" /></div>
       <div><label>Weather longitude</label><input id="longitudeInput" placeholder="-112.3044" /></div>
+      <div><label>Timezone</label><select id="timezoneInput">
+        <option value="America/New_York">Eastern (ET)</option>
+        <option value="America/Chicago">Central (CT)</option>
+        <option value="America/Denver">Mountain (MT)</option>
+        <option value="America/Phoenix">Mountain – no DST (AZ)</option>
+        <option value="America/Los_Angeles">Pacific (PT)</option>
+        <option value="America/Anchorage">Alaska (AKT)</option>
+        <option value="America/Honolulu">Hawaii (HT)</option>
+      </select></div>
       <div><label>Google Calendar IDs, one per line</label><textarea id="calendarIdsInput" placeholder="family@gmail.com&#10;work_calendar_id@group.calendar.google.com"></textarea></div>
       <div><label>Mom photo URL</label><input id="momPhotoInput" placeholder="photos/mom.jpg or https://..." /></div>
       <div><label>Dad photo URL</label><input id="dadPhotoInput" placeholder="photos/dad.jpg or https://..." /></div>
@@ -512,29 +576,13 @@
     const defaultPeople = [
       { key: "mom", name: "Mom", photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop&crop=faces" },
       { key: "dad", name: "Dad", photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop&crop=faces" },
-      { key: "child1", name: "Child 1", photo: "https://images.unsplash.com/photo-1544717305-2782549b5136?w=200&h=200&fit=crop&crop=faces" },
-      { key: "child2", name: "Child 2", photo: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=200&h=200&fit=crop&crop=faces" },
-      { key: "child3", name: "Child 3", photo: "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=200&h=200&fit=crop&crop=faces" },
-      { key: "child4", name: "Child 4", photo: "https://images.unsplash.com/photo-1503919545889-aef636e10ad4?w=200&h=200&fit=crop&crop=faces" },
+      { key: "child1", name: "Quade", photo: "https://images.unsplash.com/photo-1544717305-2782549b5136?w=200&h=200&fit=crop&crop=faces" },
+      { key: "child2", name: "Grayson", photo: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=200&h=200&fit=crop&crop=faces" },
+      { key: "child3", name: "Easton", photo: "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=200&h=200&fit=crop&crop=faces" },
+      { key: "child4", name: "Reese", photo: "https://images.unsplash.com/photo-1503919545889-aef636e10ad4?w=200&h=200&fit=crop&crop=faces" },
       { key: "family", name: "Family", photo: "https://images.unsplash.com/photo-1511895426328-dc8714191300?w=200&h=200&fit=crop&crop=faces" }
     ];
 
-    const sampleEvents = [
-      { title: "School", person: "child1", allDay: true },
-      { title: "Work", person: "dad", allDay: true },
-      { title: "School", person: "child3", allDay: true },
-      { title: "School", person: "child4", allDay: true },
-      { title: "Soccer Practice", person: "child1", start: "07:30", end: "08:15" },
-      { title: "School Dropoff", person: "family", start: "08:30", end: "08:50" },
-      { title: "Work Call", person: "mom", start: "09:30", end: "10:00" },
-      { title: "Therapy", person: "dad", start: "10:00", end: "10:45" },
-      { title: "Dentist", person: "family", start: "11:00", end: "12:30" },
-      { title: "Football", person: "child2", start: "15:30", end: "16:30" },
-      { title: "Piano", person: "child3", start: "17:00", end: "17:30" },
-      { title: "Homework", person: "child4", start: "17:30", end: "18:00" },
-      { title: "Dinner", person: "family", start: "18:00", end: "18:45" },
-      { title: "Church Activity", person: "family", start: "19:00", end: "20:00" }
-    ];
 
     const state = {
       selectedDate: new Date(),
@@ -545,8 +593,13 @@
       calendarIds: JSON.parse(localStorage.getItem("calendarIds") || "[]"),
       latitude: localStorage.getItem("weatherLatitude") || "40.6127",
       longitude: localStorage.getItem("weatherLongitude") || "-112.3044",
+      timezone: localStorage.getItem("timezone") || "America/Denver",
       weather: "Loading weather...",
-      people: JSON.parse(localStorage.getItem("people") || JSON.stringify(defaultPeople)),
+      people: (() => {
+        const stored = JSON.parse(localStorage.getItem("people") || JSON.stringify(defaultPeople));
+        const nameMap = { child1: "Quade", child2: "Grayson", child3: "Easton", child4: "Reese" };
+        return stored.map(p => nameMap[p.key] ? { ...p, name: nameMap[p.key] } : p);
+      })(),
       events: [],
       meals: JSON.parse(localStorage.getItem("meals") || "[]"),
       listItems: JSON.parse(localStorage.getItem("listItems") || "[]")
@@ -586,7 +639,7 @@
     }
 
     async function loadGoogleEvents() {
-      if (!state.apiKey || state.calendarIds.length === 0) { state.events = sampleEvents; renderSchedule(); return; }
+      if (!state.apiKey || state.calendarIds.length === 0) { state.events = []; renderSchedule(); stampLastUpdated(); return; }
 
       const allEvents = [];
       const rangeStart = state.viewMode === "week" ? startOfWeek(state.selectedDate) : state.selectedDate;
@@ -620,8 +673,35 @@
         } catch (error) { console.error("Calendar load failed", calendarId, error); }
       }
 
-      state.events = allEvents.length ? allEvents : sampleEvents;
+      state.events = allEvents;
       renderSchedule();
+      stampLastUpdated();
+    }
+
+    function mstNow() {
+      const now = new Date();
+      const tz = state.timezone;
+      const parts = new Intl.DateTimeFormat("en-US", {
+        timeZone: tz, hour: "numeric", minute: "2-digit",
+        hour12: true, weekday: "short", month: "short", day: "numeric"
+      }).formatToParts(now);
+      const get = (type) => (parts.find(p => p.type === type) || {}).value || "";
+      const h12 = get("hour"); const min = get("minute"); const dayperiod = get("dayPeriod").toLowerCase();
+      const numParts = new Intl.DateTimeFormat("en-US", {
+        timeZone: tz, hour: "numeric", minute: "2-digit", hour12: false
+      }).formatToParts(now);
+      const h24 = parseInt((numParts.find(p => p.type === "hour") || {}).value || "0");
+      const m = parseInt((numParts.find(p => p.type === "minute") || {}).value || "0");
+      return {
+        display: `${h12}:${min}${dayperiod}`,
+        dateDisplay: `${get("weekday")}, ${get("month")} ${get("day")}`,
+        hours: h24, minutes: m
+      };
+    }
+
+    function stampLastUpdated() {
+      const { display } = mstNow();
+      el("lastUpdated").textContent = `Updated ${display}`;
     }
 
     function renderPeople() {
@@ -667,9 +747,10 @@
       }).join("");
 
       const now = new Date();
+      const { hours: nowH, minutes: nowM } = mstNow();
       let nowLine = "";
       if (sameDay(now, state.selectedDate)) {
-        const nowTop = (((now.getHours() * 60 + now.getMinutes()) - START_HOUR * 60) / 60) * HOUR_HEIGHT;
+        const nowTop = (((nowH * 60 + nowM) - START_HOUR * 60) / 60) * HOUR_HEIGHT;
         if (nowTop >= 0 && nowTop <= (END_HOUR - START_HOUR) * HOUR_HEIGHT) nowLine = `<div class="now-line" style="top:${nowTop}px"><span class="now-dot"></span></div>`;
       }
       el("eventLayer").innerHTML = layer + nowLine;
@@ -694,9 +775,9 @@
     function renderTop() {
       el("familyName").textContent = state.familyName;
       el("weatherText").textContent = state.weather;
-      const now = new Date();
-      el("clock").textContent = now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }).replace(" ", "").toLowerCase();
-      el("clockDate").textContent = now.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+      const { display, dateDisplay } = mstNow();
+      el("clock").textContent = display;
+      el("clockDate").textContent = dateDisplay;
     }
 
     function renderPhotos() { el("photoCollage").innerHTML = state.people.map(p => `<img src="${p.photo}" alt="${p.name}" />`).join(""); }
@@ -707,6 +788,7 @@
 
     function openSettings() {
       el("familyNameInput").value = state.familyName; el("apiKeyInput").value = state.apiKey; el("latitudeInput").value = state.latitude; el("longitudeInput").value = state.longitude;
+      el("timezoneInput").value = state.timezone;
       el("calendarIdsInput").value = state.calendarIds.join("\n");
       ["mom", "dad", "child1", "child2", "child3", "child4"].forEach(key => el(`${key}PhotoInput`).value = state.people.find(p => p.key === key)?.photo || "");
       el("settingsPanel").classList.add("open");
@@ -717,22 +799,23 @@
       state.apiKey = el("apiKeyInput").value.trim();
       state.latitude = el("latitudeInput").value.trim() || "40.6127";
       state.longitude = el("longitudeInput").value.trim() || "-112.3044";
+      state.timezone = el("timezoneInput").value || "America/Denver";
       state.calendarIds = el("calendarIdsInput").value.split("\n").map(x => x.trim()).filter(Boolean);
       const photos = { mom: el("momPhotoInput").value.trim(), dad: el("dadPhotoInput").value.trim(), child1: el("child1PhotoInput").value.trim(), child2: el("child2PhotoInput").value.trim(), child3: el("child3PhotoInput").value.trim(), child4: el("child4PhotoInput").value.trim() };
       state.people = state.people.map(p => photos[p.key] ? { ...p, photo: photos[p.key] } : p);
-      localStorage.setItem("familyName", state.familyName); localStorage.setItem("googleApiKey", state.apiKey); localStorage.setItem("weatherLatitude", state.latitude); localStorage.setItem("weatherLongitude", state.longitude); localStorage.setItem("calendarIds", JSON.stringify(state.calendarIds)); localStorage.setItem("people", JSON.stringify(state.people));
+      localStorage.setItem("familyName", state.familyName); localStorage.setItem("googleApiKey", state.apiKey); localStorage.setItem("weatherLatitude", state.latitude); localStorage.setItem("weatherLongitude", state.longitude); localStorage.setItem("timezone", state.timezone); localStorage.setItem("calendarIds", JSON.stringify(state.calendarIds)); localStorage.setItem("people", JSON.stringify(state.people));
       el("settingsPanel").classList.remove("open"); renderTop(); loadWeather(); loadGoogleEvents();
     }
 
     el("prevDay").addEventListener("click", () => { state.selectedDate = addDays(state.selectedDate, state.viewMode === "week" ? -7 : -1); loadGoogleEvents(); });
     el("nextDay").addEventListener("click", () => { state.selectedDate = addDays(state.selectedDate, state.viewMode === "week" ? 7 : 1); loadGoogleEvents(); });
+    el("todayBtn").addEventListener("click", () => { state.selectedDate = new Date(); loadGoogleEvents(); });
     el("dayViewBtn").addEventListener("click", () => { state.viewMode = "day"; localStorage.setItem("viewMode", "day"); loadGoogleEvents(); });
     el("weekViewBtn").addEventListener("click", () => { state.viewMode = "week"; localStorage.setItem("viewMode", "week"); loadGoogleEvents(); });
     el("settingsBtn").addEventListener("click", openSettings);
     el("closeSettings").addEventListener("click", () => el("settingsPanel").classList.remove("open"));
     el("saveSettings").addEventListener("click", saveSettings);
     el("resetSettings").addEventListener("click", () => { localStorage.clear(); location.reload(); });
-    el("photosBtn").addEventListener("click", () => { renderPhotos(); el("photosPanel").classList.add("open"); });
     el("closePhotos").addEventListener("click", () => el("photosPanel").classList.remove("open"));
     el("mealsBtn").addEventListener("click", () => { renderMeals(); el("mealsPanel").classList.add("open"); });
     el("closeMeals").addEventListener("click", () => el("mealsPanel").classList.remove("open"));
@@ -745,6 +828,7 @@
     renderHours(); renderTop(); loadWeather(); loadGoogleEvents();
     setInterval(renderTop, 30000);
     setInterval(loadWeather, 30 * 60 * 1000);
+    setInterval(loadGoogleEvents, 90000);
   </script>
 </body>
 </html>
