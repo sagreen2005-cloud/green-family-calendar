@@ -585,21 +585,13 @@
       timezone: localStorage.getItem("timezone") || "America/Denver",
       weather: "Loading weather...",
       people: (() => {
-        const savedPeople = JSON.parse(localStorage.getItem("people") || "[]");
-        const allowedKeys = ["mom", "dad", "family"];
-
-        return defaultPeople.map(defaultPerson => {
-          const savedPerson = savedPeople.find(p => p.key === defaultPerson.key);
-
-          if (savedPerson && allowedKeys.includes(savedPerson.key)) {
-            return {
-              ...defaultPerson,
-              photo: savedPerson.photo || defaultPerson.photo
-            };
-          }
-
-          return defaultPerson;
+        const stored = JSON.parse(localStorage.getItem("people") || "[]");
+        const allowed = ["mom", "dad", "family"];
+        const merged = defaultPeople.map(defaultPerson => {
+          const saved = stored.find(p => p.key === defaultPerson.key);
+          return saved && allowed.includes(saved.key) ? { ...saved, photo: defaultPerson.photo, name: defaultPerson.name } : defaultPerson;
         });
+        return merged;
       })(),
       events: [],
       meals: JSON.parse(localStorage.getItem("meals") || "[]"),
