@@ -215,6 +215,15 @@
       padding-bottom: 8px;
     }
 
+    .week-grid.day-mode {
+      grid-template-columns: minmax(260px, 1fr);
+      overflow-x: hidden;
+    }
+
+    .week-grid.day-mode .day-col {
+      min-width: 0;
+    }
+
     .day-col {
       background: #ffffff;
       border: 1px solid var(--line);
@@ -556,9 +565,11 @@
         </div>
 
         <div class="controls">
-          <button class="control-btn" id="prevWeek" title="Previous week">‹</button>
-          <button class="control-btn" id="weekLabel" title="Current week">Week</button>
-          <button class="control-btn" id="nextWeek" title="Next week">›</button>
+          <button class="control-btn primary" id="dayViewBtn" title="Show one day">Day</button>
+          <button class="control-btn" id="weekViewBtn" title="Show full week">Week</button>
+          <button class="control-btn" id="prevWeek" title="Previous">‹</button>
+          <button class="control-btn" id="weekLabel" title="Current date range">Week</button>
+          <button class="control-btn" id="nextWeek" title="Next">›</button>
           <button class="control-btn primary" id="todayBtn">Today</button>
           <button class="control-btn" id="refreshBtn">Refresh</button>
         </div>
@@ -568,7 +579,6 @@
 
       <section class="calendar-wrap">
         <div class="week-grid" id="weekGrid"></div>
-        <button class="fab" id="addBtn">+</button>
       </section>
     </main>
   </div>
@@ -675,6 +685,7 @@
 
     const state = {
       selectedDate: new Date(),
+      viewMode: localStorage.getItem("viewMode") || "day",
       activePerson: visibleFilterKeys.includes(localStorage.getItem("activePerson")) && localStorage.getItem("activePerson") !== "family"
         ? localStorage.getItem("activePerson")
         : "all",
@@ -878,8 +889,8 @@
       }
 
       const allEvents = [];
-      const rangeStart = startOfWeek(state.selectedDate);
-      const rangeEnd = addDays(rangeStart, 7);
+      const rangeStart = state.viewMode === "day" ? state.selectedDate : startOfWeek(state.selectedDate);
+      const rangeEnd = state.viewMode === "day" ? state.selectedDate : addDays(rangeStart, 7);
 
       for (const calendarId of state.calendarIds) {
         const url = new URL(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events`);
@@ -993,14 +1004,20 @@
       renderTop();
       renderPersonFilter();
 
-      const start = startOfWeek(state.selectedDate);
-      const end = addDays(start, 6);
-      el("weekLabel").textContent = `${formatShortDate(start)} - ${formatShortDate(end)}, ${end.getFullYear()}`;
+      const start = state.viewMode === "day" ? state.selectedDate : startOfWeek(state.selectedDate);
+      const end = state.viewMode === "day" ? state.selectedDate : addDays(start, 6);
+      el("weekLabel").textContent = state.viewMode === "day"
+        ? `${formatShortDate(start)}, ${start.getFullYear()}`
+        : `${formatShortDate(start)} - ${formatShortDate(end)}, ${end.getFullYear()}`;
+      el("dayViewBtn").classList.toggle("primary", state.viewMode === "day");
+      el("weekViewBtn").classList.toggle("primary", state.viewMode === "week");
+      el("weekGrid").classList.toggle("day-mode", state.viewMode === "day");
 
       const today = new Date();
+      const daysToShow = state.viewMode === "day" ? 1 : 7;
 
       state.eventDetails = [];
-      el("weekGrid").innerHTML = Array.from({ length: 7 }).map((_, i) => {
+      el("weekGrid").innerHTML = Array.from({ length: daysToShow }).map((_, i) => {
         const day = addDays(start, i);
         const dayEvents = state.events
           .filter(e => sameDay(new Date(e.date), day))
@@ -1037,7 +1054,6 @@
                 <div class="day-title ${isToday ? "today" : ""}">${dayName} ${dayNum}</div>
                 <div class="event-count">${filtered.length} event${filtered.length === 1 ? "" : "s"}</div>
               </div>
-              <button class="add-small" onclick="openGoogleCalendar()">+</button>
             </div>
             <div class="events">${eventHtml}</div>
           </section>
@@ -1225,12 +1241,24 @@
     el("settingsBtn").addEventListener("click", openSettings);
 
     el("prevWeek").addEventListener("click", () => {
-      state.selectedDate = addDays(state.selectedDate, -7);
+      state.selectedDate = addDays(state.selectedDate, state.viewMode === "day" ? -1 : -7);
       loadGoogleEvents();
     });
 
     el("nextWeek").addEventListener("click", () => {
-      state.selectedDate = addDays(state.selectedDate, 7);
+      state.selectedDate = addDays(state.selectedDate, state.viewMode === "day" ? 1 : 7);
+      loadGoogleEvents();
+    });
+
+    el("dayViewBtn").addEventListener("click", () => {
+      state.viewMode = "day";
+      localStorage.setItem("viewMode", "day");
+      loadGoogleEvents();
+    });
+
+    el("weekViewBtn").addEventListener("click", () => {
+      state.viewMode = "week";
+      localStorage.setItem("viewMode", "week");
       loadGoogleEvents();
     });
 
@@ -1244,7 +1272,6 @@
       loadGoogleEvents();
     });
 
-    el("addBtn").addEventListener("click", openGoogleCalendar);
 
     el("saveSettings").addEventListener("click", saveSettings);
     el("closeEventDetail").addEventListener("click", () => el("eventDetailPanel").classList.remove("open"));
