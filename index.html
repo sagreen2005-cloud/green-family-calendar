@@ -566,23 +566,12 @@
     const START_HOUR = 5;
     const END_HOUR = 24;
 
-   const defaultPeople = [
-  {
-    key: "mom",
-    name: "Mom",
-    photo: "photos/mom.jpg"
-  },
-  {
-    key: "dad",
-    name: "Dad",
-    photo: "photos/dad.jpg"
-  },
-  {
-    key: "family",
-    name: "Family",
-    photo: "https://upload.wikimedia.org/wikipedia/commons/d/d3/Soccerball.svg"
-  }
-];
+    const defaultPeople = [
+      { key: "mom", name: "Mom", photo: "https://drive.google.com/uc?export=view&id=1eh2hfJR7NWA7bJfcX_21yI1ZGtNo24SQ" },
+      { key: "dad", name: "Dad", photo: "https://drive.google.com/uc?export=view&id=1bG3x7wokVjVPnOz5ES7G2MHKEFTPh14F" },
+      { key: "family", name: "Family", photo: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23e0f2fe'/%3E%3Ccircle cx='100' cy='100' r='72' fill='white' stroke='%231f2937' stroke-width='6'/%3E%3Cpolygon points='100,58 128,80 118,114 82,114 72,80' fill='%231f2937'/%3E%3Cpath d='M100 58 L100 28 M128 80 L166 66 M118 114 L140 154 M82 114 L60 154 M72 80 L34 66' stroke='%231f2937' stroke-width='6' fill='none'/%3E%3Cpath d='M100 28 C130 34 154 48 166 66 M166 66 C172 92 166 126 140 154 M140 154 C112 170 88 170 60 154 M60 154 C34 126 28 92 34 66 M34 66 C46 48 70 34 100 28' stroke='%231f2937' stroke-width='6' fill='none'/%3E%3C/svg%3E" }
+    ];
+
 
     const state = {
       selectedDate: new Date(),
@@ -595,16 +584,27 @@
       longitude: localStorage.getItem("weatherLongitude") || "-112.3044",
       timezone: localStorage.getItem("timezone") || "America/Denver",
       weather: "Loading weather...",
-     people: (() => {
-  const stored = JSON.parse(
-    localStorage.getItem("people") ||
-    JSON.stringify(defaultPeople)
-  );
+      people: (() => {
+        const savedPeople = JSON.parse(localStorage.getItem("people") || "[]");
+        const allowedKeys = ["mom", "dad", "family"];
 
-  return stored.filter(p =>
-    ["mom", "dad", "family"].includes(p.key)
-  );
-})(),
+        return defaultPeople.map(defaultPerson => {
+          const savedPerson = savedPeople.find(p => p.key === defaultPerson.key);
+
+          if (savedPerson && allowedKeys.includes(savedPerson.key)) {
+            return {
+              ...defaultPerson,
+              photo: savedPerson.photo || defaultPerson.photo
+            };
+          }
+
+          return defaultPerson;
+        });
+      })(),
+      events: [],
+      meals: JSON.parse(localStorage.getItem("meals") || "[]"),
+      listItems: JSON.parse(localStorage.getItem("listItems") || "[]")
+    };
 
     const el = (id) => document.getElementById(id);
 
@@ -788,67 +788,29 @@
     function deleteListItem(index) { state.listItems.splice(index, 1); localStorage.setItem("listItems", JSON.stringify(state.listItems)); renderListItems(); }
 
     function openSettings() {
-  el("familyNameInput").value = state.familyName;
-  el("apiKeyInput").value = state.apiKey;
-  el("latitudeInput").value = state.latitude;
-  el("longitudeInput").value = state.longitude;
-  el("timezoneInput").value = state.timezone;
-  el("calendarIdsInput").value = state.calendarIds.join("\n");
-
-  ["mom", "dad"].forEach(key => {
-    el(`${key}PhotoInput`).value =
-      state.people.find(p => p.key === key)?.photo || "";
-  });
-
-  el("settingsPanel").classList.add("open");
-}
+      el("familyNameInput").value = state.familyName; el("apiKeyInput").value = state.apiKey; el("latitudeInput").value = state.latitude; el("longitudeInput").value = state.longitude;
+      el("timezoneInput").value = state.timezone;
+      el("calendarIdsInput").value = state.calendarIds.join("\n");
+      ["mom", "dad", "family"].forEach(key => el(`${key}PhotoInput`).value = state.people.find(p => p.key === key)?.photo || "");
+      el("settingsPanel").classList.add("open");
+    }
 
     function saveSettings() {
-  state.familyName =
-    el("familyNameInput").value.trim() || "Green Family";
-
-  state.apiKey = el("apiKeyInput").value.trim();
-
-  state.latitude =
-    el("latitudeInput").value.trim() || "40.6127";
-
-  state.longitude =
-    el("longitudeInput").value.trim() || "-112.3044";
-
-  state.timezone =
-    el("timezoneInput").value || "America/Denver";
-
-  state.calendarIds = el("calendarIdsInput")
-    .value
-    .split("\n")
-    .map(x => x.trim())
-    .filter(Boolean);
-
-  const photos = {
-    mom: el("momPhotoInput").value.trim(),
-    dad: el("dadPhotoInput").value.trim()
-  };
-
-  state.people = state.people.map(p =>
-    photos[p.key]
-      ? { ...p, photo: photos[p.key] }
-      : p
-  );
-
-  localStorage.setItem("familyName", state.familyName);
-  localStorage.setItem("googleApiKey", state.apiKey);
-  localStorage.setItem("weatherLatitude", state.latitude);
-  localStorage.setItem("weatherLongitude", state.longitude);
-  localStorage.setItem("timezone", state.timezone);
-  localStorage.setItem("calendarIds", JSON.stringify(state.calendarIds));
-  localStorage.setItem("people", JSON.stringify(state.people));
-
-  el("settingsPanel").classList.remove("open");
-
-  renderTop();
-  loadWeather();
-  loadGoogleEvents();
-}
+      state.familyName = el("familyNameInput").value.trim() || "Green Family";
+      state.apiKey = el("apiKeyInput").value.trim();
+      state.latitude = el("latitudeInput").value.trim() || "40.6127";
+      state.longitude = el("longitudeInput").value.trim() || "-112.3044";
+      state.timezone = el("timezoneInput").value || "America/Denver";
+      state.calendarIds = el("calendarIdsInput").value.split("\n").map(x => x.trim()).filter(Boolean);
+      const photos = {
+        mom: el("momPhotoInput").value.trim(),
+        dad: el("dadPhotoInput").value.trim(),
+        family: el("familyPhotoInput").value.trim()
+      };
+      state.people = state.people.map(p => photos[p.key] ? { ...p, photo: photos[p.key] } : p);
+      localStorage.setItem("familyName", state.familyName); localStorage.setItem("googleApiKey", state.apiKey); localStorage.setItem("weatherLatitude", state.latitude); localStorage.setItem("weatherLongitude", state.longitude); localStorage.setItem("timezone", state.timezone); localStorage.setItem("calendarIds", JSON.stringify(state.calendarIds)); localStorage.setItem("people", JSON.stringify(state.people));
+      el("settingsPanel").classList.remove("open"); renderTop(); loadWeather(); loadGoogleEvents();
+    }
 
     el("prevDay").addEventListener("click", () => { state.selectedDate = addDays(state.selectedDate, state.viewMode === "week" ? -7 : -1); loadGoogleEvents(); });
     el("nextDay").addEventListener("click", () => { state.selectedDate = addDays(state.selectedDate, state.viewMode === "week" ? 7 : 1); loadGoogleEvents(); });
