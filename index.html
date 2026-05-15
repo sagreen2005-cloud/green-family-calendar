@@ -575,7 +575,7 @@
 
   <section class="panel" id="settingsPanel">
     <h2>Settings</h2>
-    <p>Connect your Google Calendar API key and calendar IDs. Events are color-coded by Google account email or by names in the title. Scott or sagreen2005@gmail.com shows as Dad. Robyn or ratgreen2010@gmail.com shows as Mom. Quade, Grayson, Easton, and Reese each get their own color. Tasks use the same person colors.</p>
+    <p>Connect your Google Calendar API key and calendar IDs. Events are color-coded by email/calendar ID or by the name before a colon in the event title. Examples: Scott: Work, Robyn: Appointment, Grayson: Football, Quade: Soccer, Easton: School, Reese: Activity. Tasks use the assigned person for the same colors.</p>
     <div class="form-grid">
       <div><label>Family display name</label><input id="familyNameInput" placeholder="Green Family Command Center" /></div>
       <div><label>Google API key</label><input id="apiKeyInput" placeholder="Paste Google API key" /></div>
@@ -765,65 +765,66 @@
       };
     }
 
-    function classifyPersonValue(value) {
-      const text = String(value || "").toLowerCase();
+    function normalizePersonText(value) {
+      return String(value || "").trim().toLowerCase();
+    }
+
+    function personKeyFromNameOrEmail(value) {
+      const text = normalizePersonText(value);
+      if (!text) return "";
 
       if (
+        text === "sagreen2005@gmail.com" ||
         text.includes("sagreen2005@gmail.com") ||
-        text.includes("scott") ||
-        text.includes("dad")
+        text === "scott" ||
+        text === "dad"
       ) return "dad";
 
       if (
+        text === "ratgreen2010@gmail.com" ||
         text.includes("ratgreen2010@gmail.com") ||
-        text.includes("robyn") ||
-        text.includes("mom")
+        text === "robyn" ||
+        text === "mom"
       ) return "mom";
 
-      if (text.includes("quade")) return "quade";
-      if (text.includes("grayson")) return "grayson";
-      if (text.includes("easton")) return "easton";
-      if (text.includes("reese")) return "reese";
+      if (text === "quade" || text.includes("quade")) return "quade";
+      if (text === "grayson" || text.includes("grayson")) return "grayson";
+      if (text === "easton" || text.includes("easton")) return "easton";
+      if (text === "reese" || text.includes("reese")) return "reese";
+      if (text === "family" || text.includes("family")) return "family";
 
       return "";
     }
 
-    function classifyEvent(calendarId, title, creatorEmail, organizerEmail) {
-      return (
-        classifyPersonValue(creatorEmail) ||
-        classifyPersonValue(organizerEmail) ||
-        classifyPersonValue(calendarId) ||
-        classifyPersonValue(title) ||
-        "family"
-      );
+    function classifyCalendar(calendarId) {
+      return personKeyFromNameOrEmail(calendarId) || "family";
+    }
+
+    function classifyEventPerson(title, calendarId) {
+      const rawTitle = String(title || "");
+      const colonIndex = rawTitle.indexOf(":");
+
+      if (colonIndex > -1) {
+        const prefix = rawTitle.slice(0, colonIndex).trim();
+        const personFromPrefix = personKeyFromNameOrEmail(prefix);
+        if (personFromPrefix) return personFromPrefix;
+      }
+
+      return classifyCalendar(calendarId);
     }
 
     function cleanEventTitle(title) {
       const rawTitle = String(title || "Untitled").trim();
+      const colonIndex = rawTitle.indexOf(":");
 
-      const knownPrefixes = [
-        "Scott", "Dad",
-        "Robyn", "Mom",
-        "Quade",
-        "Grayson",
-        "Easton",
-        "Reese",
-        "Family"
-      ];
-
-      for (const prefix of knownPrefixes) {
-        const colonPattern = new RegExp(`^${prefix}\\s*:\\s*`, "i");
-        const dashPattern = new RegExp(`^${prefix}\\s*-\\s*`, "i");
-
-        if (colonPattern.test(rawTitle)) return rawTitle.replace(colonPattern, "").trim() || rawTitle;
-        if (dashPattern.test(rawTitle)) return rawTitle.replace(dashPattern, "").trim() || rawTitle;
+      if (colonIndex > -1) {
+        const prefix = rawTitle.slice(0, colonIndex).trim();
+        if (personKeyFromNameOrEmail(prefix)) {
+          return rawTitle.slice(colonIndex + 1).trim() || rawTitle;
+        }
       }
 
       return rawTitle;
-    }
-
-    function getTaskPersonKey(personName) {
-      return classifyPersonValue(personName) || "family";
     }
 
     function getPersonName(key) {
@@ -893,13 +894,11 @@
           const data = await response.json();
           (data.items || []).forEach(item => {
             const eventDate = new Date(item.start.dateTime || item.start.date);
-            const creatorEmail = item.creator?.email || "";
-            const organizerEmail = item.organizer?.email || "";
-            const eventTitle = item.summary || "Untitled";
-            const personKey = classifyEvent(calendarId, eventTitle, creatorEmail, organizerEmail);
+            const summary = item.summary || "Untitled";
+            const personKey = classifyEventPerson(summary, calendarId);
 
             allEvents.push({
-              title: cleanEventTitle(eventTitle),
+              title: cleanEventTitle(summary),
               person: personKey,
               date: eventDate.toISOString(),
               allDay: Boolean(item.start.date),
@@ -935,8 +934,7 @@
       return state.tasks
         .filter(t => t.date && sameDay(new Date(t.date + "T00:00:00"), day))
         .map(t => {
-          const personKey = getTaskPersonKey(t.person);
-
+          const personKey = personKeyFromNameOrEmail(t.person) || "chore";
           return {
             title: `${t.text} ☑️`,
             assignedTo: t.person,
@@ -952,10 +950,11 @@
 
     function visibleEvents(events) {
       if (state.activePerson === "all") return events;
-
+      const activeName = getPersonName(state.activePerson);
       return events.filter(e =>
         e.person === state.activePerson ||
-        e.person === "meal"
+        e.person === "meal" ||
+        (e.source === "task" && (e.person === state.activePerson || e.assignedTo === activeName))
       );
     }
 
