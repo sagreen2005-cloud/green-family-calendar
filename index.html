@@ -96,7 +96,7 @@
     }
 
     .family-name {
-      font-size: 22px;
+      font-size: 36px;
       color: white;
       font-weight: 900;
       text-align: center;
@@ -244,10 +244,6 @@
     .person.active .avatar { border-color: currentColor; }
     .person[data-key="mom"] { color: var(--mom); }
     .person[data-key="dad"] { color: var(--dad); }
-    .person[data-key="child1"] { color: var(--child1); }
-    .person[data-key="child2"] { color: var(--child2); }
-    .person[data-key="child3"] { color: var(--child3); }
-    .person[data-key="child4"] { color: var(--child4); }
     .person[data-key="family"] { color: var(--family); }
 
     .person-name {
@@ -527,10 +523,6 @@
       <div><label>Google Calendar IDs, one per line</label><textarea id="calendarIdsInput" placeholder="family@gmail.com&#10;work_calendar_id@group.calendar.google.com"></textarea></div>
       <div><label>Mom photo URL</label><input id="momPhotoInput" placeholder="photos/mom.jpg or https://..." /></div>
       <div><label>Dad photo URL</label><input id="dadPhotoInput" placeholder="photos/dad.jpg or https://..." /></div>
-      <div><label>Child 1 photo URL</label><input id="child1PhotoInput" placeholder="photos/child1.jpg or https://..." /></div>
-      <div><label>Child 2 photo URL</label><input id="child2PhotoInput" placeholder="photos/child2.jpg or https://..." /></div>
-      <div><label>Child 3 photo URL</label><input id="child3PhotoInput" placeholder="photos/child3.jpg or https://..." /></div>
-      <div><label>Child 4 photo URL</label><input id="child4PhotoInput" placeholder="photos/child4.jpg or https://..." /></div>
     </div>
     <div class="panel-actions">
       <button id="saveSettings">Save</button>
@@ -576,10 +568,6 @@
     const defaultPeople = [
       { key: "mom", name: "Mom", photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop&crop=faces" },
       { key: "dad", name: "Dad", photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop&crop=faces" },
-      { key: "child1", name: "Quade", photo: "https://images.unsplash.com/photo-1544717305-2782549b5136?w=200&h=200&fit=crop&crop=faces" },
-      { key: "child2", name: "Grayson", photo: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=200&h=200&fit=crop&crop=faces" },
-      { key: "child3", name: "Easton", photo: "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=200&h=200&fit=crop&crop=faces" },
-      { key: "child4", name: "Reese", photo: "https://images.unsplash.com/photo-1503919545889-aef636e10ad4?w=200&h=200&fit=crop&crop=faces" },
       { key: "family", name: "Family", photo: "https://images.unsplash.com/photo-1511895426328-dc8714191300?w=200&h=200&fit=crop&crop=faces" }
     ];
 
@@ -597,9 +585,7 @@
       weather: "Loading weather...",
       people: (() => {
         const stored = JSON.parse(localStorage.getItem("people") || JSON.stringify(defaultPeople));
-        const nameMap = { child1: "Quade", child2: "Grayson", child3: "Easton", child4: "Reese" };
-        return stored.map(p => nameMap[p.key] ? { ...p, name: nameMap[p.key] } : p);
-      })(),
+        return stored;
       events: [],
       meals: JSON.parse(localStorage.getItem("meals") || "[]"),
       listItems: JSON.parse(localStorage.getItem("listItems") || "[]")
