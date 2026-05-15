@@ -862,6 +862,10 @@
 
       state.events = allEvents;
       renderCalendar();
+      
+      if (allEvents.length === 0) {
+  alert("No Google Calendar events loaded. Check API key, Calendar ID, and public calendar settings.");
+}
     }
 
     function getMealsForDay(day) {
