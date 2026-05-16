@@ -588,7 +588,7 @@
     <p>Connect your Google Calendar API key and calendar IDs. Events are color-coded by email/calendar ID or by the name before a colon in the event title. Examples: Scott: Work, Robyn: Appointment, Grayson: Football, Quade: Soccer, Easton: School, Reese: Activity. Tasks use the assigned person for the same colors.</p>
     <div class="form-grid">
       <div><label>Family display name</label><input id="familyNameInput" placeholder="Green Family Command Center" /></div>
-      <div><label>Google API key</label><input id="apiKeyInput" placeholder="Paste Google API key" /></div>
+      <div><label>Google API key</label><input id="apiKeyInput" placeholder="AIzaSyAvvYpUgcIcKId9BMvdyTr3Kbq6S1D9WgY" /></div>
       <div><label>Weather display location</label><input id="weatherLocationInput" placeholder="Stansbury Park" /></div>
       <div><label>Weather latitude</label><input id="latitudeInput" placeholder="40.6127" /></div>
       <div><label>Weather longitude</label><input id="longitudeInput" placeholder="-112.3044" /></div>
@@ -601,7 +601,7 @@
         <option value="America/Anchorage">Alaska (AKT)</option>
         <option value="America/Honolulu">Hawaii (HT)</option>
       </select></div>
-      <div><label>Google Calendar IDs, one per line</label><textarea id="calendarIdsInput" placeholder="family@gmail.com&#10;mom_calendar_id@group.calendar.google.com&#10;dad_calendar_id@group.calendar.google.com"></textarea></div>
+      <div><label>Google Calendar IDs, one per line</label><textarea id="calendarIdsInput" placeholder="sagreen2005@gmail.com&#10;ratgreen2010@gmail.com"></textarea></div>
       <div><label>Mom avatar</label><select id="momEmojiInput"></select></div>
       <div><label>Dad avatar</label><select id="dadEmojiInput"></select></div>
       <div><label>Quade avatar</label><select id="quadeEmojiInput"></select></div>
@@ -690,8 +690,8 @@
         ? localStorage.getItem("activePerson")
         : "all",
       familyName: localStorage.getItem("familyName") || "Green Family Command Center",
-      apiKey: localStorage.getItem("googleApiKey") || "",
-      calendarIds: JSON.parse(localStorage.getItem("calendarIds") || "[]"),
+      apiKey: localStorage.getItem("googleApiKey") || "AIzaSyAvvYpUgcIcKId9BMvdyTr3Kbq6S1D9WgY",
+      calendarIds: JSON.parse(localStorage.getItem("calendarIds") || '["sagreen2005@gmail.com","ratgreen2010@gmail.com"]'),
       latitude: localStorage.getItem("weatherLatitude") || "40.6127",
       longitude: localStorage.getItem("weatherLongitude") || "-112.3044",
       timezone: localStorage.getItem("timezone") || "America/Denver",
