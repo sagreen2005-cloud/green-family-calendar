@@ -741,10 +741,61 @@
 
         db = firebase.firestore();
         firebaseReady = true;
+        cleanupOldSharedItems();
         listenForSharedMealsAndTasks();
       } catch (error) {
         console.error("Firebase setup failed:", error);
         firebaseReady = false;
+      }
+    }
+
+    function getCleanupCutoffDateString() {
+      const cutoff = new Date();
+      cutoff.setDate(cutoff.getDate() - 15);
+      return cutoff.toISOString().slice(0, 10);
+    }
+
+    function removeOldLocalMealsAndTasks() {
+      const cutoff = getCleanupCutoffDateString();
+      const originalMeals = state.meals.length;
+      const originalTasks = state.tasks.length;
+
+      state.meals = state.meals.filter(meal => !meal.date || meal.date >= cutoff);
+      state.tasks = state.tasks.filter(task => !task.date || task.date >= cutoff);
+
+      if (state.meals.length !== originalMeals) {
+        localStorage.setItem("meals", JSON.stringify(state.meals));
+      }
+
+      if (state.tasks.length !== originalTasks) {
+        localStorage.setItem("tasks", JSON.stringify(state.tasks));
+      }
+    }
+
+    async function cleanupOldSharedItems() {
+      const cutoff = getCleanupCutoffDateString();
+
+      if (!db) {
+        removeOldLocalMealsAndTasks();
+        renderMeals();
+        renderTasks();
+        renderCalendar();
+        return;
+      }
+
+      try {
+        const collectionsToClean = ["meals", "tasks"];
+
+        for (const collectionName of collectionsToClean) {
+          const snapshot = await db.collection(collectionName).where("date", "<", cutoff).get();
+          if (snapshot.empty) continue;
+
+          const batch = db.batch();
+          snapshot.docs.forEach(doc => batch.delete(doc.ref));
+          await batch.commit();
+        }
+      } catch (error) {
+        console.error("Old meals/tasks cleanup failed:", error);
       }
     }
 
@@ -1445,6 +1496,7 @@
     });
 
     initFirebase();
+    cleanupOldSharedItems();
     renderTop();
     renderCalendar();
     loadWeather();
@@ -1453,6 +1505,7 @@
     setInterval(renderTop, 30000);
     setInterval(loadWeather, 30 * 60 * 1000);
     setInterval(loadGoogleEvents, 90000);
+    setInterval(cleanupOldSharedItems, 6 * 60 * 60 * 1000);
   </script>
 </body>
 </html>
