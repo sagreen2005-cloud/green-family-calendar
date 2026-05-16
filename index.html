@@ -659,7 +659,22 @@
     </div>
   </section>
 
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+
   <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBegJ4GeYNkzyrB2mvMs_I3ovRfUizk_gE",
+      authDomain: "green-family-calendar-ae701.firebaseapp.com",
+      projectId: "green-family-calendar-ae701",
+      storageBucket: "green-family-calendar-ae701.firebasestorage.app",
+      messagingSenderId: "641077645916",
+      appId: "1:641077645916:web:59b86a64650159b5b8cc99"
+    };
+
+    let db = null;
+    let firebaseReady = false;
+
     const defaultPeople = [
       { key: "mom", name: "Mom", icon: "👩" },
       { key: "dad", name: "Dad", icon: "👨" },
@@ -712,6 +727,110 @@
     };
 
     const el = id => document.getElementById(id);
+
+    function initFirebase() {
+      try {
+        if (!window.firebase) {
+          console.warn("Firebase SDK did not load. Meals and tasks will save only on this device.");
+          return;
+        }
+
+        if (!firebase.apps.length) {
+          firebase.initializeApp(firebaseConfig);
+        }
+
+        db = firebase.firestore();
+        firebaseReady = true;
+        listenForSharedMealsAndTasks();
+      } catch (error) {
+        console.error("Firebase setup failed:", error);
+        firebaseReady = false;
+      }
+    }
+
+    function listenForSharedMealsAndTasks() {
+      if (!db) return;
+
+      db.collection("meals").orderBy("date", "asc").onSnapshot(snapshot => {
+        state.meals = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        localStorage.setItem("meals", JSON.stringify(state.meals));
+        renderMeals();
+        renderCalendar();
+      }, error => {
+        console.error("Meals sync failed:", error);
+      });
+
+      db.collection("tasks").orderBy("date", "asc").onSnapshot(snapshot => {
+        state.tasks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        localStorage.setItem("tasks", JSON.stringify(state.tasks));
+        renderTasks();
+        renderCalendar();
+      }, error => {
+        console.error("Tasks sync failed:", error);
+      });
+    }
+
+    async function addSharedMeal(meal) {
+      if (db) {
+        await db.collection("meals").add({
+          ...meal,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        return;
+      }
+
+      state.meals.push({ ...meal, id: `local-${Date.now()}` });
+      localStorage.setItem("meals", JSON.stringify(state.meals));
+      renderMeals();
+      renderCalendar();
+    }
+
+    async function addSharedTask(task) {
+      if (db) {
+        await db.collection("tasks").add({
+          ...task,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        return;
+      }
+
+      state.tasks.push({ ...task, id: `local-${Date.now()}` });
+      localStorage.setItem("tasks", JSON.stringify(state.tasks));
+      renderTasks();
+      renderCalendar();
+    }
+
+    async function deleteSharedMeal(index) {
+      const meal = state.meals[index];
+      if (!meal) return;
+
+      if (db && meal.id && !String(meal.id).startsWith("local-")) {
+        await db.collection("meals").doc(meal.id).delete();
+        return;
+      }
+
+      state.meals.splice(index, 1);
+      localStorage.setItem("meals", JSON.stringify(state.meals));
+      renderMeals();
+      renderCalendar();
+    }
+
+    async function deleteSharedTask(index) {
+      const task = state.tasks[index];
+      if (!task) return;
+
+      if (db && task.id && !String(task.id).startsWith("local-")) {
+        await db.collection("tasks").doc(task.id).delete();
+        return;
+      }
+
+      state.tasks.splice(index, 1);
+      localStorage.setItem("tasks", JSON.stringify(state.tasks));
+      renderTasks();
+      renderCalendar();
+    }
 
     function addDays(date, days) {
       const copy = new Date(date);
@@ -1198,17 +1317,11 @@
     }
 
     function deleteMeal(index) {
-      state.meals.splice(index, 1);
-      localStorage.setItem("meals", JSON.stringify(state.meals));
-      renderMeals();
-      renderCalendar();
+      deleteSharedMeal(index).catch(error => console.error("Could not delete meal:", error));
     }
 
     function deleteTask(index) {
-      state.tasks.splice(index, 1);
-      localStorage.setItem("tasks", JSON.stringify(state.tasks));
-      renderTasks();
-      renderCalendar();
+      deleteSharedTask(index).catch(error => console.error("Could not delete task:", error));
     }
 
     function openGoogleCalendar() {
@@ -1285,17 +1398,20 @@
       location.reload();
     });
 
-    el("addMealBtn").addEventListener("click", () => {
+    el("addMealBtn").addEventListener("click", async () => {
       const text = el("mealTextInput").value.trim();
       if (!text) return;
       const date = el("mealDateInput").value;
       if (!date) return;
-      state.meals.push({ date, text });
-      localStorage.setItem("meals", JSON.stringify(state.meals));
-      el("mealTextInput").value = "";
-      el("mealDateInput").value = "";
-      renderMeals();
-      renderCalendar();
+
+      try {
+        await addSharedMeal({ date, text });
+        el("mealTextInput").value = "";
+        el("mealDateInput").value = "";
+      } catch (error) {
+        console.error("Could not add meal:", error);
+        alert("Meal could not be saved. Check Firebase/Firestore permissions.");
+      }
     });
 
     el("closeMeals").addEventListener("click", () => {
@@ -1303,24 +1419,24 @@
       setActiveSide("calendarBtn");
     });
 
-    el("addTaskBtn").addEventListener("click", () => {
+    el("addTaskBtn").addEventListener("click", async () => {
       const text = el("taskTextInput").value.trim();
       const date = el("taskDateInput").value;
       if (!text || !date) return;
 
-      state.tasks.push({
-        person: el("taskPersonInput").value,
-        text,
-        date
-      });
+      try {
+        await addSharedTask({
+          person: el("taskPersonInput").value,
+          text,
+          date
+        });
 
-      localStorage.setItem("tasks", JSON.stringify(state.tasks));
-
-      el("taskTextInput").value = "";
-      el("taskDateInput").value = "";
-
-      renderTasks();
-      renderCalendar();
+        el("taskTextInput").value = "";
+        el("taskDateInput").value = "";
+      } catch (error) {
+        console.error("Could not add task:", error);
+        alert("Task could not be saved. Check Firebase/Firestore permissions.");
+      }
     });
 
     el("closeTasks").addEventListener("click", () => {
@@ -1328,6 +1444,7 @@
       setActiveSide("calendarBtn");
     });
 
+    initFirebase();
     renderTop();
     renderCalendar();
     loadWeather();
