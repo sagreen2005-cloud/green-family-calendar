@@ -17,6 +17,10 @@
       --family: #86efac;
       --meal: #fde68a;
       --chore: #c4b5fd;
+      --quade: #bfdbfe;
+      --grayson: #ddd6fe;
+      --easton: #bbf7d0;
+      --reese: #fecdd3;
       --shadow: 0 18px 45px rgba(15, 23, 42, 0.16);
     }
 
@@ -32,11 +36,7 @@
       font-family: Arial, Helvetica, sans-serif;
     }
 
-    body {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+    body { display: flex; align-items: center; justify-content: center; }
 
     .app {
       width: min(100vw, 1280px);
@@ -59,13 +59,7 @@
       gap: 14px;
     }
 
-    .weather-box {
-      text-align: center;
-      font-weight: 900;
-      color: var(--ink);
-      margin-bottom: 8px;
-    }
-
+    .weather-box { text-align: center; font-weight: 900; color: var(--ink); margin-bottom: 8px; }
     .weather-icon { font-size: 34px; line-height: 1; }
     .weather-temp { font-size: 16px; margin-top: 4px; }
     .weather-location { font-size: 10px; color: var(--muted); font-weight: 900; margin-top: 2px; line-height: 1.15; }
@@ -88,27 +82,14 @@
     }
 
     .side-item span:first-child { font-size: 24px; line-height: 1; }
+    .side-item.active { color: var(--blue); background: #eff6ff; box-shadow: inset 4px 0 0 var(--blue); }
 
-    .side-item.active {
-      color: var(--blue);
-      background: #eff6ff;
-      box-shadow: inset 4px 0 0 var(--blue);
-    }
-
-    .main {
-      display: grid;
-      grid-template-rows: auto 1fr;
-      min-width: 0;
-      min-height: 0;
-      background: #ffffff;
-    }
+    .main { display: grid; grid-template-rows: auto 1fr; min-width: 0; min-height: 0; background: #ffffff; }
 
     .topbar {
       display: grid;
       grid-template-columns: minmax(0, 1fr) auto;
-      grid-template-areas:
-        "title controls"
-        "filters filters";
+      grid-template-areas: "title controls" "filters filters";
       align-items: center;
       padding: 12px 16px 10px;
       border-bottom: 1px solid var(--line);
@@ -119,39 +100,11 @@
       min-height: 126px;
     }
 
-    .top-left {
-      grid-area: title;
-      min-width: 0;
-    }
-
-    .date-line {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      min-width: 0;
-    }
-
-    .today-date {
-      font-size: 24px;
-      font-weight: 900;
-      white-space: nowrap;
-    }
-
-    .clock {
-      font-size: 22px;
-      font-weight: 900;
-      color: var(--ink);
-      white-space: nowrap;
-    }
-
-    .family-title {
-      color: var(--muted);
-      font-weight: 900;
-      font-size: 13px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
+    .top-left { grid-area: title; min-width: 0; }
+    .date-line { display: flex; align-items: center; gap: 14px; min-width: 0; }
+    .today-date { font-size: 24px; font-weight: 900; white-space: nowrap; }
+    .clock { font-size: 22px; font-weight: 900; color: var(--ink); white-space: nowrap; }
+    .family-title { color: var(--muted); font-weight: 900; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
     .controls {
       grid-area: controls;
@@ -177,270 +130,9 @@
       white-space: nowrap;
     }
 
-    #weekLabel {
-      min-width: 138px;
-      text-align: center;
-      background: #f8fafc;
-    }
-
-    #prevWeek, #nextWeek {
-      min-width: 44px;
-      font-size: 22px;
-      line-height: 1;
-      padding: 8px 14px;
-    }
-
-    .control-btn.primary {
-      background: var(--blue);
-      color: white;
-      border-color: var(--blue);
-    }
-
-    .calendar-wrap {
-      position: relative;
-      min-height: 0;
-      overflow: hidden;
-      background: #f8fafc;
-      padding: 12px;
-      z-index: 1;
-    }
-
-    .week-grid {
-      height: 100%;
-      display: grid;
-      grid-template-columns: repeat(7, minmax(150px, 1fr));
-      gap: 10px;
-      overflow-x: auto;
-      overflow-y: hidden;
-      padding-bottom: 8px;
-    }
-
-    .week-grid.day-mode {
-      grid-template-columns: minmax(260px, 1fr);
-      overflow-x: hidden;
-    }
-
-    .week-grid.day-mode .day-col {
-      min-width: 0;
-    }
-
-    .day-col {
-      background: #ffffff;
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      min-width: 150px;
-    }
-
-    .day-header {
-      padding: 12px 12px 8px;
-      border-bottom: 1px solid var(--line);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      min-height: 54px;
-    }
-
-    .day-title {
-      font-size: 17px;
-      font-weight: 900;
-      white-space: nowrap;
-    }
-
-    .day-title.today { color: var(--blue); }
-
-    .event-count {
-      color: var(--muted);
-      font-size: 11px;
-      font-weight: 900;
-      white-space: nowrap;
-    }
-
-    .add-small {
-      border: 0;
-      background: transparent;
-      font-size: 20px;
-      font-weight: 900;
-      color: var(--muted);
-      cursor: pointer;
-    }
-
-    .events {
-      padding: 10px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 9px;
-      min-height: 0;
-    }
-
-    .event-card {
-      border-radius: 10px;
-      padding: 10px;
-      min-height: 68px;
-      font-size: 13px;
-      font-weight: 900;
-      color: #111827;
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 5px;
-      border-left: 5px solid rgba(17, 24, 39, 0.22);
-      cursor: pointer;
-      overflow-wrap: anywhere;
-      line-height: 1.25;
-    }
-
-    .event-title {
-      display: block;
-      white-space: normal;
-    }
-
-    .event-meta {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 6px;
-      font-size: 11px;
-      color: #374151;
-      font-weight: 900;
-      flex-wrap: wrap;
-    }
-
-    .event-person {
-      background: rgba(255,255,255,0.55);
-      border-radius: 999px;
-      padding: 3px 7px;
-      white-space: nowrap;
-    }
-
-    .event-card.mom { background: var(--mom); }
-    .event-card.dad { background: var(--dad); }
-    .event-card.family { background: var(--family); }
-    .event-card.quade { background: #bfdbfe; }
-    .event-card.grayson { background: #ddd6fe; }
-    .event-card.easton { background: #bbf7d0; }
-    .event-card.reese { background: #fecdd3; }
-    .event-card.meal { background: var(--meal); }
-    .event-card.chore { background: var(--chore); }
-
-    .event-time {
-      display: inline-block;
-      font-size: 11px;
-      color: #374151;
-      font-weight: 800;
-      white-space: nowrap;
-    }
-
-    .empty {
-      color: #9ca3af;
-      font-size: 13px;
-      font-weight: 800;
-      padding: 10px 4px;
-    }
-
-    .fab {
-      position: absolute;
-      right: 26px;
-      bottom: 26px;
-      width: 58px;
-      height: 58px;
-      border-radius: 999px;
-      border: 0;
-      background: var(--blue);
-      color: white;
-      font-size: 34px;
-      line-height: 1;
-      box-shadow: 0 12px 26px rgba(37, 99, 235, 0.32);
-      cursor: pointer;
-      z-index: 5;
-    }
-
-    .panel {
-      position: fixed;
-      inset: 24px;
-      max-width: 900px;
-      margin: 0 auto;
-      z-index: 20;
-      display: none;
-      background: rgba(255,255,255,0.98);
-      border-radius: 20px;
-      border: 1px solid var(--line);
-      box-shadow: var(--shadow);
-      overflow: auto;
-      padding: 18px;
-    }
-
-    .panel.open { display: block; }
-    .panel h2 { margin: 0 0 8px; }
-    .panel p { color: var(--muted); line-height: 1.4; }
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-    }
-
-    label { font-weight: 900; font-size: 13px; }
-
-    input, textarea, select {
-      width: 100%;
-      margin-top: 5px;
-      border: 1px solid #cbd5e1;
-      border-radius: 12px;
-      padding: 11px;
-      font-size: 15px;
-      font-family: inherit;
-    }
-
-    textarea { min-height: 100px; }
-
-    .panel-actions {
-      margin-top: 14px;
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .panel-actions button {
-      border: 0;
-      border-radius: 14px;
-      background: #0f172a;
-      color: white;
-      padding: 12px 16px;
-      font-weight: 900;
-      cursor: pointer;
-    }
-
-    .simple-list {
-      display: grid;
-      gap: 10px;
-      margin-top: 12px;
-    }
-
-    .simple-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      padding: 12px;
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      background: #f8fafc;
-      font-weight: 800;
-    }
-
-    .simple-item button {
-      border: 0;
-      border-radius: 10px;
-      background: #ef4444;
-      color: white;
-      padding: 8px 10px;
-      font-weight: 900;
-      cursor: pointer;
-    }
+    .control-btn.active, .control-btn.primary { background: var(--blue); color: white; border-color: var(--blue); }
+    #dateRangeLabel { min-width: 168px; text-align: center; background: #f8fafc; }
+    #prevPeriod, #nextPeriod { min-width: 44px; font-size: 22px; line-height: 1; padding: 8px 14px; }
 
     .person-filter {
       grid-area: filters;
@@ -472,67 +164,143 @@
       box-shadow: 0 2px 7px rgba(15, 23, 42, 0.06);
     }
 
-    .person-pill.active {
-      background: #eff6ff;
-      color: var(--blue);
-      border-color: #bfdbfe;
+    .person-pill.active { background: #eff6ff; color: var(--blue); border-color: #bfdbfe; }
+
+    .person-emoji {
+      font-size: 22px;
+      line-height: 1;
+      vertical-align: middle;
+      display: inline-block;
+      margin-right: 4px;
     }
 
+    .calendar-wrap { position: relative; min-height: 0; overflow: hidden; background: #f8fafc; padding: 12px; z-index: 1; }
+
+    .week-grid {
+      height: 100%;
+      display: grid;
+      grid-template-columns: repeat(7, minmax(150px, 1fr));
+      gap: 10px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding-bottom: 8px;
+    }
+
+    .week-grid.day-mode { grid-template-columns: minmax(280px, 1fr); max-width: 520px; margin: 0 auto; }
+
+    .day-col {
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      min-width: 150px;
+    }
+
+    .day-header {
+      padding: 12px 12px 8px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      min-height: 54px;
+    }
+
+    .day-title { font-size: 17px; font-weight: 900; white-space: nowrap; }
+    .day-title.today { color: var(--blue); }
+    .event-count { color: var(--muted); font-size: 11px; font-weight: 900; white-space: nowrap; }
+
+    .events { padding: 10px; overflow-y: auto; display: flex; flex-direction: column; gap: 9px; min-height: 0; }
+
+    .event-card {
+      border-radius: 10px;
+      padding: 10px;
+      min-height: 68px;
+      font-size: 13px;
+      font-weight: 900;
+      color: #111827;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 5px;
+      border-left: 5px solid rgba(17, 24, 39, 0.22);
+      cursor: pointer;
+      overflow-wrap: anywhere;
+      line-height: 1.25;
+    }
+
+    .event-title { display: block; white-space: normal; }
+    .event-meta { display: flex; align-items: center; justify-content: space-between; gap: 6px; font-size: 11px; color: #374151; font-weight: 900; flex-wrap: wrap; }
+    .event-person { background: rgba(255,255,255,0.55); border-radius: 999px; padding: 3px 7px; white-space: nowrap; }
+    .event-time { display: inline-block; font-size: 11px; color: #374151; font-weight: 800; white-space: nowrap; }
+
+    .event-card.mom, .simple-item.mom { background: var(--mom); }
+    .event-card.dad, .simple-item.dad { background: var(--dad); }
+    .event-card.family, .simple-item.family { background: var(--family); }
+    .event-card.quade, .simple-item.quade { background: var(--quade); }
+    .event-card.grayson, .simple-item.grayson { background: var(--grayson); }
+    .event-card.easton, .simple-item.easton { background: var(--easton); }
+    .event-card.reese, .simple-item.reese { background: var(--reese); }
+    .event-card.meal, .simple-item.meal { background: var(--meal); }
+    .event-card.chore, .simple-item.chore { background: var(--chore); }
+
+    .empty { color: #9ca3af; font-size: 13px; font-weight: 800; padding: 10px 4px; }
+
+    .panel {
+      position: fixed;
+      inset: 24px;
+      max-width: 900px;
+      margin: 0 auto;
+      z-index: 20;
+      display: none;
+      background: rgba(255,255,255,0.98);
+      border-radius: 20px;
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      overflow: auto;
+      padding: 18px;
+    }
+
+    .panel.open { display: block; }
+    .panel h2 { margin: 0 0 8px; }
+    .panel p { color: var(--muted); line-height: 1.4; }
+
+    .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    label { font-weight: 900; font-size: 13px; }
+
+    input, textarea, select {
+      width: 100%;
+      margin-top: 5px;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      padding: 11px;
+      font-size: 15px;
+      font-family: inherit;
+    }
+
+    textarea { min-height: 100px; }
+    .panel-actions { margin-top: 14px; display: flex; gap: 8px; flex-wrap: wrap; }
+    .panel-actions button { border: 0; border-radius: 14px; background: #0f172a; color: white; padding: 12px 16px; font-weight: 900; cursor: pointer; }
+
+    .simple-list { display: grid; gap: 10px; margin-top: 12px; }
+    .simple-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px; border: 1px solid var(--line); border-radius: 14px; font-weight: 800; }
+    .simple-item button { border: 0; border-radius: 10px; background: #ef4444; color: white; padding: 8px 10px; font-weight: 900; cursor: pointer; }
+
     @media (max-width: 800px) {
-      .app {
-        width: 100vw;
-        height: 100vh;
-        border-radius: 0;
-        grid-template-columns: 76px 1fr;
-      }
-
+      .app { width: 100vw; height: 100vh; border-radius: 0; grid-template-columns: 76px 1fr; }
       .sidebar { padding: 10px 4px; gap: 8px; }
-
-      .side-item {
-        width: 64px;
-        min-height: 54px;
-        font-size: 10px;
-      }
-
+      .side-item { width: 64px; min-height: 54px; font-size: 10px; }
       .side-item span:first-child { font-size: 21px; }
-
-      .topbar {
-        grid-template-columns: 1fr;
-        grid-template-areas:
-          "title"
-          "controls"
-          "filters";
-        gap: 8px;
-        padding: 10px 12px;
-        min-height: 176px;
-      }
-
-      .main { grid-template-rows: auto 1fr; }
-
+      .topbar { grid-template-columns: 1fr; grid-template-areas: "title" "controls" "filters"; gap: 8px; padding: 10px 12px; min-height: 176px; }
       .today-date { font-size: 20px; }
       .clock { font-size: 19px; }
-
-      .controls {
-        justify-content: flex-start;
-        overflow-x: auto;
-        min-width: 0;
-        width: 100%;
-        padding-bottom: 2px;
-      }
-
-      .person-filter {
-        max-height: 84px;
-        overflow-y: auto;
-      }
-
-      .person-pill {
-        font-size: 14px;
-        min-height: 34px;
-        padding: 7px 11px;
-      }
-
+      .controls { justify-content: flex-start; overflow-x: auto; min-width: 0; width: 100%; padding-bottom: 2px; }
+      .person-filter { max-height: 84px; overflow-y: auto; }
+      .person-pill { font-size: 14px; min-height: 34px; padding: 7px 11px; }
+      .person-emoji { font-size: 20px; }
       .week-grid { grid-template-columns: repeat(7, minmax(180px, 180px)); }
-
+      .week-grid.day-mode { grid-template-columns: minmax(220px, 1fr); max-width: none; }
       .form-grid { grid-template-columns: 1fr; }
       .panel { inset: 10px; }
     }
@@ -565,11 +333,11 @@
         </div>
 
         <div class="controls">
-          <button class="control-btn primary" id="dayViewBtn" title="Show one day">Day</button>
-          <button class="control-btn" id="weekViewBtn" title="Show full week">Week</button>
-          <button class="control-btn" id="prevWeek" title="Previous">‹</button>
-          <button class="control-btn" id="weekLabel" title="Current date range">Week</button>
-          <button class="control-btn" id="nextWeek" title="Next">›</button>
+          <button class="control-btn" id="prevPeriod" title="Previous">‹</button>
+          <button class="control-btn" id="dateRangeLabel" title="Current range">Week</button>
+          <button class="control-btn" id="nextPeriod" title="Next">›</button>
+          <button class="control-btn active" id="dayModeBtn">Day</button>
+          <button class="control-btn" id="weekModeBtn">Week</button>
           <button class="control-btn primary" id="todayBtn">Today</button>
           <button class="control-btn" id="refreshBtn">Refresh</button>
         </div>
@@ -585,10 +353,10 @@
 
   <section class="panel" id="settingsPanel">
     <h2>Settings</h2>
-    <p>Connect your Google Calendar API key and calendar IDs. Events are color-coded by email/calendar ID or by the name before a colon in the event title. Examples: Scott: Work, Robyn: Appointment, Grayson: Football, Quade: Soccer, Easton: School, Reese: Activity. Tasks use the assigned person for the same colors.</p>
+    <p>Connect your Google Calendar API key and calendar IDs. Events are color-coded by email, calendar ID, or title prefix like <strong>Grayson:</strong>, <strong>Quade:</strong>, <strong>Easton:</strong>, <strong>Reese:</strong>, <strong>Scott:</strong>, or <strong>Robyn:</strong>.</p>
     <div class="form-grid">
       <div><label>Family display name</label><input id="familyNameInput" placeholder="Green Family Command Center" /></div>
-      <div><label>Google API key</label><input id="apiKeyInput" placeholder="AIzaSyAvvYpUgcIcKId9BMvdyTr3Kbq6S1D9WgY" /></div>
+      <div><label>Google API key</label><input id="apiKeyInput" placeholder="Paste Google API key" /></div>
       <div><label>Weather display location</label><input id="weatherLocationInput" placeholder="Stansbury Park" /></div>
       <div><label>Weather latitude</label><input id="latitudeInput" placeholder="40.6127" /></div>
       <div><label>Weather longitude</label><input id="longitudeInput" placeholder="-112.3044" /></div>
@@ -619,7 +387,7 @@
 
   <section class="panel" id="mealsPanel">
     <h2>Meal Planning</h2>
-    <p>Add weekly dinners. These save on this device/browser.</p>
+    <p>Add weekly dinners. These sync across devices through Firebase and auto-delete after 15 days.</p>
     <div class="form-grid">
       <div><label>Meal Date</label><input id="mealDateInput" type="date" /></div>
       <div><label>Meal</label><input id="mealTextInput" placeholder="Tacos, spaghetti, leftovers..." /></div>
@@ -633,7 +401,7 @@
 
   <section class="panel" id="tasksPanel">
     <h2>Tasks & Chores</h2>
-    <p>Add chores or reminders. These save on this device/browser.</p>
+    <p>Add chores or reminders. These sync across devices through Firebase and auto-delete after 15 days.</p>
     <div class="form-grid">
       <div><label>Assigned To</label><select id="taskPersonInput"><option>Mom</option><option>Dad</option><option>Quade</option><option>Grayson</option><option>Easton</option><option>Reese</option><option>Family</option></select></div>
       <div><label>Task Date</label><input id="taskDateInput" type="date" /></div>
@@ -659,10 +427,10 @@
     </div>
   </section>
 
-  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+    import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
-  <script>
     const firebaseConfig = {
       apiKey: "AIzaSyBegJ4GeYNkzyrB2mvMs_I3ovRfUizk_gE",
       authDomain: "green-family-calendar-ae701.firebaseapp.com",
@@ -672,8 +440,11 @@
       appId: "1:641077645916:web:59b86a64650159b5b8cc99"
     };
 
-    let db = null;
-    let firebaseReady = false;
+    const firebaseApp = initializeApp(firebaseConfig);
+    const db = getFirestore(firebaseApp);
+
+    const DEFAULT_GOOGLE_API_KEY = "AIzaSyAvvYpUgcIcKId9BMvdyTr3Kbq6S1D9WgY";
+    const DEFAULT_CALENDAR_IDS = ["sagreen2005@gmail.com", "ratgreen2010@gmail.com"];
 
     const defaultPeople = [
       { key: "mom", name: "Mom", icon: "👩" },
@@ -682,31 +453,28 @@
       { key: "grayson", name: "Grayson", icon: "🧒" },
       { key: "easton", name: "Easton", icon: "🧒" },
       { key: "reese", name: "Reese", icon: "👧" },
-      { key: "family", name: "Family", icon: "⚽" }
+      { key: "family", name: "Family", icon: "🏠" }
     ];
 
     const visibleFilterKeys = ["all", "mom", "dad", "quade", "grayson", "easton", "reese"];
 
     const avatarOptions = {
-      mom: ["👩", "👩‍🦰", "👩‍🦱", "👩‍🦳", "👱‍♀️", "🙋‍♀️", "👮‍♀️", "🧑‍💼", "❤️"],
-      dad: ["👨", "👨‍🦰", "👨‍🦱", "👨‍🦳", "👱‍♂️", "🙋‍♂️", "👮‍♂️", "🧔", "🏔️"],
-      quade: ["🧒", "👦", "⚽", "🏈", "🏀", "🎮", "🚴", "🏃", "⭐"],
-      grayson: ["🧒", "👦", "⚽", "🏈", "🏀", "🎮", "🚴", "🏃", "🔥"],
-      easton: ["🧒", "👦", "⚽", "🏈", "🏀", "🎮", "🚴", "🏃", "🌟"],
-      reese: ["👧", "🧒", "🎀", "⚽", "🏀", "🎨", "📚", "⭐", "💜"],
-      family: ["⚽", "🏠", "👨‍👩‍👧‍👦", "❤️", "⭐", "🌲", "🏔️"]
+      mom: ["👩", "👩‍🦰", "👩‍🦱", "👩‍🦳", "👱‍♀️", "🙋‍♀️", "💁‍♀️", "🙆‍♀️", "👮‍♀️", "🧑‍💼", "👩‍💻", "👩‍🍳", "👩‍🏫", "👩‍⚕️", "👩‍🌾", "❤️", "💜", "🌸", "🌻", "⭐", "☀️", "🏠"],
+      dad: ["👨", "👨‍🦰", "👨‍🦱", "👨‍🦳", "👱‍♂️", "🙋‍♂️", "💁‍♂️", "🙆‍♂️", "👮‍♂️", "🧔", "👨‍💻", "👨‍🔧", "👨‍🏫", "👨‍🚒", "👨‍🌾", "🏔️", "🛠️", "🚔", "⭐", "🔥", "🏠", "💙"],
+      quade: ["🧒", "👦", "🙂", "😎", "🤠", "🤓", "😁", "🔥", "⭐", "🌟", "⚽", "🏈", "🏀", "⚾", "🎮", "🚴", "🏃", "🥇", "🎯", "🚀", "🦁", "🐺", "🦅", "🐻"],
+      grayson: ["🧒", "👦", "🙂", "😎", "🤠", "🤓", "😁", "🔥", "⭐", "🌟", "⚽", "🏈", "🏀", "⚾", "🎮", "🚴", "🏃", "🥇", "🎯", "🚀", "🦁", "🐺", "🦅", "🐻"],
+      easton: ["🧒", "👦", "🙂", "😎", "🤠", "🤓", "😁", "🔥", "⭐", "🌟", "⚽", "🏈", "🏀", "⚾", "🎮", "🚴", "🏃", "🥇", "🎯", "🚀", "🦁", "🐺", "🦅", "🐻"],
+      reese: ["👧", "🧒", "🙂", "😎", "😁", "🤓", "🥰", "⭐", "🌟", "💜", "🎀", "🌸", "🌻", "🦄", "🐶", "🐱", "🐴", "🎨", "📚", "⚽", "🏀", "🎮", "🚴", "🏃", "🥇"],
+      family: ["⚽", "🏠", "👨‍👩‍👧‍👦", "❤️", "💙", "💜", "⭐", "🌟", "🌲", "🏔️", "🍽️", "📅", "🏡", "🚗", "⛪", "🎉"]
     };
-
 
     const state = {
       selectedDate: new Date(),
       viewMode: localStorage.getItem("viewMode") || "day",
-      activePerson: visibleFilterKeys.includes(localStorage.getItem("activePerson")) && localStorage.getItem("activePerson") !== "family"
-        ? localStorage.getItem("activePerson")
-        : "all",
+      activePerson: visibleFilterKeys.includes(localStorage.getItem("activePerson")) && localStorage.getItem("activePerson") !== "family" ? localStorage.getItem("activePerson") : "all",
       familyName: localStorage.getItem("familyName") || "Green Family Command Center",
-      apiKey: localStorage.getItem("googleApiKey") || "AIzaSyAvvYpUgcIcKId9BMvdyTr3Kbq6S1D9WgY",
-      calendarIds: JSON.parse(localStorage.getItem("calendarIds") || '["sagreen2005@gmail.com","ratgreen2010@gmail.com"]'),
+      apiKey: localStorage.getItem("googleApiKey") || DEFAULT_GOOGLE_API_KEY,
+      calendarIds: JSON.parse(localStorage.getItem("calendarIds") || JSON.stringify(DEFAULT_CALENDAR_IDS)),
       latitude: localStorage.getItem("weatherLatitude") || "40.6127",
       longitude: localStorage.getItem("weatherLongitude") || "-112.3044",
       timezone: localStorage.getItem("timezone") || "America/Denver",
@@ -721,191 +489,20 @@
         });
       })(),
       events: [],
-      meals: JSON.parse(localStorage.getItem("meals") || "[]"),
-      tasks: JSON.parse(localStorage.getItem("tasks") || "[]"),
+      meals: [],
+      tasks: [],
       eventDetails: []
     };
 
     const el = id => document.getElementById(id);
+    window.openEventDetail = openEventDetail;
+    window.deleteMeal = deleteMeal;
+    window.deleteTask = deleteTask;
 
-    function initFirebase() {
-      try {
-        if (!window.firebase) {
-          console.warn("Firebase SDK did not load. Meals and tasks will save only on this device.");
-          return;
-        }
-
-        if (!firebase.apps.length) {
-          firebase.initializeApp(firebaseConfig);
-        }
-
-        db = firebase.firestore();
-        firebaseReady = true;
-        cleanupOldSharedItems();
-        listenForSharedMealsAndTasks();
-      } catch (error) {
-        console.error("Firebase setup failed:", error);
-        firebaseReady = false;
-      }
-    }
-
-    function getCleanupCutoffDateString() {
-      const cutoff = new Date();
-      cutoff.setDate(cutoff.getDate() - 15);
-      return cutoff.toISOString().slice(0, 10);
-    }
-
-    function removeOldLocalMealsAndTasks() {
-      const cutoff = getCleanupCutoffDateString();
-      const originalMeals = state.meals.length;
-      const originalTasks = state.tasks.length;
-
-      state.meals = state.meals.filter(meal => !meal.date || meal.date >= cutoff);
-      state.tasks = state.tasks.filter(task => !task.date || task.date >= cutoff);
-
-      if (state.meals.length !== originalMeals) {
-        localStorage.setItem("meals", JSON.stringify(state.meals));
-      }
-
-      if (state.tasks.length !== originalTasks) {
-        localStorage.setItem("tasks", JSON.stringify(state.tasks));
-      }
-    }
-
-    async function cleanupOldSharedItems() {
-      const cutoff = getCleanupCutoffDateString();
-
-      if (!db) {
-        removeOldLocalMealsAndTasks();
-        renderMeals();
-        renderTasks();
-        renderCalendar();
-        return;
-      }
-
-      try {
-        const collectionsToClean = ["meals", "tasks"];
-
-        for (const collectionName of collectionsToClean) {
-          const snapshot = await db.collection(collectionName).where("date", "<", cutoff).get();
-          if (snapshot.empty) continue;
-
-          const batch = db.batch();
-          snapshot.docs.forEach(doc => batch.delete(doc.ref));
-          await batch.commit();
-        }
-      } catch (error) {
-        console.error("Old meals/tasks cleanup failed:", error);
-      }
-    }
-
-    function listenForSharedMealsAndTasks() {
-      if (!db) return;
-
-      db.collection("meals").orderBy("date", "asc").onSnapshot(snapshot => {
-        state.meals = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        localStorage.setItem("meals", JSON.stringify(state.meals));
-        renderMeals();
-        renderCalendar();
-      }, error => {
-        console.error("Meals sync failed:", error);
-      });
-
-      db.collection("tasks").orderBy("date", "asc").onSnapshot(snapshot => {
-        state.tasks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        localStorage.setItem("tasks", JSON.stringify(state.tasks));
-        renderTasks();
-        renderCalendar();
-      }, error => {
-        console.error("Tasks sync failed:", error);
-      });
-    }
-
-    async function addSharedMeal(meal) {
-      if (db) {
-        await db.collection("meals").add({
-          ...meal,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        return;
-      }
-
-      state.meals.push({ ...meal, id: `local-${Date.now()}` });
-      localStorage.setItem("meals", JSON.stringify(state.meals));
-      renderMeals();
-      renderCalendar();
-    }
-
-    async function addSharedTask(task) {
-      if (db) {
-        await db.collection("tasks").add({
-          ...task,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        return;
-      }
-
-      state.tasks.push({ ...task, id: `local-${Date.now()}` });
-      localStorage.setItem("tasks", JSON.stringify(state.tasks));
-      renderTasks();
-      renderCalendar();
-    }
-
-    async function deleteSharedMeal(index) {
-      const meal = state.meals[index];
-      if (!meal) return;
-
-      if (db && meal.id && !String(meal.id).startsWith("local-")) {
-        await db.collection("meals").doc(meal.id).delete();
-        return;
-      }
-
-      state.meals.splice(index, 1);
-      localStorage.setItem("meals", JSON.stringify(state.meals));
-      renderMeals();
-      renderCalendar();
-    }
-
-    async function deleteSharedTask(index) {
-      const task = state.tasks[index];
-      if (!task) return;
-
-      if (db && task.id && !String(task.id).startsWith("local-")) {
-        await db.collection("tasks").doc(task.id).delete();
-        return;
-      }
-
-      state.tasks.splice(index, 1);
-      localStorage.setItem("tasks", JSON.stringify(state.tasks));
-      renderTasks();
-      renderCalendar();
-    }
-
-    function addDays(date, days) {
-      const copy = new Date(date);
-      copy.setDate(copy.getDate() + days);
-      return copy;
-    }
-
-    function startOfWeek(date) {
-      const d = new Date(date);
-      const day = d.getDay();
-      d.setDate(d.getDate() - day);
-      d.setHours(0, 0, 0, 0);
-      return d;
-    }
-
-    function sameDay(a, b) {
-      return a.getFullYear() === b.getFullYear() &&
-        a.getMonth() === b.getMonth() &&
-        a.getDate() === b.getDate();
-    }
-
-    function formatShortDate(date) {
-      return date.toLocaleDateString("en-US", { month: "short", day: "2-digit" });
-    }
+    function addDays(date, days) { const copy = new Date(date); copy.setDate(copy.getDate() + days); return copy; }
+    function startOfWeek(date) { const d = new Date(date); const day = d.getDay(); d.setDate(d.getDate() - day); d.setHours(0, 0, 0, 0); return d; }
+    function sameDay(a, b) { return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate(); }
+    function formatShortDate(date) { return date.toLocaleDateString("en-US", { month: "short", day: "2-digit" }); }
 
     function formatTime(time) {
       if (!time) return "";
@@ -938,92 +535,51 @@
         day: "numeric",
         year: "numeric"
       }).formatToParts(now);
-
       const get = type => (parts.find(p => p.type === type) || {}).value || "";
-      return {
-        time: `${get("hour")}:${get("minute")} ${get("dayPeriod")}`,
-        date: `${get("month")} ${get("day")}, ${get("year")}`
-      };
+      return { time: `${get("hour")}:${get("minute")} ${get("dayPeriod")}`, date: `${get("month")} ${get("day")}, ${get("year")}` };
     }
 
-    function normalizePersonText(value) {
-      return String(value || "").trim().toLowerCase();
-    }
+    function normalize(value) { return String(value || "").trim().toLowerCase(); }
 
-    function personKeyFromNameOrEmail(value) {
-      const text = normalizePersonText(value);
-      if (!text) return "";
-
-      if (
-        text === "sagreen2005@gmail.com" ||
-        text.includes("sagreen2005@gmail.com") ||
-        text === "scott" ||
-        text === "dad"
-      ) return "dad";
-
-      if (
-        text === "ratgreen2010@gmail.com" ||
-        text.includes("ratgreen2010@gmail.com") ||
-        text === "robyn" ||
-        text === "mom"
-      ) return "mom";
-
-      if (text === "quade" || text.includes("quade")) return "quade";
-      if (text === "grayson" || text.includes("grayson")) return "grayson";
-      if (text === "easton" || text.includes("easton")) return "easton";
-      if (text === "reese" || text.includes("reese")) return "reese";
-      if (text === "family" || text.includes("family")) return "family";
-
-      return "";
-    }
-
-    function classifyCalendar(calendarId) {
-      return personKeyFromNameOrEmail(calendarId) || "family";
-    }
-
-    function classifyEventPerson(title, calendarId) {
+    function detectPersonFromText(title = "", fallback = "") {
       const rawTitle = String(title || "");
-      const colonIndex = rawTitle.indexOf(":");
+      const prefix = rawTitle.includes(":") ? rawTitle.split(":")[0].trim() : "";
+      const lowerTitle = normalize(rawTitle);
+      const lowerFallback = normalize(fallback);
+      const target = normalize(prefix || lowerFallback || lowerTitle);
 
-      if (colonIndex > -1) {
-        const prefix = rawTitle.slice(0, colonIndex).trim();
-        const personFromPrefix = personKeyFromNameOrEmail(prefix);
-        if (personFromPrefix) return personFromPrefix;
-      }
+      if (target.includes("sagreen2005@gmail.com") || target === "scott" || target === "dad" || lowerTitle.startsWith("scott:") || lowerTitle.startsWith("dad:")) return "dad";
+      if (target.includes("ratgreen2010@gmail.com") || target === "robyn" || target === "mom" || lowerTitle.startsWith("robyn:") || lowerTitle.startsWith("mom:")) return "mom";
+      if (target === "quade" || lowerTitle.startsWith("quade:")) return "quade";
+      if (target === "grayson" || lowerTitle.startsWith("grayson:")) return "grayson";
+      if (target === "easton" || lowerTitle.startsWith("easton:")) return "easton";
+      if (target === "reese" || lowerTitle.startsWith("reese:")) return "reese";
+      if (target === "family" || lowerTitle.startsWith("family:")) return "family";
 
-      return classifyCalendar(calendarId);
+      if (lowerTitle.includes("quade")) return "quade";
+      if (lowerTitle.includes("grayson")) return "grayson";
+      if (lowerTitle.includes("easton")) return "easton";
+      if (lowerTitle.includes("reese")) return "reese";
+      if (lowerTitle.includes("scott")) return "dad";
+      if (lowerTitle.includes("robyn")) return "mom";
+      return "family";
     }
 
     function cleanEventTitle(title) {
-      const rawTitle = String(title || "Untitled").trim();
-      const colonIndex = rawTitle.indexOf(":");
-
-      if (colonIndex > -1) {
-        const prefix = rawTitle.slice(0, colonIndex).trim();
-        if (personKeyFromNameOrEmail(prefix)) {
-          return rawTitle.slice(colonIndex + 1).trim() || rawTitle;
-        }
+      const raw = String(title || "Untitled").trim();
+      const prefixKey = detectPersonFromText(raw);
+      if (raw.includes(":") && prefixKey !== "family") {
+        const parts = raw.split(":");
+        parts.shift();
+        return parts.join(":").trim() || raw;
       }
-
-      return rawTitle;
+      if (raw.toLowerCase().startsWith("family:")) return raw.split(":").slice(1).join(":").trim() || raw;
+      return raw;
     }
 
-    function getPersonName(key) {
-      return state.people.find(p => p.key === key)?.name || "Family";
-    }
-
-    function getPersonIcon(key) {
-      if (key === "meal") return "🍽️";
-      if (key === "chore") return "☑️";
-      return state.people.find(p => p.key === key)?.icon || "⚽";
-    }
-
-    function getEventPersonLabel(event) {
-      if (event.assignedTo) return event.assignedTo;
-      if (event.person === "meal") return "Meal";
-      if (event.person === "chore") return "Task";
-      return getPersonName(event.person);
-    }
+    function getPersonName(key) { return state.people.find(p => p.key === key)?.name || "Family"; }
+    function getPersonIcon(key) { if (key === "meal") return "🍽️"; if (key === "chore") return "☑️"; return state.people.find(p => p.key === key)?.icon || "🏠"; }
+    function getEventPersonLabel(event) { if (event.assignedTo) return event.assignedTo; if (event.person === "meal") return "Meal"; if (event.person === "chore") return "Task"; return getPersonName(event.person); }
 
     async function loadWeather() {
       const url = `https://api.open-meteo.com/v1/forecast?latitude=${state.latitude}&longitude=${state.longitude}&current=temperature_2m,weather_code&temperature_unit=fahrenheit`;
@@ -1059,8 +615,8 @@
       }
 
       const allEvents = [];
-      const rangeStart = state.viewMode === "day" ? state.selectedDate : startOfWeek(state.selectedDate);
-      const rangeEnd = state.viewMode === "day" ? state.selectedDate : addDays(rangeStart, 7);
+      const rangeStart = state.viewMode === "week" ? startOfWeek(state.selectedDate) : state.selectedDate;
+      const rangeEnd = state.viewMode === "week" ? addDays(startOfWeek(state.selectedDate), 7) : state.selectedDate;
 
       for (const calendarId of state.calendarIds) {
         const url = new URL(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events`);
@@ -1076,8 +632,7 @@
           (data.items || []).forEach(item => {
             const eventDate = new Date(item.start.dateTime || item.start.date);
             const summary = item.summary || "Untitled";
-            const personKey = classifyEventPerson(summary, calendarId);
-
+            const personKey = detectPersonFromText(summary, calendarId);
             allEvents.push({
               title: cleanEventTitle(summary),
               person: personKey,
@@ -1100,43 +655,19 @@
     function getMealsForDay(day) {
       return state.meals
         .filter(m => m.date && sameDay(new Date(m.date + "T00:00:00"), day))
-        .map(m => ({
-          title: `Dinner: ${m.text} 🍽️`,
-          person: "meal",
-          date: day.toISOString(),
-          start: "",
-          end: "",
-          allDay: true,
-          source: "meal"
-        }));
+        .map(m => ({ title: `Dinner: ${m.text} 🍽️`, person: "meal", date: day.toISOString(), start: "", end: "", allDay: true, source: "meal" }));
     }
 
     function getTasksForDay(day) {
       return state.tasks
         .filter(t => t.date && sameDay(new Date(t.date + "T00:00:00"), day))
-        .map(t => {
-          const personKey = personKeyFromNameOrEmail(t.person) || "chore";
-          return {
-            title: `${t.text} ☑️`,
-            assignedTo: t.person,
-            person: personKey,
-            date: day.toISOString(),
-            start: "",
-            end: "",
-            allDay: true,
-            source: "task"
-          };
-        });
+        .map(t => ({ title: `${t.person}: ${t.text} ☑️`, assignedTo: t.person, person: detectPersonFromText(t.person), date: day.toISOString(), start: "", end: "", allDay: true, source: "task" }));
     }
 
     function visibleEvents(events) {
       if (state.activePerson === "all") return events;
       const activeName = getPersonName(state.activePerson);
-      return events.filter(e =>
-        e.person === state.activePerson ||
-        e.person === "meal" ||
-        (e.source === "task" && (e.person === state.activePerson || e.assignedTo === activeName))
-      );
+      return events.filter(e => e.person === state.activePerson || e.person === "meal" || (e.source === "task" && e.assignedTo === activeName));
     }
 
     function renderTop() {
@@ -1150,17 +681,12 @@
     }
 
     function renderPersonFilter() {
-      const items = [
-        { key: "all", name: "All", icon: "👥" },
-        ...state.people.filter(p => visibleFilterKeys.includes(p.key) && p.key !== "family")
-      ];
-
+      const items = [{ key: "all", name: "All", icon: "👥" }, ...state.people.filter(p => visibleFilterKeys.includes(p.key) && p.key !== "family")];
       el("personFilter").innerHTML = items.map(p => `
         <button class="person-pill ${state.activePerson === p.key ? "active" : ""}" data-key="${p.key}">
-          ${p.icon} ${p.name}
+          <span class="person-emoji">${p.icon}</span>${p.name}
         </button>
       `).join("");
-
       document.querySelectorAll(".person-pill").forEach(btn => {
         btn.addEventListener("click", () => {
           state.activePerson = btn.dataset.key;
@@ -1170,36 +696,44 @@
       });
     }
 
+    function getRenderedDays() {
+      if (state.viewMode === "day") return [new Date(state.selectedDate)];
+      const start = startOfWeek(state.selectedDate);
+      return Array.from({ length: 7 }).map((_, i) => addDays(start, i));
+    }
+
+    function updateDateLabel() {
+      if (state.viewMode === "day") {
+        el("dateRangeLabel").textContent = state.selectedDate.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "2-digit", year: "numeric" });
+      } else {
+        const start = startOfWeek(state.selectedDate);
+        const end = addDays(start, 6);
+        el("dateRangeLabel").textContent = `${formatShortDate(start)} - ${formatShortDate(end)}, ${end.getFullYear()}`;
+      }
+      el("dayModeBtn").classList.toggle("active", state.viewMode === "day");
+      el("weekModeBtn").classList.toggle("active", state.viewMode === "week");
+      el("weekGrid").classList.toggle("day-mode", state.viewMode === "day");
+    }
+
     function renderCalendar() {
       renderTop();
       renderPersonFilter();
-
-      const start = state.viewMode === "day" ? state.selectedDate : startOfWeek(state.selectedDate);
-      const end = state.viewMode === "day" ? state.selectedDate : addDays(start, 6);
-      el("weekLabel").textContent = state.viewMode === "day"
-        ? `${formatShortDate(start)}, ${start.getFullYear()}`
-        : `${formatShortDate(start)} - ${formatShortDate(end)}, ${end.getFullYear()}`;
-      el("dayViewBtn").classList.toggle("primary", state.viewMode === "day");
-      el("weekViewBtn").classList.toggle("primary", state.viewMode === "week");
-      el("weekGrid").classList.toggle("day-mode", state.viewMode === "day");
+      updateDateLabel();
 
       const today = new Date();
-      const daysToShow = state.viewMode === "day" ? 1 : 7;
-
       state.eventDetails = [];
-      el("weekGrid").innerHTML = Array.from({ length: daysToShow }).map((_, i) => {
-        const day = addDays(start, i);
+
+      el("weekGrid").innerHTML = getRenderedDays().map(day => {
         const dayEvents = state.events
           .filter(e => sameDay(new Date(e.date), day))
           .concat(getMealsForDay(day))
           .concat(getTasksForDay(day));
 
         const filtered = visibleEvents(dayEvents);
-
         filtered.sort((a, b) => (a.start || "99:99").localeCompare(b.start || "99:99"));
 
-        const dayName = day.toLocaleDateString("en-US", { weekday: "short" });
-        const dayNum = day.toLocaleDateString("en-US", { day: "2-digit" });
+        const dayName = day.toLocaleDateString("en-US", { weekday: state.viewMode === "day" ? "long" : "short" });
+        const dayNum = day.toLocaleDateString("en-US", { month: state.viewMode === "day" ? "long" : undefined, day: "2-digit" });
         const isToday = sameDay(day, today);
 
         const eventHtml = filtered.length
@@ -1234,49 +768,26 @@
     function openEventDetail(index) {
       const event = state.eventDetails[index];
       if (!event) return;
-
       const date = new Date(event.date);
       el("eventDetailTitle").textContent = event.title;
       el("eventDetailPerson").textContent = getEventPersonLabel(event);
-      el("eventDetailDate").textContent = date.toLocaleDateString("en-US", {
-        weekday: "long",
-        month: "long",
-        day: "numeric",
-        year: "numeric"
-      });
-      el("eventDetailTime").textContent = event.start
-        ? `${formatTime(event.start)} - ${formatTime(event.end)}`
-        : "All day";
-      el("eventDetailSource").textContent =
-        event.source === "google" ? "Google Calendar" :
-        event.source === "meal" ? "Meal Plan" :
-        event.source === "task" ? "Task / Chore" :
-        "Sample Event";
-
+      el("eventDetailDate").textContent = date.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
+      el("eventDetailTime").textContent = event.start ? `${formatTime(event.start)} - ${formatTime(event.end)}` : "All day";
+      el("eventDetailSource").textContent = event.source === "google" ? "Google Calendar" : event.source === "meal" ? "Meal Plan" : event.source === "task" ? "Task / Chore" : "Event";
       el("eventDetailPanel").classList.add("open");
     }
 
     function setActiveSide(id) {
-      ["calendarBtn", "tasksBtn", "mealsBtn", "settingsBtn"].forEach(btnId => {
-        el(btnId).classList.toggle("active", btnId === id);
-      });
+      ["calendarBtn", "tasksBtn", "mealsBtn", "settingsBtn"].forEach(btnId => el(btnId).classList.toggle("active", btnId === id));
     }
 
     function populateAvatarSelects() {
       state.people.forEach(person => {
         const input = el(`${person.key}EmojiInput`);
         if (!input) return;
-
         const options = avatarOptions[person.key] || [person.icon];
-        input.innerHTML = options.map(option => `
-          <option value="${option}" ${option === person.icon ? "selected" : ""}>
-            ${option} ${person.name}
-          </option>
-        `).join("");
-
-        if (!options.includes(person.icon)) {
-          input.insertAdjacentHTML("afterbegin", `<option value="${person.icon}" selected>${person.icon} ${person.name}</option>`);
-        }
+        input.innerHTML = options.map(option => `<option value="${option}" ${option === person.icon ? "selected" : ""}>${option} ${person.name}</option>`).join("");
+        if (!options.includes(person.icon)) input.insertAdjacentHTML("afterbegin", `<option value="${person.icon}" selected>${person.icon} ${person.name}</option>`);
       });
     }
 
@@ -1289,31 +800,27 @@
       el("longitudeInput").value = state.longitude;
       el("timezoneInput").value = state.timezone;
       el("calendarIdsInput").value = state.calendarIds.join("\n");
-
       populateAvatarSelects();
-
       state.people.forEach(person => {
         const input = el(`${person.key}EmojiInput`);
         if (input) input.value = person.icon;
       });
-
       el("settingsPanel").classList.add("open");
     }
 
     function saveSettings() {
       state.familyName = el("familyNameInput").value.trim() || "Green Family Command Center";
-      state.apiKey = el("apiKeyInput").value.trim();
+      state.apiKey = el("apiKeyInput").value.trim() || DEFAULT_GOOGLE_API_KEY;
       state.weatherLocation = el("weatherLocationInput").value.trim() || "Stansbury Park";
       state.latitude = el("latitudeInput").value.trim() || "40.6127";
       state.longitude = el("longitudeInput").value.trim() || "-112.3044";
       state.timezone = el("timezoneInput").value || "America/Denver";
       state.calendarIds = el("calendarIdsInput").value.split("\n").map(x => x.trim()).filter(Boolean);
+      if (!state.calendarIds.length) state.calendarIds = DEFAULT_CALENDAR_IDS;
 
       state.people = state.people.map(person => {
         const input = el(`${person.key}EmojiInput`);
-        return input && input.value.trim()
-          ? { ...person, icon: input.value.trim() }
-          : person;
+        return input && input.value.trim() ? { ...person, icon: input.value.trim() } : person;
       });
 
       localStorage.setItem("familyName", state.familyName);
@@ -1331,181 +838,140 @@
       loadGoogleEvents();
     }
 
-    function formatMealDate(dateString) {
+    function formatLocalDate(dateString) {
       if (!dateString) return "No date";
-      return new Date(dateString + "T00:00:00").toLocaleDateString("en-US", {
-        weekday: "short",
-        month: "short",
-        day: "numeric"
-      });
+      return new Date(dateString + "T00:00:00").toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
     }
 
     function renderMeals() {
-      el("mealsList").innerHTML = state.meals.map((m, i) => `
-        <div class="simple-item">
-          <span><strong>${formatMealDate(m.date)}:</strong> ${m.text}</span>
-          <button onclick="deleteMeal(${i})">Delete</button>
-        </div>
-      `).join("") || `<div class="simple-item">No meals added yet.</div>`;
-    }
-
-    function formatTaskDate(dateString) {
-      if (!dateString) return "No date";
-      return new Date(dateString + "T00:00:00").toLocaleDateString("en-US", {
-        weekday: "short",
-        month: "short",
-        day: "numeric"
-      });
+      el("mealsList").innerHTML = state.meals.map((m, i) => `<div class="simple-item meal"><span><strong>${formatLocalDate(m.date)}:</strong> ${m.text}</span><button onclick="deleteMeal(${i})">Delete</button></div>`).join("") || `<div class="simple-item">No meals added yet.</div>`;
     }
 
     function renderTasks() {
-      el("tasksList").innerHTML = state.tasks.map((t, i) => `
-        <div class="simple-item">
-          <span><strong>${formatTaskDate(t.date)}</strong> — ${t.person}: ${t.text}</span>
-          <button onclick="deleteTask(${i})">Delete</button>
-        </div>
-      `).join("") || `<div class="simple-item">No tasks added yet.</div>`;
+      el("tasksList").innerHTML = state.tasks.map((t, i) => {
+        const personKey = detectPersonFromText(t.person);
+        return `<div class="simple-item ${personKey}"><span><strong>${formatLocalDate(t.date)}</strong> — ${t.person}: ${t.text}</span><button onclick="deleteTask(${i})">Delete</button></div>`;
+      }).join("") || `<div class="simple-item">No tasks added yet.</div>`;
     }
 
-    function deleteMeal(index) {
-      deleteSharedMeal(index).catch(error => console.error("Could not delete meal:", error));
+    async function deleteMeal(index) {
+      const item = state.meals[index];
+      if (item?.id) await deleteDoc(doc(db, "meals", item.id));
     }
 
-    function deleteTask(index) {
-      deleteSharedTask(index).catch(error => console.error("Could not delete task:", error));
+    async function deleteTask(index) {
+      const item = state.tasks[index];
+      if (item?.id) await deleteDoc(doc(db, "tasks", item.id));
     }
 
-    function openGoogleCalendar() {
-      window.open("https://calendar.google.com/calendar/u/0/r/eventedit", "_blank");
+    function isOlderThan15Days(dateString) {
+      if (!dateString) return false;
+      const assignedDate = new Date(dateString + "T00:00:00");
+      const cutoff = new Date();
+      cutoff.setHours(0, 0, 0, 0);
+      cutoff.setDate(cutoff.getDate() - 15);
+      return assignedDate < cutoff;
     }
 
-    el("calendarBtn").addEventListener("click", () => {
-      setActiveSide("calendarBtn");
-      renderCalendar();
-    });
+    async function cleanupOldFirebaseItems() {
+      const mealSnap = await getDocs(collection(db, "meals"));
+      mealSnap.forEach(async item => {
+        if (isOlderThan15Days(item.data().date)) await deleteDoc(doc(db, "meals", item.id));
+      });
+      const taskSnap = await getDocs(collection(db, "tasks"));
+      taskSnap.forEach(async item => {
+        if (isOlderThan15Days(item.data().date)) await deleteDoc(doc(db, "tasks", item.id));
+      });
+    }
 
+    function subscribeFirebase() {
+      onSnapshot(collection(db, "meals"), snapshot => {
+        state.meals = snapshot.docs.map(d => ({ id: d.id, ...d.data() })).filter(m => !isOlderThan15Days(m.date));
+        renderMeals();
+        renderCalendar();
+      });
+
+      onSnapshot(collection(db, "tasks"), snapshot => {
+        state.tasks = snapshot.docs.map(d => ({ id: d.id, ...d.data() })).filter(t => !isOlderThan15Days(t.date));
+        renderTasks();
+        renderCalendar();
+      });
+    }
+
+    el("calendarBtn").addEventListener("click", () => { setActiveSide("calendarBtn"); renderCalendar(); });
     el("tasksBtn").addEventListener("click", () => {
       setActiveSide("tasksBtn");
       renderTasks();
-      if (!el("taskDateInput").value) {
-        el("taskDateInput").value = new Date().toISOString().slice(0, 10);
-      }
+      if (!el("taskDateInput").value) el("taskDateInput").value = new Date().toISOString().slice(0, 10);
       el("tasksPanel").classList.add("open");
     });
-
     el("mealsBtn").addEventListener("click", () => {
       setActiveSide("mealsBtn");
       renderMeals();
-      if (!el("mealDateInput").value) {
-        el("mealDateInput").value = new Date().toISOString().slice(0, 10);
-      }
+      if (!el("mealDateInput").value) el("mealDateInput").value = new Date().toISOString().slice(0, 10);
       el("mealsPanel").classList.add("open");
     });
-
     el("settingsBtn").addEventListener("click", openSettings);
 
-    el("prevWeek").addEventListener("click", () => {
-      state.selectedDate = addDays(state.selectedDate, state.viewMode === "day" ? -1 : -7);
+    el("prevPeriod").addEventListener("click", () => {
+      state.selectedDate = addDays(state.selectedDate, state.viewMode === "week" ? -7 : -1);
       loadGoogleEvents();
     });
-
-    el("nextWeek").addEventListener("click", () => {
-      state.selectedDate = addDays(state.selectedDate, state.viewMode === "day" ? 1 : 7);
+    el("nextPeriod").addEventListener("click", () => {
+      state.selectedDate = addDays(state.selectedDate, state.viewMode === "week" ? 7 : 1);
       loadGoogleEvents();
     });
-
-    el("dayViewBtn").addEventListener("click", () => {
+    el("dayModeBtn").addEventListener("click", () => {
       state.viewMode = "day";
       localStorage.setItem("viewMode", "day");
       loadGoogleEvents();
     });
-
-    el("weekViewBtn").addEventListener("click", () => {
+    el("weekModeBtn").addEventListener("click", () => {
       state.viewMode = "week";
       localStorage.setItem("viewMode", "week");
       loadGoogleEvents();
     });
-
-    el("todayBtn").addEventListener("click", () => {
-      state.selectedDate = new Date();
-      loadGoogleEvents();
-    });
-
-    el("refreshBtn").addEventListener("click", () => {
-      loadWeather();
-      loadGoogleEvents();
-    });
-
+    el("todayBtn").addEventListener("click", () => { state.selectedDate = new Date(); loadGoogleEvents(); });
+    el("refreshBtn").addEventListener("click", () => { loadWeather(); loadGoogleEvents(); cleanupOldFirebaseItems(); });
 
     el("saveSettings").addEventListener("click", saveSettings);
     el("closeEventDetail").addEventListener("click", () => el("eventDetailPanel").classList.remove("open"));
-
-    el("closeSettings").addEventListener("click", () => {
-      el("settingsPanel").classList.remove("open");
-      setActiveSide("calendarBtn");
-    });
-    el("resetSettings").addEventListener("click", () => {
-      localStorage.clear();
-      location.reload();
-    });
+    el("closeSettings").addEventListener("click", () => { el("settingsPanel").classList.remove("open"); setActiveSide("calendarBtn"); });
+    el("resetSettings").addEventListener("click", () => { localStorage.clear(); location.reload(); });
 
     el("addMealBtn").addEventListener("click", async () => {
       const text = el("mealTextInput").value.trim();
-      if (!text) return;
       const date = el("mealDateInput").value;
-      if (!date) return;
-
-      try {
-        await addSharedMeal({ date, text });
-        el("mealTextInput").value = "";
-        el("mealDateInput").value = "";
-      } catch (error) {
-        console.error("Could not add meal:", error);
-        alert("Meal could not be saved. Check Firebase/Firestore permissions.");
-      }
+      if (!text || !date) return;
+      await addDoc(collection(db, "meals"), { date, text, createdAt: new Date().toISOString() });
+      el("mealTextInput").value = "";
+      el("mealDateInput").value = "";
     });
 
-    el("closeMeals").addEventListener("click", () => {
-      el("mealsPanel").classList.remove("open");
-      setActiveSide("calendarBtn");
-    });
+    el("closeMeals").addEventListener("click", () => { el("mealsPanel").classList.remove("open"); setActiveSide("calendarBtn"); });
 
     el("addTaskBtn").addEventListener("click", async () => {
       const text = el("taskTextInput").value.trim();
       const date = el("taskDateInput").value;
       if (!text || !date) return;
-
-      try {
-        await addSharedTask({
-          person: el("taskPersonInput").value,
-          text,
-          date
-        });
-
-        el("taskTextInput").value = "";
-        el("taskDateInput").value = "";
-      } catch (error) {
-        console.error("Could not add task:", error);
-        alert("Task could not be saved. Check Firebase/Firestore permissions.");
-      }
+      await addDoc(collection(db, "tasks"), { person: el("taskPersonInput").value, text, date, createdAt: new Date().toISOString() });
+      el("taskTextInput").value = "";
+      el("taskDateInput").value = "";
     });
 
-    el("closeTasks").addEventListener("click", () => {
-      el("tasksPanel").classList.remove("open");
-      setActiveSide("calendarBtn");
-    });
+    el("closeTasks").addEventListener("click", () => { el("tasksPanel").classList.remove("open"); setActiveSide("calendarBtn"); });
 
-    initFirebase();
-    cleanupOldSharedItems();
     renderTop();
     renderCalendar();
+    subscribeFirebase();
+    cleanupOldFirebaseItems();
     loadWeather();
     loadGoogleEvents();
 
     setInterval(renderTop, 30000);
     setInterval(loadWeather, 30 * 60 * 1000);
     setInterval(loadGoogleEvents, 90000);
-    setInterval(cleanupOldSharedItems, 6 * 60 * 60 * 1000);
+    setInterval(cleanupOldFirebaseItems, 6 * 60 * 60 * 1000);
   </script>
 </body>
 </html>
