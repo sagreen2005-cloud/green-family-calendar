@@ -487,6 +487,257 @@
       .chores-board { grid-template-columns: 1fr; }
       .panel { inset: 10px; }
     }
+
+    /* Phone-first layout: makes the calendar usable on small screens instead of shrinking the tablet layout. */
+    @media (max-width: 600px) {
+      html, body {
+        overflow: hidden;
+      }
+
+      .app {
+        width: 100vw;
+        height: 100vh;
+        border-radius: 0;
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr;
+      }
+
+      .sidebar {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 74px;
+        z-index: 60;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-around;
+        padding: 5px 4px calc(5px + env(safe-area-inset-bottom));
+        gap: 2px;
+        border-right: 0;
+        border-top: 1px solid var(--line);
+        box-shadow: 0 -10px 24px rgba(15, 23, 42, 0.12);
+      }
+
+      body.night-mode .sidebar {
+        border-top-color: #334155;
+        box-shadow: 0 -10px 24px rgba(0, 0, 0, 0.35);
+      }
+
+      .weather-box {
+        width: 54px;
+        margin: 0;
+        padding: 2px 0;
+      }
+
+      .weather-icon { font-size: 20px; }
+      .weather-temp { font-size: 11px; margin-top: 1px; }
+      .weather-location { display: none; }
+      .weather-hint { display: none; }
+
+      .side-item {
+        width: 54px;
+        min-height: 54px;
+        border-radius: 12px;
+        font-size: 9px;
+        gap: 3px;
+        padding: 4px 2px;
+      }
+
+      .side-item span:first-child {
+        font-size: 20px;
+      }
+
+      .side-item.active {
+        box-shadow: inset 0 -4px 0 var(--blue);
+      }
+
+      .main {
+        min-height: 0;
+        height: 100vh;
+        padding-bottom: calc(74px + env(safe-area-inset-bottom));
+      }
+
+      .topbar {
+        min-height: auto;
+        padding: 8px 8px 6px;
+        gap: 6px;
+        grid-template-columns: 1fr;
+        grid-template-areas:
+          "title"
+          "controls"
+          "filters";
+      }
+
+      .date-line {
+        justify-content: space-between;
+        gap: 8px;
+      }
+
+      .today-date {
+        font-size: 17px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .clock {
+        font-size: 16px;
+      }
+
+      .family-title {
+        font-size: 11px;
+      }
+
+      .controls {
+        width: 100%;
+        min-width: 0;
+        justify-content: flex-start;
+        overflow-x: auto;
+        gap: 6px;
+        padding-bottom: 3px;
+        scrollbar-width: none;
+      }
+
+      .controls::-webkit-scrollbar,
+      .person-filter::-webkit-scrollbar,
+      .week-grid::-webkit-scrollbar {
+        display: none;
+      }
+
+      .control-btn {
+        padding: 8px 10px;
+        font-size: 12px;
+        flex: 0 0 auto;
+      }
+
+      #dateRangeLabel {
+        min-width: 150px;
+      }
+
+      #prevPeriod,
+      #nextPeriod {
+        min-width: 38px;
+        font-size: 19px;
+        padding: 6px 10px;
+      }
+
+      .person-filter {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        overflow-y: hidden;
+        max-height: none;
+        padding: 2px 0 4px;
+        gap: 6px;
+      }
+
+      .person-pill {
+        flex: 0 0 auto;
+        font-size: 12px;
+        min-height: 32px;
+        padding: 6px 10px;
+      }
+
+      .person-emoji {
+        font-size: 17px;
+      }
+
+      .calendar-wrap {
+        padding: 6px;
+        min-height: 0;
+        overflow: hidden;
+      }
+
+      .week-grid {
+        height: 100%;
+        gap: 6px;
+        grid-template-columns: repeat(7, minmax(86vw, 86vw));
+        overflow-x: auto;
+        overflow-y: hidden;
+        scroll-snap-type: x mandatory;
+        padding-bottom: 4px;
+      }
+
+      .week-grid.day-mode {
+        grid-template-columns: 1fr;
+        width: 100%;
+        max-width: none;
+        margin: 0;
+        overflow-x: hidden;
+      }
+
+      .day-col {
+        min-width: 0;
+        width: 100%;
+        border-radius: 12px;
+        scroll-snap-align: start;
+      }
+
+      .day-header {
+        min-height: 45px;
+        padding: 9px 10px 7px;
+      }
+
+      .day-title {
+        font-size: 16px;
+      }
+
+      .event-count {
+        font-size: 10px;
+      }
+
+      .events {
+        padding: 8px;
+        gap: 7px;
+      }
+
+      .event-card {
+        min-height: auto;
+        padding: 10px;
+        font-size: 14px;
+        border-radius: 10px;
+      }
+
+      .event-meta {
+        font-size: 11px;
+      }
+
+      .panel {
+        inset: 8px 8px calc(82px + env(safe-area-inset-bottom)) 8px;
+        border-radius: 16px;
+        padding: 14px;
+      }
+
+      .panel h2 {
+        font-size: 20px;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      input,
+      textarea,
+      select {
+        font-size: 16px;
+        padding: 10px;
+      }
+
+      .simple-item {
+        align-items: flex-start;
+        flex-direction: column;
+        font-size: 14px;
+      }
+
+      .simple-item button {
+        align-self: flex-end;
+      }
+
+      .chores-board {
+        grid-template-columns: 1fr;
+      }
+    }
+
   </style>
 </head>
 
@@ -699,7 +950,7 @@
 
     const state = {
       selectedDate: new Date(),
-      viewMode: localStorage.getItem("viewMode") || "day",
+      viewMode: window.matchMedia("(max-width: 600px)").matches ? "day" : (localStorage.getItem("viewMode") || "day"),
       activePerson: visibleFilterKeys.includes(localStorage.getItem("activePerson")) && localStorage.getItem("activePerson") !== "family" ? localStorage.getItem("activePerson") : "all",
       familyName: localStorage.getItem("familyName") || "Green Family Command Center",
       apiKey: localStorage.getItem("googleApiKey") || DEFAULT_GOOGLE_API_KEY,
@@ -1557,6 +1808,15 @@
 
     el("resetTodayChoresBtn").addEventListener("click", resetTodayChores);
     el("closeChores").addEventListener("click", () => { el("choresPanel").classList.remove("open"); setActiveSide("calendarBtn"); });
+
+
+    window.addEventListener("resize", () => {
+      if (window.matchMedia("(max-width: 600px)").matches && state.viewMode !== "day") {
+        state.viewMode = "day";
+        localStorage.setItem("viewMode", "day");
+        loadGoogleEvents();
+      }
+    });
 
     renderTop();
     renderCalendar();
