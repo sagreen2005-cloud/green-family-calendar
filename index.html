@@ -1343,9 +1343,19 @@
     }
 
     function visibleEvents(events) {
-      if (state.activePerson === "all") return events;
+      // Keep chores in the Chores tab by default.
+      // They only show on the calendar when that specific child is selected.
+      if (state.activePerson === "all") {
+        return events.filter(e => e.source !== "chore");
+      }
+
       const activeName = getPersonName(state.activePerson);
-      return events.filter(e => e.person === state.activePerson || e.person === "meal" || (e.source === "task" && e.assignedTo === activeName));
+      return events.filter(e =>
+        e.person === state.activePerson ||
+        e.person === "meal" ||
+        (e.source === "task" && e.assignedTo === activeName) ||
+        (e.source === "chore" && e.assignedTo === activeName)
+      );
     }
 
     function renderTop() {
@@ -1596,7 +1606,15 @@
     }
 
     async function deleteChore(id) {
-      if (id) await deleteDoc(doc(db, "chores", id));
+      if (!id) return;
+      const pin = window.prompt("Enter parent PIN to delete this chore:");
+      if (pin !== "101617") {
+        if (pin !== null) window.alert("Incorrect PIN. Chore was not deleted.");
+        return;
+      }
+      const confirmed = window.confirm("Delete this chore? This cannot be undone.");
+      if (!confirmed) return;
+      await deleteDoc(doc(db, "chores", id));
     }
 
     async function toggleChoreDone(id, completed) {
