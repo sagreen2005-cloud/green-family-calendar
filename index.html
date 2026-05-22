@@ -873,6 +873,7 @@
       <div><label>Kid</label><select id="chorePersonInput"><option>Quade</option><option>Grayson</option><option>Easton</option><option>Reese</option></select></div>
       <div><label>Due Date</label><input id="choreDateInput" type="date" /></div>
       <div><label>Repeat</label><select id="choreRepeatInput"><option value="none">No repeat</option><option value="daily">Daily</option><option value="weekdays">Weekdays</option><option value="weekly">Weekly</option></select></div>
+      <div><label>Repeat End Date <small>(optional)</small></label><input id="choreRepeatEndInput" type="date" /></div>
       <div><label>Chore</label><input id="choreTextInput" placeholder="Clean room, trash, dishes..." /></div>
     </div>
     <div class="panel-actions">
@@ -1518,21 +1519,65 @@
       return start.toISOString().slice(0, 10);
     }
 
+    function localDateKey(date) {
+      const d = new Date(date);
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+    }
+
+    function parseLocalDate(dateString) {
+      return new Date(dateString + "T00:00:00");
+    }
+
+    function choreAppliesOnDate(chore, day) {
+      if (!chore.date) return false;
+      const target = parseLocalDate(localDateKey(day));
+      const start = parseLocalDate(chore.date);
+      start.setHours(0, 0, 0, 0);
+      target.setHours(0, 0, 0, 0);
+      if (target < start) return false;
+
+      if (chore.repeatEndDate) {
+        const end = parseLocalDate(chore.repeatEndDate);
+        end.setHours(0, 0, 0, 0);
+        if (target > end) return false;
+      }
+
+      const repeat = chore.repeat || "none";
+      if (repeat === "none") return sameDay(start, target);
+      if (repeat === "daily") return true;
+      if (repeat === "weekdays") return target.getDay() >= 1 && target.getDay() <= 5;
+      if (repeat === "weekly") return target.getDay() === start.getDay();
+      return sameDay(start, target);
+    }
+
     function getChoresForWeek(childName, weekKey) {
-      return state.chores.filter(c => c.person === childName && weekKeyFromDate(c.date) === weekKey);
+      const start = parseLocalDate(weekKey);
+      const days = Array.from({ length: 7 }).map((_, i) => addDays(start, i));
+      const occurrences = [];
+      state.chores
+        .filter(c => c.person === childName)
+        .forEach(chore => {
+          days.forEach(day => {
+            if (choreAppliesOnDate(chore, day)) {
+              occurrences.push({ ...chore, occurrenceDate: localDateKey(day) });
+            }
+          });
+        });
+      return occurrences;
     }
 
     function choreValue(chore) {
       const key = childKeyFromName(chore.person);
       const weeklyAllowance = Number(state.allowances[key] || 0);
-      const weekChores = getChoresForWeek(chore.person, weekKeyFromDate(chore.date));
+      const choreDate = chore.occurrenceDate || chore.date;
+      const weekChores = getChoresForWeek(chore.person, weekKeyFromDate(choreDate));
       if (!weekChores.length) return 0;
       return weeklyAllowance / weekChores.length;
     }
 
     function getChoresForDay(day) {
       return state.chores
-        .filter(c => c.date && sameDay(new Date(c.date + "T00:00:00"), day))
+        .filter(c => choreAppliesOnDate(c, day))
         .map(c => ({
           title: `${c.person}: ${c.text} 🧹 ${c.approved ? "✅" : c.completed ? "done" : ""}`,
           assignedTo: c.person,
@@ -1576,8 +1621,9 @@
               <div class="chore-row ${personKey} ${chore.completed ? "done" : ""} ${chore.approved ? "approved" : ""}">
                 <div>${getPersonIcon(personKey)} ${chore.text}</div>
                 <div class="chore-meta">
-                  <span class="chore-chip">${formatLocalDate(chore.date)}</span>
+                  <span class="chore-chip">${formatLocalDate(chore.occurrenceDate || chore.date)}</span>
                   <span class="chore-chip">${chore.repeat === "none" ? "one-time" : chore.repeat}</span>
+                  ${chore.repeat !== "none" && chore.repeatEndDate ? `<span class="chore-chip">ends ${formatLocalDate(chore.repeatEndDate)}</span>` : ""}
                   <span class="chore-chip">${money(value)}</span>
                   <span class="chore-chip">${chore.approved ? "approved" : chore.completed ? "waiting approval" : "not done"}</span>
                 </div>
@@ -1676,7 +1722,8 @@
       });
       const choreSnap = await getDocs(collection(db, "chores"));
       choreSnap.forEach(async item => {
-        if (isOlderThan15Days(item.data().date)) await deleteDoc(doc(db, "chores", item.id));
+        const data = item.data();
+        if (isOlderThan15Days(data.repeatEndDate || data.date)) await deleteDoc(doc(db, "chores", item.id));
       });
     }
 
@@ -1704,7 +1751,7 @@
       });
 
       onSnapshot(collection(db, "chores"), snapshot => {
-        state.chores = snapshot.docs.map(d => ({ id: d.id, ...d.data() })).filter(c => !isOlderThan15Days(c.date));
+        state.chores = snapshot.docs.map(d => ({ id: d.id, ...d.data() })).filter(c => !isOlderThan15Days(c.repeatEndDate || c.date));
         renderChores();
         renderCalendar();
       });
@@ -1811,17 +1858,24 @@
       const date = el("choreDateInput").value;
       const person = el("chorePersonInput").value;
       const repeat = el("choreRepeatInput").value || "none";
+      const repeatEndDate = repeat === "none" ? "" : el("choreRepeatEndInput").value;
       if (!text || !date || !person) return;
+      if (repeat !== "none" && repeatEndDate && repeatEndDate < date) {
+        window.alert("Repeat end date cannot be before the due date.");
+        return;
+      }
       await addDoc(collection(db, "chores"), {
         person,
         text,
         date,
         repeat,
+        repeatEndDate,
         completed: false,
         approved: false,
         createdAt: new Date().toISOString()
       });
       el("choreTextInput").value = "";
+      el("choreRepeatEndInput").value = "";
     });
 
     el("resetTodayChoresBtn").addEventListener("click", resetTodayChores);
