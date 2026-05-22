@@ -59,10 +59,28 @@
       gap: 14px;
     }
 
-    .weather-box { text-align: center; font-weight: 900; color: var(--ink); margin-bottom: 8px; }
+    .weather-box {
+      text-align: center;
+      font-weight: 900;
+      color: var(--ink);
+      margin-bottom: 8px;
+      cursor: pointer;
+      width: 78px;
+      border-radius: 14px;
+      padding: 6px 3px;
+    }
+    .weather-box:hover { background: #eff6ff; }
     .weather-icon { font-size: 34px; line-height: 1; }
     .weather-temp { font-size: 16px; margin-top: 4px; }
     .weather-location { font-size: 10px; color: var(--muted); font-weight: 900; margin-top: 2px; line-height: 1.15; }
+    .weather-hint { font-size: 9px; color: var(--blue); font-weight: 900; margin-top: 4px; }
+    .weather-forecast-grid { display: grid; grid-template-columns: repeat(5, minmax(110px, 1fr)); gap: 10px; margin-top: 12px; }
+    .forecast-card { border: 1px solid var(--line); border-radius: 14px; padding: 12px; background: #f8fafc; text-align: center; font-weight: 900; }
+    .forecast-day { font-size: 13px; color: var(--muted); }
+    .forecast-icon { font-size: 30px; margin: 6px 0; }
+    .forecast-temp { font-size: 16px; }
+    .forecast-rain { font-size: 12px; color: var(--muted); margin-top: 4px; }
+    .forecast-updated { color: var(--muted); font-size: 12px; font-weight: 800; margin-top: 8px; }
 
     .side-item {
       width: 76px;
@@ -186,7 +204,7 @@
       padding-bottom: 8px;
     }
 
-    .week-grid.day-mode { grid-template-columns: minmax(280px, 1fr); max-width: 520px; margin: 0 auto; }
+    .week-grid.day-mode { grid-template-columns: minmax(0, 1fr); width: 100%; max-width: none; margin: 0; }
 
     .day-col {
       background: #ffffff;
@@ -366,6 +384,87 @@
     .chore-actions button.approve { background: #16a34a; }
     .chore-actions button.done-btn { background: #2563eb; }
 
+
+    body.night-mode {
+      background: #020617;
+      color: #e5e7eb;
+    }
+
+    body.night-mode .app {
+      background: #0f172a;
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.55);
+    }
+
+    body.night-mode .sidebar,
+    body.night-mode .topbar,
+    body.night-mode .main,
+    body.night-mode .calendar-wrap,
+    body.night-mode .person-filter {
+      background: #0f172a;
+      color: #e5e7eb;
+    }
+
+    body.night-mode .day-col,
+    body.night-mode .panel,
+    body.night-mode .simple-item,
+    body.night-mode .forecast-card,
+    body.night-mode .chore-card,
+    body.night-mode input,
+    body.night-mode textarea,
+    body.night-mode select,
+    body.night-mode .control-btn,
+    body.night-mode .person-pill {
+      background: #111827;
+      color: #e5e7eb;
+      border-color: #334155;
+    }
+
+    body.night-mode .day-header,
+    body.night-mode .topbar,
+    body.night-mode .sidebar {
+      border-color: #334155;
+    }
+
+    body.night-mode .family-title,
+    body.night-mode .event-count,
+    body.night-mode .weather-location,
+    body.night-mode .forecast-day,
+    body.night-mode .forecast-rain,
+    body.night-mode .panel p,
+    body.night-mode .chore-card-subtitle,
+    body.night-mode .chore-meta {
+      color: #cbd5e1;
+    }
+
+    body.night-mode .side-item { color: #cbd5e1; }
+    body.night-mode .side-item.active,
+    body.night-mode .person-pill.active,
+    body.night-mode .control-btn.active,
+    body.night-mode .control-btn.primary {
+      background: #1d4ed8;
+      color: #ffffff;
+      border-color: #3b82f6;
+    }
+
+    body.night-mode .weather-box:hover { background: #1e293b; }
+    body.night-mode .empty { color: #94a3b8; }
+    body.night-mode .chore-row { background: rgba(15, 23, 42, 0.82); border-color: #334155; }
+    body.night-mode .chore-chip { background: rgba(30, 41, 59, 0.9); color: #e5e7eb; border-color: #475569; }
+    body.night-mode .event-meta,
+    body.night-mode .event-time { color: #1f2937; }
+
+    body.night-mode::after {
+      content: "Night Mode 10 PM - 6 AM";
+      position: fixed;
+      right: 16px;
+      bottom: 10px;
+      z-index: 30;
+      color: rgba(226, 232, 240, 0.72);
+      font-size: 11px;
+      font-weight: 900;
+      pointer-events: none;
+    }
+
     @media (max-width: 1000px) {
       .chores-board { grid-template-columns: repeat(2, minmax(180px, 1fr)); }
     }
@@ -383,7 +482,7 @@
       .person-pill { font-size: 14px; min-height: 34px; padding: 7px 11px; }
       .person-emoji { font-size: 20px; }
       .week-grid { grid-template-columns: repeat(7, minmax(180px, 180px)); }
-      .week-grid.day-mode { grid-template-columns: minmax(220px, 1fr); max-width: none; }
+      .week-grid.day-mode { grid-template-columns: minmax(0, 1fr); width: 100%; max-width: none; margin: 0; }
       .form-grid { grid-template-columns: 1fr; }
       .chores-board { grid-template-columns: 1fr; }
       .panel { inset: 10px; }
@@ -398,6 +497,7 @@
         <div class="weather-icon" id="weatherIcon">☀</div>
         <div class="weather-temp" id="weatherText">--°F</div>
         <div class="weather-location" id="weatherLocation">Stansbury Park</div>
+        <div class="weather-hint">5 Day</div>
       </div>
 
       <button class="side-item active" id="calendarBtn"><span>📅</span><span>Calendar</span></button>
@@ -424,6 +524,7 @@
           <button class="control-btn active" id="dayModeBtn">Day</button>
           <button class="control-btn" id="weekModeBtn">Week</button>
           <button class="control-btn primary" id="todayBtn">Today</button>
+          <button class="control-btn" id="themeModeBtn" title="Auto night mode">🌙 Auto</button>
           <button class="control-btn" id="refreshBtn">Refresh</button>
         </div>
 
@@ -443,6 +544,16 @@
       <div><label>Family display name</label><input id="familyNameInput" placeholder="Green Family Command Center" /></div>
       <div><label>Google API key</label><input id="apiKeyInput" placeholder="Paste Google API key" /></div>
       <div><label>Weather display location</label><input id="weatherLocationInput" placeholder="Stansbury Park" /></div>
+      <div><label>Weather icon</label><select id="weatherIconInput">
+        <option value="auto">Auto from forecast</option>
+        <option value="☀">☀ Sunny</option>
+        <option value="🌤">🌤 Partly sunny</option>
+        <option value="☁">☁ Cloudy</option>
+        <option value="🌧">🌧 Rain</option>
+        <option value="❄">❄ Snow</option>
+        <option value="⛈">⛈ Storm</option>
+        <option value="🌡">🌡 Weather</option>
+      </select></div>
       <div><label>Weather latitude</label><input id="latitudeInput" placeholder="40.6127" /></div>
       <div><label>Weather longitude</label><input id="longitudeInput" placeholder="-112.3044" /></div>
       <div><label>Timezone</label><select id="timezoneInput">
@@ -521,6 +632,17 @@
     <div class="chores-board" id="choresBoard"></div>
   </section>
 
+  <section class="panel" id="weatherPanel">
+    <h2>5-Day Weather</h2>
+    <p id="weatherPanelSummary">Forecast for your selected weather location.</p>
+    <div class="weather-forecast-grid" id="weatherForecastGrid"></div>
+    <div class="forecast-updated" id="weatherUpdatedText"></div>
+    <div class="panel-actions">
+      <button id="refreshWeatherBtn">Refresh Weather</button>
+      <button id="closeWeather">Close</button>
+    </div>
+  </section>
+
   <section class="panel" id="eventDetailPanel">
     <h2 id="eventDetailTitle">Event Details</h2>
     <div class="simple-list">
@@ -536,7 +658,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-    import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, getDocs, updateDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBegJ4GeYNkzyrB2mvMs_I3ovRfUizk_gE",
@@ -587,6 +709,10 @@
       timezone: localStorage.getItem("timezone") || "America/Denver",
       weather: "--°F",
       weatherIcon: "☀",
+      customWeatherIcon: localStorage.getItem("customWeatherIcon") || "auto",
+      weatherForecast: [],
+      weatherUpdatedAt: "",
+      nightModeOverride: localStorage.getItem("nightModeOverride") || "auto",
       weatherLocation: localStorage.getItem("weatherLocation") || "Stansbury Park",
       people: (() => {
         const saved = JSON.parse(localStorage.getItem("people") || "[]");
@@ -604,6 +730,113 @@
     };
 
     const el = id => document.getElementById(id);
+    const settingsDocRef = doc(db, "settings", "familyCalendar");
+
+    function cacheSharedSettings() {
+      localStorage.setItem("familyName", state.familyName);
+      localStorage.setItem("googleApiKey", state.apiKey);
+      localStorage.setItem("weatherLocation", state.weatherLocation);
+      localStorage.setItem("weatherLatitude", state.latitude);
+      localStorage.setItem("weatherLongitude", state.longitude);
+      localStorage.setItem("customWeatherIcon", state.customWeatherIcon);
+      localStorage.setItem("timezone", state.timezone);
+      localStorage.setItem("calendarIds", JSON.stringify(state.calendarIds));
+      localStorage.setItem("people", JSON.stringify(state.people));
+      localStorage.setItem("allowances", JSON.stringify(state.allowances));
+    }
+
+    function applySharedSettings(data = {}) {
+      state.familyName = data.familyName || state.familyName || "Green Family Command Center";
+      state.apiKey = data.apiKey || state.apiKey || DEFAULT_GOOGLE_API_KEY;
+      state.weatherLocation = data.weatherLocation || state.weatherLocation || "Stansbury Park";
+      state.latitude = data.latitude || state.latitude || "40.6127";
+      state.longitude = data.longitude || state.longitude || "-112.3044";
+      state.customWeatherIcon = data.customWeatherIcon || state.customWeatherIcon || "auto";
+      state.timezone = data.timezone || state.timezone || "America/Denver";
+      state.calendarIds = Array.isArray(data.calendarIds) && data.calendarIds.length ? data.calendarIds : state.calendarIds;
+      state.allowances = { ...state.allowances, ...(data.allowances || {}) };
+
+      if (Array.isArray(data.people) && data.people.length) {
+        state.people = defaultPeople.map(defaultPerson => {
+          const match = data.people.find(p => p.key === defaultPerson.key);
+          return match ? { ...defaultPerson, icon: match.icon || defaultPerson.icon } : defaultPerson;
+        });
+      }
+
+      cacheSharedSettings();
+      renderTop();
+      renderPersonFilter();
+      renderCalendar();
+      renderChores();
+
+      if (el("settingsPanel")?.classList.contains("open")) {
+        fillSettingsForm();
+      }
+    }
+
+    function getSharedSettingsFromState() {
+      return {
+        familyName: state.familyName || "Green Family Command Center",
+        apiKey: state.apiKey || DEFAULT_GOOGLE_API_KEY,
+        weatherLocation: state.weatherLocation || "Stansbury Park",
+        customWeatherIcon: state.customWeatherIcon || "auto",
+        latitude: state.latitude || "40.6127",
+        longitude: state.longitude || "-112.3044",
+        timezone: state.timezone || "America/Denver",
+        calendarIds: state.calendarIds?.length ? state.calendarIds : DEFAULT_CALENDAR_IDS,
+        people: state.people || defaultPeople,
+        allowances: state.allowances || { quade: 0, grayson: 0, easton: 5, reese: 0 },
+        updatedAt: new Date().toISOString()
+      };
+    }
+
+    function getSharedSettingsFromForm() {
+      const calendarIds = el("calendarIdsInput").value.split("\n").map(x => x.trim()).filter(Boolean);
+      const people = state.people.map(person => {
+        const input = el(`${person.key}EmojiInput`);
+        return input && input.value.trim() ? { ...person, icon: input.value.trim() } : person;
+      });
+
+      return {
+        familyName: el("familyNameInput").value.trim() || "Green Family Command Center",
+        apiKey: el("apiKeyInput").value.trim() || DEFAULT_GOOGLE_API_KEY,
+        weatherLocation: el("weatherLocationInput").value.trim() || "Stansbury Park",
+        latitude: el("latitudeInput").value.trim() || "40.6127",
+        longitude: el("longitudeInput").value.trim() || "-112.3044",
+        customWeatherIcon: el("weatherIconInput").value || "auto",
+        timezone: el("timezoneInput").value || "America/Denver",
+        calendarIds: calendarIds.length ? calendarIds : DEFAULT_CALENDAR_IDS,
+        people,
+        allowances: {
+          quade: Number(el("quadeAllowanceInput").value || 0),
+          grayson: Number(el("graysonAllowanceInput").value || 0),
+          easton: Number(el("eastonAllowanceInput").value || 0),
+          reese: Number(el("reeseAllowanceInput").value || 0)
+        },
+        updatedAt: new Date().toISOString()
+      };
+    }
+
+    function fillSettingsForm() {
+      el("familyNameInput").value = state.familyName;
+      el("apiKeyInput").value = state.apiKey;
+      el("weatherLocationInput").value = state.weatherLocation;
+      el("latitudeInput").value = state.latitude;
+      el("longitudeInput").value = state.longitude;
+      el("weatherIconInput").value = state.customWeatherIcon || "auto";
+      el("timezoneInput").value = state.timezone;
+      el("calendarIdsInput").value = state.calendarIds.join("\n");
+      el("quadeAllowanceInput").value = state.allowances.quade || 0;
+      el("graysonAllowanceInput").value = state.allowances.grayson || 0;
+      el("eastonAllowanceInput").value = state.allowances.easton || 0;
+      el("reeseAllowanceInput").value = state.allowances.reese || 0;
+      populateAvatarSelects();
+      state.people.forEach(person => {
+        const input = el(`${person.key}EmojiInput`);
+        if (input) input.value = person.icon;
+      });
+    }
+
     window.openEventDetail = openEventDetail;
     window.deleteMeal = deleteMeal;
     window.deleteTask = deleteTask;
@@ -651,6 +884,53 @@
       return { time: `${get("hour")}:${get("minute")} ${get("dayPeriod")}`, date: `${get("month")} ${get("day")}, ${get("year")}` };
     }
 
+
+    function getCurrentHourInTimezone() {
+      const parts = new Intl.DateTimeFormat("en-US", {
+        timeZone: state.timezone,
+        hour: "2-digit",
+        hour12: false
+      }).formatToParts(new Date());
+      const hourValue = Number((parts.find(p => p.type === "hour") || {}).value || "0");
+      return hourValue === 24 ? 0 : hourValue;
+    }
+
+    function applyNightMode() {
+      const hour = getCurrentHourInTimezone();
+      const autoNight = hour >= 22 || hour < 6;
+      const mode = state.nightModeOverride || "auto";
+      const isNight = mode === "night" || (mode === "auto" && autoNight);
+
+      document.body.classList.toggle("night-mode", isNight);
+      document.body.dataset.themeMode = mode;
+      updateThemeModeButton(autoNight, isNight);
+    }
+
+    function updateThemeModeButton(autoNight = false, isNight = false) {
+      const btn = el("themeModeBtn");
+      if (!btn) return;
+
+      if (state.nightModeOverride === "day") {
+        btn.textContent = "☀️ Day";
+        btn.title = "Forced day mode. Tap to force night mode.";
+      } else if (state.nightModeOverride === "night") {
+        btn.textContent = "🌙 Night";
+        btn.title = "Forced night mode. Tap to return to auto mode.";
+      } else {
+        btn.textContent = isNight ? "🌙 Auto" : "☀️ Auto";
+        btn.title = autoNight ? "Auto night mode is active. Tap to force day mode." : "Auto day mode is active. Tap to force day mode.";
+      }
+
+      btn.classList.toggle("active", state.nightModeOverride !== "auto");
+    }
+
+    function cycleThemeMode() {
+      const current = state.nightModeOverride || "auto";
+      state.nightModeOverride = current === "auto" ? "day" : current === "day" ? "night" : "auto";
+      localStorage.setItem("nightModeOverride", state.nightModeOverride);
+      applyNightMode();
+    }
+
     function normalize(value) { return String(value || "").trim().toLowerCase(); }
 
     function detectPersonFromText(title = "", fallback = "") {
@@ -694,18 +974,53 @@
     function getEventPersonLabel(event) { if (event.assignedTo) return event.assignedTo; if (event.person === "meal") return "Meal"; if (event.person === "chore") return "Task"; return getPersonName(event.person); }
 
     async function loadWeather() {
-      const url = `https://api.open-meteo.com/v1/forecast?latitude=${state.latitude}&longitude=${state.longitude}&current=temperature_2m,weather_code&temperature_unit=fahrenheit`;
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${state.latitude}&longitude=${state.longitude}&current=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&temperature_unit=fahrenheit&timezone=${encodeURIComponent(state.timezone)}&forecast_days=5`;
       try {
-        const response = await fetch(url);
+        const response = await fetch(url, { cache: "no-store" });
         const data = await response.json();
-        const code = data.current.weather_code;
-        state.weatherIcon = getWeatherIcon(code);
+        const code = data.current?.weather_code;
+        const autoIcon = getWeatherIcon(code);
+        state.weatherIcon = state.customWeatherIcon && state.customWeatherIcon !== "auto" ? state.customWeatherIcon : autoIcon;
         state.weather = `${Math.round(data.current.temperature_2m)}°F`;
+        state.weatherUpdatedAt = new Date().toLocaleString("en-US", { timeZone: state.timezone, month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+
+        const daily = data.daily || {};
+        state.weatherForecast = (daily.time || []).slice(0, 5).map((date, index) => ({
+          date,
+          icon: getWeatherIcon(daily.weather_code?.[index]),
+          high: Math.round(daily.temperature_2m_max?.[index]),
+          low: Math.round(daily.temperature_2m_min?.[index]),
+          rain: daily.precipitation_probability_max?.[index] ?? 0
+        }));
       } catch {
-        state.weatherIcon = "☀";
+        state.weatherIcon = state.customWeatherIcon && state.customWeatherIcon !== "auto" ? state.customWeatherIcon : "☀";
         state.weather = "--°F";
+        state.weatherForecast = [];
+        state.weatherUpdatedAt = "";
       }
       renderTop();
+      renderWeatherPanel();
+    }
+
+    function renderWeatherPanel() {
+      const grid = el("weatherForecastGrid");
+      if (!grid) return;
+      el("weatherPanelSummary").textContent = `Forecast for ${state.weatherLocation}`;
+      grid.innerHTML = state.weatherForecast.length
+        ? state.weatherForecast.map(day => {
+            const date = new Date(day.date + "T00:00:00");
+            const label = date.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+            return `
+              <div class="forecast-card">
+                <div class="forecast-day">${label}</div>
+                <div class="forecast-icon">${day.icon}</div>
+                <div class="forecast-temp">${day.high}° / ${day.low}°</div>
+                <div class="forecast-rain">Rain: ${day.rain}%</div>
+              </div>
+            `;
+          }).join("\n")
+        : `<div class="simple-item">No forecast loaded yet. Press Refresh Weather.</div>`;
+      el("weatherUpdatedText").textContent = state.weatherUpdatedAt ? `Updated ${state.weatherUpdatedAt}` : "";
     }
 
     function getWeatherIcon(code) {
@@ -783,6 +1098,7 @@
     }
 
     function renderTop() {
+      applyNightMode();
       const now = mstNow();
       el("todayDate").textContent = now.date;
       el("clock").textContent = now.time;
@@ -798,7 +1114,7 @@
         <button class="person-pill ${state.activePerson === p.key ? "active" : ""}" data-key="${p.key}">
           <span class="person-emoji">${p.icon}</span>${p.name}
         </button>
-      `).join("");
+      `).join("\n");
       document.querySelectorAll(".person-pill").forEach(btn => {
         btn.addEventListener("click", () => {
           state.activePerson = btn.dataset.key;
@@ -861,7 +1177,7 @@
                   </div>
                 </div>
               `;
-            }).join("")
+            }).join("\n")
           : `<div class="empty">No events</div>`;
 
         return `
@@ -875,7 +1191,7 @@
             <div class="events">${eventHtml}</div>
           </section>
         `;
-      }).join("");
+      }).join("\n");
     }
 
     function openEventDetail(index) {
@@ -899,62 +1215,21 @@
         const input = el(`${person.key}EmojiInput`);
         if (!input) return;
         const options = avatarOptions[person.key] || [person.icon];
-        input.innerHTML = options.map(option => `<option value="${option}" ${option === person.icon ? "selected" : ""}>${option} ${person.name}</option>`).join("");
+        input.innerHTML = options.map(option => `<option value="${option}" ${option === person.icon ? "selected" : ""}>${option} ${person.name}</option>`).join("\n");
         if (!options.includes(person.icon)) input.insertAdjacentHTML("afterbegin", `<option value="${person.icon}" selected>${person.icon} ${person.name}</option>`);
       });
     }
 
     function openSettings() {
       setActiveSide("settingsBtn");
-      el("familyNameInput").value = state.familyName;
-      el("apiKeyInput").value = state.apiKey;
-      el("weatherLocationInput").value = state.weatherLocation;
-      el("latitudeInput").value = state.latitude;
-      el("longitudeInput").value = state.longitude;
-      el("timezoneInput").value = state.timezone;
-      el("calendarIdsInput").value = state.calendarIds.join("\n");
-      el("quadeAllowanceInput").value = state.allowances.quade || 0;
-      el("graysonAllowanceInput").value = state.allowances.grayson || 0;
-      el("eastonAllowanceInput").value = state.allowances.easton || 0;
-      el("reeseAllowanceInput").value = state.allowances.reese || 0;
-      populateAvatarSelects();
-      state.people.forEach(person => {
-        const input = el(`${person.key}EmojiInput`);
-        if (input) input.value = person.icon;
-      });
+      fillSettingsForm();
       el("settingsPanel").classList.add("open");
     }
 
-    function saveSettings() {
-      state.familyName = el("familyNameInput").value.trim() || "Green Family Command Center";
-      state.apiKey = el("apiKeyInput").value.trim() || DEFAULT_GOOGLE_API_KEY;
-      state.weatherLocation = el("weatherLocationInput").value.trim() || "Stansbury Park";
-      state.latitude = el("latitudeInput").value.trim() || "40.6127";
-      state.longitude = el("longitudeInput").value.trim() || "-112.3044";
-      state.timezone = el("timezoneInput").value || "America/Denver";
-      state.calendarIds = el("calendarIdsInput").value.split("\n").map(x => x.trim()).filter(Boolean);
-      if (!state.calendarIds.length) state.calendarIds = DEFAULT_CALENDAR_IDS;
-      state.allowances = {
-        quade: Number(el("quadeAllowanceInput").value || 0),
-        grayson: Number(el("graysonAllowanceInput").value || 0),
-        easton: Number(el("eastonAllowanceInput").value || 0),
-        reese: Number(el("reeseAllowanceInput").value || 0)
-      };
-
-      state.people = state.people.map(person => {
-        const input = el(`${person.key}EmojiInput`);
-        return input && input.value.trim() ? { ...person, icon: input.value.trim() } : person;
-      });
-
-      localStorage.setItem("familyName", state.familyName);
-      localStorage.setItem("googleApiKey", state.apiKey);
-      localStorage.setItem("weatherLocation", state.weatherLocation);
-      localStorage.setItem("weatherLatitude", state.latitude);
-      localStorage.setItem("weatherLongitude", state.longitude);
-      localStorage.setItem("timezone", state.timezone);
-      localStorage.setItem("calendarIds", JSON.stringify(state.calendarIds));
-      localStorage.setItem("people", JSON.stringify(state.people));
-      localStorage.setItem("allowances", JSON.stringify(state.allowances));
+    async function saveSettings() {
+      const sharedSettings = getSharedSettingsFromForm();
+      applySharedSettings(sharedSettings);
+      await setDoc(settingsDocRef, sharedSettings, { merge: true });
 
       el("settingsPanel").classList.remove("open");
       setActiveSide("calendarBtn");
@@ -1010,14 +1285,14 @@
     }
 
     function renderMeals() {
-      el("mealsList").innerHTML = state.meals.map((m, i) => `<div class="simple-item meal"><span><strong>${formatLocalDate(m.date)}:</strong> ${m.text}</span><button onclick="deleteMeal(${i})">Delete</button></div>`).join("") || `<div class="simple-item">No meals added yet.</div>`;
+      el("mealsList").innerHTML = state.meals.map((m, i) => `<div class="simple-item meal"><span><strong>${formatLocalDate(m.date)}:</strong> ${m.text}</span><button onclick="deleteMeal(${i})">Delete</button></div>`).join("\n") || `<div class="simple-item">No meals added yet.</div>`;
     }
 
     function renderTasks() {
       el("tasksList").innerHTML = state.tasks.map((t, i) => {
         const personKey = detectPersonFromText(t.person);
         return `<div class="simple-item ${personKey}"><span><strong>${formatLocalDate(t.date)}</strong> — ${t.person}: ${t.text}</span><button onclick="deleteTask(${i})">Delete</button></div>`;
-      }).join("") || `<div class="simple-item">No tasks added yet.</div>`;
+      }).join("\n") || `<div class="simple-item">No tasks added yet.</div>`;
     }
 
 
@@ -1052,7 +1327,7 @@
                 </div>
               </div>
             `;
-          }).join("") || `<div class="empty">No chores this week.</div>`;
+          }).join("\n") || `<div class="empty">No chores this week.</div>`;
 
         return `
           <div class="kid-chore-card ${personKey}">
@@ -1066,7 +1341,7 @@
             ${rows}
           </div>
         `;
-      }).join("");
+      }).join("\n");
     }
 
     async function deleteChore(id) {
@@ -1137,6 +1412,16 @@
     }
 
     function subscribeFirebase() {
+      onSnapshot(settingsDocRef, snapshot => {
+        if (snapshot.exists()) {
+          applySharedSettings(snapshot.data());
+          loadWeather();
+          loadGoogleEvents();
+        } else {
+          setDoc(settingsDocRef, getSharedSettingsFromState(), { merge: true });
+        }
+      });
+
       onSnapshot(collection(db, "meals"), snapshot => {
         state.meals = snapshot.docs.map(d => ({ id: d.id, ...d.data() })).filter(m => !isOlderThan15Days(m.date));
         renderMeals();
@@ -1176,6 +1461,12 @@
       el("choresPanel").classList.add("open");
     });
     el("settingsBtn").addEventListener("click", openSettings);
+    el("weatherIcon").closest(".weather-box").addEventListener("click", () => {
+      renderWeatherPanel();
+      el("weatherPanel").classList.add("open");
+    });
+    el("refreshWeatherBtn").addEventListener("click", loadWeather);
+    el("closeWeather").addEventListener("click", () => el("weatherPanel").classList.remove("open"));
 
     el("prevPeriod").addEventListener("click", () => {
       state.selectedDate = addDays(state.selectedDate, state.viewMode === "week" ? -7 : -1);
@@ -1196,12 +1487,33 @@
       loadGoogleEvents();
     });
     el("todayBtn").addEventListener("click", () => { state.selectedDate = new Date(); loadGoogleEvents(); });
-    el("refreshBtn").addEventListener("click", () => { loadWeather(); loadGoogleEvents(); cleanupOldFirebaseItems(); });
+    el("themeModeBtn").addEventListener("click", cycleThemeMode);
+    el("refreshBtn").addEventListener("click", () => {
+      window.location.reload();
+    });
 
     el("saveSettings").addEventListener("click", saveSettings);
     el("closeEventDetail").addEventListener("click", () => el("eventDetailPanel").classList.remove("open"));
     el("closeSettings").addEventListener("click", () => { el("settingsPanel").classList.remove("open"); setActiveSide("calendarBtn"); });
-    el("resetSettings").addEventListener("click", () => { localStorage.clear(); location.reload(); });
+    el("resetSettings").addEventListener("click", async () => {
+      localStorage.clear();
+      const resetSettings = {
+        familyName: "Green Family Command Center",
+        apiKey: DEFAULT_GOOGLE_API_KEY,
+        weatherLocation: "Stansbury Park",
+        customWeatherIcon: "auto",
+        latitude: "40.6127",
+        longitude: "-112.3044",
+        timezone: "America/Denver",
+        calendarIds: DEFAULT_CALENDAR_IDS,
+        people: defaultPeople,
+        allowances: { quade: 0, grayson: 0, easton: 5, reese: 0 },
+        updatedAt: new Date().toISOString()
+      };
+      applySharedSettings(resetSettings);
+      await setDoc(settingsDocRef, resetSettings, { merge: true });
+      location.reload();
+    });
 
     el("addMealBtn").addEventListener("click", async () => {
       const text = el("mealTextInput").value.trim();
@@ -1254,6 +1566,7 @@
     loadGoogleEvents();
 
     setInterval(renderTop, 30000);
+    setInterval(applyNightMode, 60 * 1000);
     setInterval(loadWeather, 30 * 60 * 1000);
     setInterval(loadGoogleEvents, 90000);
     setInterval(cleanupOldFirebaseItems, 6 * 60 * 60 * 1000);
