@@ -287,6 +287,89 @@
     .simple-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px; border: 1px solid var(--line); border-radius: 14px; font-weight: 800; }
     .simple-item button { border: 0; border-radius: 10px; background: #ef4444; color: white; padding: 8px 10px; font-weight: 900; cursor: pointer; }
 
+    .chores-board {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(180px, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .kid-chore-card {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 12px;
+      background: #ffffff;
+      min-height: 220px;
+    }
+
+    .kid-chore-card h3 {
+      margin: 0 0 4px;
+      font-size: 18px;
+    }
+
+    .allowance-summary {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 900;
+      margin-bottom: 10px;
+      line-height: 1.35;
+    }
+
+    .chore-row {
+      border: 1px solid rgba(17, 24, 39, 0.12);
+      border-radius: 12px;
+      padding: 10px;
+      margin-bottom: 8px;
+      background: rgba(255,255,255,0.72);
+      display: grid;
+      gap: 7px;
+      font-weight: 900;
+    }
+
+    .chore-row.done { opacity: 0.72; }
+    .chore-row.approved { outline: 3px solid rgba(34, 197, 94, 0.28); }
+
+    .chore-meta {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      font-size: 11px;
+      color: #374151;
+    }
+
+    .chore-chip {
+      background: rgba(255,255,255,0.75);
+      border: 1px solid rgba(17, 24, 39, 0.12);
+      border-radius: 999px;
+      padding: 3px 7px;
+      white-space: nowrap;
+    }
+
+    .chore-actions {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .chore-actions button {
+      border: 0;
+      border-radius: 10px;
+      padding: 8px 9px;
+      font-size: 12px;
+      font-weight: 900;
+      cursor: pointer;
+      background: #0f172a;
+      color: white;
+    }
+
+    .chore-actions button.danger { background: #ef4444; }
+    .chore-actions button.approve { background: #16a34a; }
+    .chore-actions button.done-btn { background: #2563eb; }
+
+    @media (max-width: 1000px) {
+      .chores-board { grid-template-columns: repeat(2, minmax(180px, 1fr)); }
+    }
+
     @media (max-width: 800px) {
       .app { width: 100vw; height: 100vh; border-radius: 0; grid-template-columns: 76px 1fr; }
       .sidebar { padding: 10px 4px; gap: 8px; }
@@ -302,6 +385,7 @@
       .week-grid { grid-template-columns: repeat(7, minmax(180px, 180px)); }
       .week-grid.day-mode { grid-template-columns: minmax(220px, 1fr); max-width: none; }
       .form-grid { grid-template-columns: 1fr; }
+      .chores-board { grid-template-columns: 1fr; }
       .panel { inset: 10px; }
     }
   </style>
@@ -319,6 +403,7 @@
       <button class="side-item active" id="calendarBtn"><span>📅</span><span>Calendar</span></button>
       <button class="side-item" id="tasksBtn"><span>☑️</span><span>Tasks</span></button>
       <button class="side-item" id="mealsBtn"><span>🍽️</span><span>Meals</span></button>
+      <button class="side-item" id="choresBtn"><span>🧹</span><span>Chores</span></button>
       <button class="side-item" id="settingsBtn"><span>⚙️</span><span>Settings</span></button>
     </aside>
 
@@ -377,6 +462,10 @@
       <div><label>Easton avatar</label><select id="eastonEmojiInput"></select></div>
       <div><label>Reese avatar</label><select id="reeseEmojiInput"></select></div>
       <div><label>Family event icon</label><select id="familyEmojiInput"></select></div>
+      <div><label>Quade weekly allowance</label><input id="quadeAllowanceInput" type="number" min="0" step="0.25" placeholder="0.00" /></div>
+      <div><label>Grayson weekly allowance</label><input id="graysonAllowanceInput" type="number" min="0" step="0.25" placeholder="0.00" /></div>
+      <div><label>Easton weekly allowance</label><input id="eastonAllowanceInput" type="number" min="0" step="0.25" placeholder="5.00" /></div>
+      <div><label>Reese weekly allowance</label><input id="reeseAllowanceInput" type="number" min="0" step="0.25" placeholder="0.00" /></div>
     </div>
     <div class="panel-actions">
       <button id="saveSettings">Save</button>
@@ -414,6 +503,24 @@
     <div class="simple-list" id="tasksList"></div>
   </section>
 
+
+  <section class="panel" id="choresPanel">
+    <h2>Kid Chores & Allowance</h2>
+    <p>Add chores for each kid. Weekly allowance is set in Settings. Each kid’s chore value automatically adjusts by dividing their weekly allowance by the number of chores assigned for that week.</p>
+    <div class="form-grid">
+      <div><label>Kid</label><select id="chorePersonInput"><option>Quade</option><option>Grayson</option><option>Easton</option><option>Reese</option></select></div>
+      <div><label>Due Date</label><input id="choreDateInput" type="date" /></div>
+      <div><label>Repeat</label><select id="choreRepeatInput"><option value="none">No repeat</option><option value="daily">Daily</option><option value="weekdays">Weekdays</option><option value="weekly">Weekly</option></select></div>
+      <div><label>Chore</label><input id="choreTextInput" placeholder="Clean room, trash, dishes..." /></div>
+    </div>
+    <div class="panel-actions">
+      <button id="addChoreBtn">Add Chore</button>
+      <button id="resetTodayChoresBtn">Reset Today</button>
+      <button id="closeChores">Close</button>
+    </div>
+    <div class="chores-board" id="choresBoard"></div>
+  </section>
+
   <section class="panel" id="eventDetailPanel">
     <h2 id="eventDetailTitle">Event Details</h2>
     <div class="simple-list">
@@ -429,7 +536,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-    import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBegJ4GeYNkzyrB2mvMs_I3ovRfUizk_gE",
@@ -491,6 +598,8 @@
       events: [],
       meals: [],
       tasks: [],
+      chores: [],
+      allowances: JSON.parse(localStorage.getItem("allowances") || JSON.stringify({ quade: 0, grayson: 0, easton: 5, reese: 0 })),
       eventDetails: []
     };
 
@@ -498,6 +607,9 @@
     window.openEventDetail = openEventDetail;
     window.deleteMeal = deleteMeal;
     window.deleteTask = deleteTask;
+    window.deleteChore = deleteChore;
+    window.toggleChoreDone = toggleChoreDone;
+    window.approveChore = approveChore;
 
     function addDays(date, days) { const copy = new Date(date); copy.setDate(copy.getDate() + days); return copy; }
     function startOfWeek(date) { const d = new Date(date); const day = d.getDay(); d.setDate(d.getDate() - day); d.setHours(0, 0, 0, 0); return d; }
@@ -727,7 +839,8 @@
         const dayEvents = state.events
           .filter(e => sameDay(new Date(e.date), day))
           .concat(getMealsForDay(day))
-          .concat(getTasksForDay(day));
+          .concat(getTasksForDay(day))
+          .concat(getChoresForDay(day));
 
         const filtered = visibleEvents(dayEvents);
         filtered.sort((a, b) => (a.start || "99:99").localeCompare(b.start || "99:99"));
@@ -773,12 +886,12 @@
       el("eventDetailPerson").textContent = getEventPersonLabel(event);
       el("eventDetailDate").textContent = date.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
       el("eventDetailTime").textContent = event.start ? `${formatTime(event.start)} - ${formatTime(event.end)}` : "All day";
-      el("eventDetailSource").textContent = event.source === "google" ? "Google Calendar" : event.source === "meal" ? "Meal Plan" : event.source === "task" ? "Task / Chore" : "Event";
+      el("eventDetailSource").textContent = event.source === "google" ? "Google Calendar" : event.source === "meal" ? "Meal Plan" : event.source === "task" ? "Task" : event.source === "chore" ? "Chore" : "Event";
       el("eventDetailPanel").classList.add("open");
     }
 
     function setActiveSide(id) {
-      ["calendarBtn", "tasksBtn", "mealsBtn", "settingsBtn"].forEach(btnId => el(btnId).classList.toggle("active", btnId === id));
+      ["calendarBtn", "tasksBtn", "mealsBtn", "choresBtn", "settingsBtn"].forEach(btnId => el(btnId).classList.toggle("active", btnId === id));
     }
 
     function populateAvatarSelects() {
@@ -800,6 +913,10 @@
       el("longitudeInput").value = state.longitude;
       el("timezoneInput").value = state.timezone;
       el("calendarIdsInput").value = state.calendarIds.join("\n");
+      el("quadeAllowanceInput").value = state.allowances.quade || 0;
+      el("graysonAllowanceInput").value = state.allowances.grayson || 0;
+      el("eastonAllowanceInput").value = state.allowances.easton || 0;
+      el("reeseAllowanceInput").value = state.allowances.reese || 0;
       populateAvatarSelects();
       state.people.forEach(person => {
         const input = el(`${person.key}EmojiInput`);
@@ -817,6 +934,12 @@
       state.timezone = el("timezoneInput").value || "America/Denver";
       state.calendarIds = el("calendarIdsInput").value.split("\n").map(x => x.trim()).filter(Boolean);
       if (!state.calendarIds.length) state.calendarIds = DEFAULT_CALENDAR_IDS;
+      state.allowances = {
+        quade: Number(el("quadeAllowanceInput").value || 0),
+        grayson: Number(el("graysonAllowanceInput").value || 0),
+        easton: Number(el("eastonAllowanceInput").value || 0),
+        reese: Number(el("reeseAllowanceInput").value || 0)
+      };
 
       state.people = state.people.map(person => {
         const input = el(`${person.key}EmojiInput`);
@@ -831,6 +954,7 @@
       localStorage.setItem("timezone", state.timezone);
       localStorage.setItem("calendarIds", JSON.stringify(state.calendarIds));
       localStorage.setItem("people", JSON.stringify(state.people));
+      localStorage.setItem("allowances", JSON.stringify(state.allowances));
 
       el("settingsPanel").classList.remove("open");
       setActiveSide("calendarBtn");
@@ -843,6 +967,48 @@
       return new Date(dateString + "T00:00:00").toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
     }
 
+
+    function money(value) {
+      return `$${Number(value || 0).toFixed(2)}`;
+    }
+
+    function childKeyFromName(name) {
+      return normalize(name);
+    }
+
+    function weekKeyFromDate(dateString) {
+      const date = dateString ? new Date(dateString + "T00:00:00") : new Date();
+      const start = startOfWeek(date);
+      return start.toISOString().slice(0, 10);
+    }
+
+    function getChoresForWeek(childName, weekKey) {
+      return state.chores.filter(c => c.person === childName && weekKeyFromDate(c.date) === weekKey);
+    }
+
+    function choreValue(chore) {
+      const key = childKeyFromName(chore.person);
+      const weeklyAllowance = Number(state.allowances[key] || 0);
+      const weekChores = getChoresForWeek(chore.person, weekKeyFromDate(chore.date));
+      if (!weekChores.length) return 0;
+      return weeklyAllowance / weekChores.length;
+    }
+
+    function getChoresForDay(day) {
+      return state.chores
+        .filter(c => c.date && sameDay(new Date(c.date + "T00:00:00"), day))
+        .map(c => ({
+          title: `${c.person}: ${c.text} 🧹 ${c.approved ? "✅" : c.completed ? "done" : ""}`,
+          assignedTo: c.person,
+          person: detectPersonFromText(c.person),
+          date: day.toISOString(),
+          start: "",
+          end: "",
+          allDay: true,
+          source: "chore"
+        }));
+    }
+
     function renderMeals() {
       el("mealsList").innerHTML = state.meals.map((m, i) => `<div class="simple-item meal"><span><strong>${formatLocalDate(m.date)}:</strong> ${m.text}</span><button onclick="deleteMeal(${i})">Delete</button></div>`).join("") || `<div class="simple-item">No meals added yet.</div>`;
     }
@@ -852,6 +1018,88 @@
         const personKey = detectPersonFromText(t.person);
         return `<div class="simple-item ${personKey}"><span><strong>${formatLocalDate(t.date)}</strong> — ${t.person}: ${t.text}</span><button onclick="deleteTask(${i})">Delete</button></div>`;
       }).join("") || `<div class="simple-item">No tasks added yet.</div>`;
+    }
+
+
+    function renderChores() {
+      const kids = ["Quade", "Grayson", "Easton", "Reese"];
+      el("choresBoard").innerHTML = kids.map(kid => {
+        const key = childKeyFromName(kid);
+        const thisWeekKey = weekKeyFromDate(new Date().toISOString().slice(0, 10));
+        const weekChores = getChoresForWeek(kid, thisWeekKey);
+        const weeklyAllowance = Number(state.allowances[key] || 0);
+        const perChore = weekChores.length ? weeklyAllowance / weekChores.length : 0;
+        const earned = weekChores.filter(c => c.approved).length * perChore;
+        const personKey = detectPersonFromText(kid);
+
+        const rows = weekChores
+          .sort((a, b) => (a.date || "").localeCompare(b.date || ""))
+          .map(chore => {
+            const value = choreValue(chore);
+            return `
+              <div class="chore-row ${personKey} ${chore.completed ? "done" : ""} ${chore.approved ? "approved" : ""}">
+                <div>${getPersonIcon(personKey)} ${chore.text}</div>
+                <div class="chore-meta">
+                  <span class="chore-chip">${formatLocalDate(chore.date)}</span>
+                  <span class="chore-chip">${chore.repeat === "none" ? "one-time" : chore.repeat}</span>
+                  <span class="chore-chip">${money(value)}</span>
+                  <span class="chore-chip">${chore.approved ? "approved" : chore.completed ? "waiting approval" : "not done"}</span>
+                </div>
+                <div class="chore-actions">
+                  <button class="done-btn" onclick="toggleChoreDone('${chore.id}', ${!chore.completed})">${chore.completed ? "Undo" : "Mark Done"}</button>
+                  <button class="approve" onclick="approveChore('${chore.id}')">Approve</button>
+                  <button class="danger" onclick="deleteChore('${chore.id}')">Delete</button>
+                </div>
+              </div>
+            `;
+          }).join("") || `<div class="empty">No chores this week.</div>`;
+
+        return `
+          <div class="kid-chore-card ${personKey}">
+            <h3>${getPersonIcon(personKey)} ${kid}</h3>
+            <div class="allowance-summary">
+              Weekly allowance: ${money(weeklyAllowance)}<br>
+              Chores this week: ${weekChores.length}<br>
+              Each chore: ${money(perChore)}<br>
+              Approved earned: ${money(earned)}
+            </div>
+            ${rows}
+          </div>
+        `;
+      }).join("");
+    }
+
+    async function deleteChore(id) {
+      if (id) await deleteDoc(doc(db, "chores", id));
+    }
+
+    async function toggleChoreDone(id, completed) {
+      if (!id) return;
+      await updateDoc(doc(db, "chores", id), {
+        completed,
+        approved: completed ? false : false,
+        completedAt: completed ? new Date().toISOString() : ""
+      });
+    }
+
+    async function approveChore(id) {
+      if (!id) return;
+      await updateDoc(doc(db, "chores", id), {
+        completed: true,
+        approved: true,
+        approvedAt: new Date().toISOString()
+      });
+    }
+
+    async function resetTodayChores() {
+      const todayString = new Date().toISOString().slice(0, 10);
+      const todays = state.chores.filter(c => c.date === todayString);
+      await Promise.all(todays.map(c => updateDoc(doc(db, "chores", c.id), {
+        completed: false,
+        approved: false,
+        completedAt: "",
+        approvedAt: ""
+      })));
     }
 
     async function deleteMeal(index) {
@@ -882,6 +1130,10 @@
       taskSnap.forEach(async item => {
         if (isOlderThan15Days(item.data().date)) await deleteDoc(doc(db, "tasks", item.id));
       });
+      const choreSnap = await getDocs(collection(db, "chores"));
+      choreSnap.forEach(async item => {
+        if (isOlderThan15Days(item.data().date)) await deleteDoc(doc(db, "chores", item.id));
+      });
     }
 
     function subscribeFirebase() {
@@ -894,6 +1146,12 @@
       onSnapshot(collection(db, "tasks"), snapshot => {
         state.tasks = snapshot.docs.map(d => ({ id: d.id, ...d.data() })).filter(t => !isOlderThan15Days(t.date));
         renderTasks();
+        renderCalendar();
+      });
+
+      onSnapshot(collection(db, "chores"), snapshot => {
+        state.chores = snapshot.docs.map(d => ({ id: d.id, ...d.data() })).filter(c => !isOlderThan15Days(c.date));
+        renderChores();
         renderCalendar();
       });
     }
@@ -910,6 +1168,12 @@
       renderMeals();
       if (!el("mealDateInput").value) el("mealDateInput").value = new Date().toISOString().slice(0, 10);
       el("mealsPanel").classList.add("open");
+    });
+    el("choresBtn").addEventListener("click", () => {
+      setActiveSide("choresBtn");
+      renderChores();
+      if (!el("choreDateInput").value) el("choreDateInput").value = new Date().toISOString().slice(0, 10);
+      el("choresPanel").classList.add("open");
     });
     el("settingsBtn").addEventListener("click", openSettings);
 
@@ -960,6 +1224,27 @@
     });
 
     el("closeTasks").addEventListener("click", () => { el("tasksPanel").classList.remove("open"); setActiveSide("calendarBtn"); });
+
+    el("addChoreBtn").addEventListener("click", async () => {
+      const text = el("choreTextInput").value.trim();
+      const date = el("choreDateInput").value;
+      const person = el("chorePersonInput").value;
+      const repeat = el("choreRepeatInput").value || "none";
+      if (!text || !date || !person) return;
+      await addDoc(collection(db, "chores"), {
+        person,
+        text,
+        date,
+        repeat,
+        completed: false,
+        approved: false,
+        createdAt: new Date().toISOString()
+      });
+      el("choreTextInput").value = "";
+    });
+
+    el("resetTodayChoresBtn").addEventListener("click", resetTodayChores);
+    el("closeChores").addEventListener("click", () => { el("choresPanel").classList.remove("open"); setActiveSide("calendarBtn"); });
 
     renderTop();
     renderCalendar();
