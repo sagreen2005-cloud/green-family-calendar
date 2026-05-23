@@ -305,24 +305,77 @@
     .simple-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px; border: 1px solid var(--line); border-radius: 14px; font-weight: 800; }
     .simple-item button { border: 0; border-radius: 10px; background: #ef4444; color: white; padding: 8px 10px; font-weight: 900; cursor: pointer; }
 
-    .chores-board {
+    .chore-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .kid-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .kid-tab {
+      border: 2px solid #cbd5e1;
+      background: #ffffff;
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .kid-tab.active { background: var(--blue); border-color: var(--blue); color: white; }
+
+    .chore-week-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .chore-week-controls button { border: 0; border-radius: 999px; background: #0f172a; color: white; padding: 10px 14px; font-weight: 900; cursor: pointer; }
+    #choreWeekLabel { font-weight: 900; color: var(--muted); }
+
+    .chore-week-view {
       display: grid;
-      grid-template-columns: repeat(4, minmax(180px, 1fr));
+      grid-template-columns: 1fr;
       gap: 12px;
       margin-top: 14px;
     }
 
     .kid-chore-card {
       border: 1px solid var(--line);
-      border-radius: 16px;
-      padding: 12px;
+      border-radius: 18px;
+      padding: 14px;
       background: #ffffff;
-      min-height: 220px;
+      min-height: 260px;
     }
 
     .kid-chore-card h3 {
       margin: 0 0 4px;
-      font-size: 18px;
+      font-size: 24px;
+    }
+
+    .chore-day-section {
+      border-top: 1px solid var(--line);
+      padding-top: 10px;
+      margin-top: 10px;
+    }
+
+    .chore-day-title {
+      font-size: 15px;
+      font-weight: 900;
+      color: var(--ink);
+      margin-bottom: 8px;
+    }
+
+    .chore-admin-box {
+      margin-top: 16px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 12px;
+      background: #f8fafc;
+    }
+
+    .chore-admin-box summary {
+      cursor: pointer;
+      font-weight: 900;
+      font-size: 16px;
     }
 
     .allowance-summary {
@@ -346,6 +399,31 @@
 
     .chore-row.done { opacity: 0.72; }
     .chore-row.approved { outline: 3px solid rgba(34, 197, 94, 0.28); }
+
+    .chore-title-line {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 900;
+      line-height: 1.25;
+    }
+
+    .chore-check {
+      width: 24px;
+      height: 24px;
+      margin: 0;
+      flex: 0 0 auto;
+      accent-color: #2563eb;
+      cursor: pointer;
+    }
+
+    .bulk-help {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 800;
+      margin: 8px 0 0;
+      line-height: 1.35;
+    }
 
     .chore-meta {
       display: flex;
@@ -466,7 +544,7 @@
     }
 
     @media (max-width: 1000px) {
-      .chores-board { grid-template-columns: repeat(2, minmax(180px, 1fr)); }
+      .chore-week-view { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 800px) {
@@ -484,7 +562,7 @@
       .week-grid { grid-template-columns: repeat(7, minmax(180px, 180px)); }
       .week-grid.day-mode { grid-template-columns: minmax(0, 1fr); width: 100%; max-width: none; margin: 0; }
       .form-grid { grid-template-columns: 1fr; }
-      .chores-board { grid-template-columns: 1fr; }
+      .chore-week-view { grid-template-columns: 1fr; }
       .panel { inset: 10px; }
     }
 
@@ -867,21 +945,48 @@
 
 
   <section class="panel" id="choresPanel">
-    <h2>Kid Chores & Allowance</h2>
-    <p>Add chores for each kid. Weekly allowance is set in Settings. Each kid’s chore value automatically adjusts by dividing their weekly allowance by the number of chores assigned for that week.</p>
-    <div class="form-grid">
-      <div><label>Kid</label><select id="chorePersonInput"><option>Quade</option><option>Grayson</option><option>Easton</option><option>Reese</option></select></div>
-      <div><label>Due Date</label><input id="choreDateInput" type="date" /></div>
-      <div><label>Repeat</label><select id="choreRepeatInput"><option value="none">No repeat</option><option value="daily">Daily</option><option value="weekdays">Weekdays</option><option value="weekly">Weekly</option></select></div>
-      <div><label>Repeat End Date <small>(optional)</small></label><input id="choreRepeatEndInput" type="date" /></div>
-      <div><label>Chore</label><input id="choreTextInput" placeholder="Clean room, trash, dishes..." /></div>
+    <h2>Weekly Kid Chores</h2>
+    <p>Chores stay here only. They do not show on the main calendar or daily command center list. Kids can check off their own chores. Parent approval and delete require the PIN.</p>
+
+    <div class="chore-toolbar">
+      <div class="kid-tabs" id="choreKidTabs"></div>
+      <div class="chore-week-controls">
+        <button id="prevChoreWeekBtn">‹</button>
+        <button id="currentChoreWeekBtn">This Week</button>
+        <button id="nextChoreWeekBtn">›</button>
+        <span id="choreWeekLabel"></span>
+      </div>
     </div>
+
+    <div class="chore-week-view" id="choresBoard"></div>
+
+    <details class="chore-admin-box">
+      <summary>Parent chore setup</summary>
+      <div class="form-grid">
+        <div><label>Kid</label><select id="chorePersonInput"><option>Quade</option><option>Grayson</option><option>Easton</option><option>Reese</option></select></div>
+        <div><label>Due Date</label><input id="choreDateInput" type="date" /></div>
+        <div><label>Repeat</label><select id="choreRepeatInput"><option value="none">No repeat</option><option value="daily">Daily</option><option value="weekdays">Weekdays</option><option value="weekly">Weekly</option></select></div>
+        <div><label>Repeat End Date <small>(optional)</small></label><input id="choreRepeatEndInput" type="date" /></div>
+        <div><label>Chore</label><input id="choreTextInput" placeholder="Clean room, trash, dishes..." /></div>
+      </div>
+      <div style="margin-top:12px;">
+        <label>Bulk Import Chores</label>
+        <textarea id="bulkChoresInput" placeholder="One chore per line. Examples:
+Clean room
+Quade | Take trash out | 2026-05-27 | weekly | 2026-08-15
+Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
+        <div class="bulk-help">Simple lines use the selected kid, due date, repeat, and repeat end date above. Advanced lines can use: Kid | Chore | Due Date | Repeat | Repeat End Date.</div>
+      </div>
+      <div class="panel-actions">
+        <button id="addChoreBtn">Add Chore</button>
+        <button id="bulkImportChoresBtn">Bulk Import</button>
+        <button id="resetTodayChoresBtn">Reset This Week</button>
+      </div>
+    </details>
+
     <div class="panel-actions">
-      <button id="addChoreBtn">Add Chore</button>
-      <button id="resetTodayChoresBtn">Reset Today</button>
       <button id="closeChores">Close</button>
     </div>
-    <div class="chores-board" id="choresBoard"></div>
   </section>
 
   <section class="panel" id="weatherPanel">
@@ -1095,6 +1200,7 @@
     window.deleteChore = deleteChore;
     window.toggleChoreDone = toggleChoreDone;
     window.approveChore = approveChore;
+    window.bulkImportChores = bulkImportChores;
 
     function addDays(date, days) { const copy = new Date(date); copy.setDate(copy.getDate() + days); return copy; }
     function startOfWeek(date) { const d = new Date(date); const day = d.getDay(); d.setDate(d.getDate() - day); d.setHours(0, 0, 0, 0); return d; }
@@ -1344,18 +1450,16 @@
     }
 
     function visibleEvents(events) {
-      // Keep chores in the Chores tab by default.
-      // They only show on the calendar when that specific child is selected.
-      if (state.activePerson === "all") {
-        return events.filter(e => e.source !== "chore");
-      }
+      // Chores are intentionally excluded from the calendar.
+      // They live only in the Chores tab so the command center does not get flooded.
+      const noChores = events.filter(e => e.source !== "chore");
+      if (state.activePerson === "all") return noChores;
 
       const activeName = getPersonName(state.activePerson);
-      return events.filter(e =>
+      return noChores.filter(e =>
         e.person === state.activePerson ||
         e.person === "meal" ||
-        (e.source === "task" && e.assignedTo === activeName) ||
-        (e.source === "chore" && e.assignedTo === activeName)
+        (e.source === "task" && e.assignedTo === activeName)
       );
     }
 
@@ -1417,8 +1521,7 @@
         const dayEvents = state.events
           .filter(e => sameDay(new Date(e.date), day))
           .concat(getMealsForDay(day))
-          .concat(getTasksForDay(day))
-          .concat(getChoresForDay(day));
+          .concat(getTasksForDay(day));
 
         const filtered = visibleEvents(dayEvents);
         filtered.sort((a, b) => (a.start || "99:99").localeCompare(b.start || "99:99"));
@@ -1507,6 +1610,15 @@
 
     function money(value) {
       return `$${Number(value || 0).toFixed(2)}`;
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
     }
 
     function childKeyFromName(name) {
@@ -1602,62 +1714,188 @@
     }
 
 
-    function renderChores() {
+    function renderChoreKidTabs() {
       const kids = ["Quade", "Grayson", "Easton", "Reese"];
-      el("choresBoard").innerHTML = kids.map(kid => {
-        const key = childKeyFromName(kid);
-        const thisWeekKey = weekKeyFromDate(new Date().toISOString().slice(0, 10));
-        const weekChores = getChoresForWeek(kid, thisWeekKey);
-        const weeklyAllowance = Number(state.allowances[key] || 0);
-        const perChore = weekChores.length ? weeklyAllowance / weekChores.length : 0;
-        const earned = weekChores.filter(c => c.approved).length * perChore;
-        const personKey = detectPersonFromText(kid);
+      el("choreKidTabs").innerHTML = kids.map(kid => {
+        const key = detectPersonFromText(kid);
+        return `<button class="kid-tab ${state.activeChoreKid === kid ? "active" : ""}" data-kid="${kid}">${getPersonIcon(key)} ${kid}</button>`;
+      }).join("\n");
 
-        const rows = weekChores
-          .sort((a, b) => (a.date || "").localeCompare(b.date || ""))
-          .map(chore => {
-            const value = choreValue(chore);
-            return `
-              <div class="chore-row ${personKey} ${chore.completed ? "done" : ""} ${chore.approved ? "approved" : ""}">
-                <div>${getPersonIcon(personKey)} ${chore.text}</div>
-                <div class="chore-meta">
-                  <span class="chore-chip">${formatLocalDate(chore.occurrenceDate || chore.date)}</span>
-                  <span class="chore-chip">${chore.repeat === "none" ? "one-time" : chore.repeat}</span>
-                  ${chore.repeat !== "none" && chore.repeatEndDate ? `<span class="chore-chip">ends ${formatLocalDate(chore.repeatEndDate)}</span>` : ""}
-                  <span class="chore-chip">${money(value)}</span>
-                  <span class="chore-chip">${chore.approved ? "approved" : chore.completed ? "waiting approval" : "not done"}</span>
-                </div>
-                <div class="chore-actions">
-                  <button class="done-btn" onclick="toggleChoreDone('${chore.id}', ${!chore.completed})">${chore.completed ? "Undo" : "Mark Done"}</button>
-                  <button class="approve" onclick="approveChore('${chore.id}')">Approve</button>
-                  <button class="danger" onclick="deleteChore('${chore.id}')">Delete</button>
-                </div>
+      document.querySelectorAll(".kid-tab").forEach(btn => {
+        btn.addEventListener("click", () => {
+          state.activeChoreKid = btn.dataset.kid;
+          localStorage.setItem("activeChoreKid", state.activeChoreKid);
+          renderChores();
+        });
+      });
+    }
+
+    function renderChores() {
+      renderChoreKidTabs();
+
+      const kid = state.activeChoreKid || "Quade";
+      const personKey = detectPersonFromText(kid);
+      const weekStartKey = state.activeChoreWeekStart || weekKeyFromDate(new Date().toISOString().slice(0, 10));
+      const weekStart = parseLocalDate(weekStartKey);
+      const weekEnd = addDays(weekStart, 6);
+      const weekChores = getChoresForWeek(kid, weekStartKey).sort((a, b) => (a.occurrenceDate || a.date || "").localeCompare(b.occurrenceDate || b.date || ""));
+      const weeklyAllowance = Number(state.allowances[childKeyFromName(kid)] || 0);
+      const perChore = weekChores.length ? weeklyAllowance / weekChores.length : 0;
+      const earned = weekChores.filter(c => c.approved).length * perChore;
+      const completedCount = weekChores.filter(c => c.completed).length;
+      const approvedCount = weekChores.filter(c => c.approved).length;
+
+      el("choreWeekLabel").textContent = `${formatShortDate(weekStart)} - ${formatShortDate(weekEnd)}, ${weekEnd.getFullYear()}`;
+
+      const daysHtml = Array.from({ length: 7 }).map((_, i) => {
+        const day = addDays(weekStart, i);
+        const key = localDateKey(day);
+        const dayChores = weekChores.filter(c => (c.occurrenceDate || c.date) === key);
+        const dayLabel = day.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" });
+        const rows = dayChores.map(chore => {
+          const value = choreValue(chore);
+          return `
+            <div class="chore-row ${personKey} ${chore.completed ? "done" : ""} ${chore.approved ? "approved" : ""}">
+              <label class="chore-title-line">
+                <input class="chore-check" type="checkbox" ${chore.completed ? "checked" : ""} onchange="toggleChoreDone('${chore.id}', this.checked)">
+                <span>${escapeHtml(chore.text)}</span>
+              </label>
+              <div class="chore-meta">
+                <span class="chore-chip">${chore.repeat === "none" ? "one-time" : chore.repeat}</span>
+                ${chore.repeat !== "none" && chore.repeatEndDate ? `<span class="chore-chip">ends ${formatLocalDate(chore.repeatEndDate)}</span>` : ""}
+                <span class="chore-chip">${money(value)}</span>
+                <span class="chore-chip">${chore.approved ? "parent approved" : chore.completed ? "done - needs parent approval" : "not done"}</span>
               </div>
-            `;
-          }).join("\n") || `<div class="empty">No chores this week.</div>`;
+              <div class="chore-actions">
+                <button class="approve" onclick="approveChore('${chore.id}')">Parent Approve</button>
+                <button class="danger" onclick="deleteChore('${chore.id}')">Delete</button>
+              </div>
+            </div>
+          `;
+        }).join("\n") || `<div class="empty">No chores for ${dayLabel}.</div>`;
 
         return `
-          <div class="kid-chore-card ${personKey}">
-            <h3>${getPersonIcon(personKey)} ${kid}</h3>
-            <div class="allowance-summary">
-              Weekly allowance: ${money(weeklyAllowance)}<br>
-              Chores this week: ${weekChores.length}<br>
-              Each chore: ${money(perChore)}<br>
-              Approved earned: ${money(earned)}
-            </div>
+          <div class="chore-day-section">
+            <div class="chore-day-title">${dayLabel}</div>
             ${rows}
           </div>
         `;
       }).join("\n");
+
+      el("choresBoard").innerHTML = `
+        <div class="kid-chore-card ${personKey}">
+          <h3>${getPersonIcon(personKey)} ${kid}'s Week</h3>
+          <div class="allowance-summary">
+            Weekly allowance: ${money(weeklyAllowance)} &nbsp; | &nbsp;
+            Chores this week: ${weekChores.length} &nbsp; | &nbsp;
+            Each chore: ${money(perChore)} &nbsp; | &nbsp;
+            Checked off: ${completedCount}/${weekChores.length} &nbsp; | &nbsp;
+            Parent approved: ${approvedCount}/${weekChores.length} &nbsp; | &nbsp;
+            Approved earned: ${money(earned)}
+          </div>
+          ${daysHtml}
+        </div>
+      `;
+    }
+
+    function parseBulkChoreLine(line, defaults) {
+      const clean = String(line || "").trim();
+      if (!clean) return null;
+
+      const parts = clean.includes("|")
+        ? clean.split("|").map(x => x.trim())
+        : clean.split(",").map(x => x.trim());
+
+      const kidNames = ["Quade", "Grayson", "Easton", "Reese"];
+      const repeatOptions = ["none", "daily", "weekdays", "weekly"];
+      const first = parts[0] || "";
+      const firstKid = kidNames.find(k => k.toLowerCase() === first.toLowerCase());
+
+      let person = defaults.person;
+      let text = clean;
+      let date = defaults.date;
+      let repeat = defaults.repeat;
+      let repeatEndDate = defaults.repeatEndDate;
+
+      if (firstKid) {
+        person = firstKid;
+        text = parts[1] || "";
+        date = parts[2] || date;
+        repeat = (parts[3] || repeat || "none").toLowerCase();
+        repeatEndDate = parts[4] || repeatEndDate;
+      } else if (parts.length >= 2 && /^\d{4}-\d{2}-\d{2}$/.test(parts[1])) {
+        text = parts[0] || "";
+        date = parts[1] || date;
+        repeat = (parts[2] || repeat || "none").toLowerCase();
+        repeatEndDate = parts[3] || repeatEndDate;
+      } else {
+        text = clean;
+      }
+
+      if (!repeatOptions.includes(repeat)) repeat = "none";
+      if (repeat === "none") repeatEndDate = "";
+      return { person, text, date, repeat, repeatEndDate };
+    }
+
+    async function bulkImportChores() {
+      const raw = el("bulkChoresInput").value;
+      const defaults = {
+        person: el("chorePersonInput").value,
+        date: el("choreDateInput").value,
+        repeat: el("choreRepeatInput").value || "none",
+        repeatEndDate: el("choreRepeatInput").value === "none" ? "" : el("choreRepeatEndInput").value
+      };
+
+      if (!raw.trim()) return;
+      if (!defaults.date) {
+        window.alert("Choose a default due date before bulk importing.");
+        return;
+      }
+
+      const lines = raw.split(/\r?\n/).map(x => x.trim()).filter(Boolean);
+      const choresToAdd = [];
+
+      for (const line of lines) {
+        const parsed = parseBulkChoreLine(line, defaults);
+        if (!parsed || !parsed.text || !parsed.person || !parsed.date) continue;
+        if (parsed.repeat !== "none" && parsed.repeatEndDate && parsed.repeatEndDate < parsed.date) {
+          window.alert(`Repeat end date cannot be before due date for: ${parsed.text}`);
+          return;
+        }
+        choresToAdd.push(parsed);
+      }
+
+      if (!choresToAdd.length) {
+        window.alert("No valid chores found to import.");
+        return;
+      }
+
+      await Promise.all(choresToAdd.map(chore => addDoc(collection(db, "chores"), {
+        person: chore.person,
+        text: chore.text,
+        date: chore.date,
+        repeat: chore.repeat,
+        repeatEndDate: chore.repeatEndDate,
+        completed: false,
+        approved: false,
+        createdAt: new Date().toISOString()
+      })));
+
+      el("bulkChoresInput").value = "";
+    }
+
+    function requireParentPin(actionText) {
+      const pin = window.prompt(`Enter parent PIN to ${actionText}:`);
+      if (pin !== "101617") {
+        if (pin !== null) window.alert("Incorrect PIN. No changes were made.");
+        return false;
+      }
+      return true;
     }
 
     async function deleteChore(id) {
       if (!id) return;
-      const pin = window.prompt("Enter parent PIN to delete this chore:");
-      if (pin !== "101617") {
-        if (pin !== null) window.alert("Incorrect PIN. Chore was not deleted.");
-        return;
-      }
+      if (!requireParentPin("delete this chore")) return;
       const confirmed = window.confirm("Delete this chore? This cannot be undone.");
       if (!confirmed) return;
       await deleteDoc(doc(db, "chores", id));
@@ -1674,6 +1912,7 @@
 
     async function approveChore(id) {
       if (!id) return;
+      if (!requireParentPin("approve this chore")) return;
       await updateDoc(doc(db, "chores", id), {
         completed: true,
         approved: true,
@@ -1682,9 +1921,10 @@
     }
 
     async function resetTodayChores() {
-      const todayString = new Date().toISOString().slice(0, 10);
-      const todays = state.chores.filter(c => c.date === todayString);
-      await Promise.all(todays.map(c => updateDoc(doc(db, "chores", c.id), {
+      if (!requireParentPin("reset this week’s chores")) return;
+      const weekChores = getChoresForWeek(state.activeChoreKid || "Quade", state.activeChoreWeekStart || weekKeyFromDate(new Date().toISOString().slice(0, 10)));
+      const uniqueIds = [...new Set(weekChores.map(c => c.id).filter(Boolean))];
+      await Promise.all(uniqueIds.map(id => updateDoc(doc(db, "chores", id), {
         completed: false,
         approved: false,
         completedAt: "",
@@ -1772,10 +2012,25 @@
     });
     el("choresBtn").addEventListener("click", () => {
       setActiveSide("choresBtn");
+      if (!state.activeChoreWeekStart) state.activeChoreWeekStart = weekKeyFromDate(new Date().toISOString().slice(0, 10));
       renderChores();
       if (!el("choreDateInput").value) el("choreDateInput").value = new Date().toISOString().slice(0, 10);
+      el("chorePersonInput").value = state.activeChoreKid || "Quade";
       el("choresPanel").classList.add("open");
     });
+    el("prevChoreWeekBtn").addEventListener("click", () => {
+      state.activeChoreWeekStart = localDateKey(addDays(parseLocalDate(state.activeChoreWeekStart), -7));
+      renderChores();
+    });
+    el("nextChoreWeekBtn").addEventListener("click", () => {
+      state.activeChoreWeekStart = localDateKey(addDays(parseLocalDate(state.activeChoreWeekStart), 7));
+      renderChores();
+    });
+    el("currentChoreWeekBtn").addEventListener("click", () => {
+      state.activeChoreWeekStart = weekKeyFromDate(new Date().toISOString().slice(0, 10));
+      renderChores();
+    });
+
     el("settingsBtn").addEventListener("click", openSettings);
     el("weatherIcon").closest(".weather-box").addEventListener("click", () => {
       renderWeatherPanel();
@@ -1878,6 +2133,7 @@
       el("choreRepeatEndInput").value = "";
     });
 
+    el("bulkImportChoresBtn").addEventListener("click", bulkImportChores);
     el("resetTodayChoresBtn").addEventListener("click", resetTodayChores);
     el("closeChores").addEventListener("click", () => { el("choresPanel").classList.remove("open"); setActiveSide("calendarBtn"); });
 
