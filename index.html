@@ -516,6 +516,215 @@
     .chore-actions button.done-btn { background: #2563eb; }
 
 
+    .kids-chore-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .parent-mode-btn {
+      border: 0;
+      border-radius: 16px;
+      background: #0f172a;
+      color: white;
+      padding: 12px 16px;
+      font-weight: 900;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .chore-toolbar.clean {
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 10px;
+    }
+
+    .chore-week-view.clean {
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      align-items: start;
+      gap: 14px;
+    }
+
+    .kid-summary-card {
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 18px;
+      background: #eff6ff;
+      min-height: 190px;
+    }
+
+    .kid-summary-card h3 {
+      margin: 0 0 14px;
+      font-size: 30px;
+      font-weight: 900;
+    }
+
+    .kid-summary-lines {
+      display: grid;
+      gap: 10px;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .kid-summary-lines div {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .kid-summary-lines span { color: #475569; }
+    .kid-summary-lines strong { color: #0f172a; }
+    .kid-summary-lines .earned-line strong { color: #15803d; font-size: 20px; }
+
+    .kid-progress {
+      height: 14px;
+      border-radius: 999px;
+      background: white;
+      border: 1px solid var(--line);
+      margin-top: 16px;
+      overflow: hidden;
+    }
+
+    .kid-progress div {
+      height: 100%;
+      background: #22c55e;
+      border-radius: 999px;
+    }
+
+    .kid-checkoff-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .kid-chore-section {
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      overflow: hidden;
+      background: white;
+    }
+
+    .kid-chore-section-title {
+      background: #f1f5f9;
+      padding: 12px 16px;
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .kid-chore-list { display: grid; }
+
+    .kid-chore-row {
+      position: relative;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 8px 12px;
+      align-items: center;
+      padding: 16px;
+      border-top: 1px solid var(--line);
+      background: white;
+    }
+
+    .kid-chore-row:first-child { border-top: 0; }
+    .kid-chore-row.done .kid-chore-name { text-decoration: line-through; color: #64748b; }
+    .kid-chore-row.approved { background: #f0fdf4; }
+
+    .kid-chore-checkline {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 22px;
+      font-weight: 900;
+      cursor: pointer;
+      grid-column: 1 / -1;
+    }
+
+    .kid-chore-checkbox {
+      width: 34px;
+      height: 34px;
+      accent-color: #2563eb;
+      flex: 0 0 auto;
+      cursor: pointer;
+    }
+
+    .parent-select {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 22px;
+      height: 22px;
+    }
+
+    .kid-chore-status {
+      grid-column: 1 / -1;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      font-size: 12px;
+      font-weight: 900;
+      color: #475569;
+      padding-left: 48px;
+    }
+
+    .kid-chore-status span {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 4px 8px;
+      background: #f8fafc;
+    }
+
+    .parent-actions-inline {
+      grid-column: 1 / -1;
+      padding-left: 48px;
+    }
+
+    .chore-parent-tools { display: none; }
+    .chore-parent-tools.open { display: block; }
+    .clean-empty { padding: 16px; }
+
+    body.night-mode .chore-toolbar.clean,
+    body.night-mode .kid-chore-section,
+    body.night-mode .kid-chore-row,
+    body.night-mode .kid-checkoff-card,
+    body.night-mode .kid-summary-card {
+      background: #111827;
+      color: #e5e7eb;
+      border-color: #334155;
+    }
+
+    body.night-mode .kid-chore-section-title,
+    body.night-mode .kid-chore-status span {
+      background: #1e293b;
+      color: #cbd5e1;
+      border-color: #334155;
+    }
+
+    body.night-mode .kid-summary-lines span { color: #cbd5e1; }
+    body.night-mode .kid-summary-lines strong { color: #f8fafc; }
+    body.night-mode .kid-chore-row.approved { background: #052e16; }
+
+    @media (max-width: 900px) {
+      .chore-week-view.clean { grid-template-columns: 1fr; }
+      .kid-summary-card h3 { font-size: 26px; }
+      .kid-chore-checkline { font-size: 20px; }
+    }
+
+    @media (max-width: 600px) {
+      .kids-chore-header h2 { font-size: 24px; }
+      .parent-mode-btn { width: 100%; }
+      .kid-tabs { flex-wrap: nowrap; overflow-x: auto; width: 100%; }
+      .kid-tab { min-width: 112px; }
+      .chore-week-controls { width: 100%; justify-content: space-between; }
+      #choreWeekLabel { width: 100%; text-align: center; }
+      .kid-chore-row { padding: 14px 12px; }
+      .kid-chore-checkline { font-size: 19px; }
+      .kid-chore-checkbox { width: 32px; height: 32px; }
+      .kid-chore-status, .parent-actions-inline { padding-left: 46px; }
+    }
+
+
     body.night-mode {
       background: #020617;
       color: #e5e7eb;
@@ -999,10 +1208,15 @@
 
 
   <section class="panel" id="choresPanel">
-    <h2>Weekly Kid Chores</h2>
-    <p>Chores stay here only. They do not show on the main calendar or daily command center list. Kids can check off their own chores. Parent approval and delete require the PIN.</p>
+    <div class="kids-chore-header">
+      <div>
+        <h2>Chore Checkoff</h2>
+        <p>Chores stay here only. Kids see one simple weekly list, check off what they finish, and parents approve or delete with the PIN.</p>
+      </div>
+      <button id="parentChoreModeBtn" class="parent-mode-btn">🔒 Parent Mode</button>
+    </div>
 
-    <div class="chore-toolbar">
+    <div class="chore-toolbar clean">
       <div class="kid-tabs" id="choreKidTabs"></div>
       <div class="chore-week-controls">
         <button id="prevChoreWeekBtn">‹</button>
@@ -1012,43 +1226,45 @@
       </div>
     </div>
 
-    <div class="chore-bulk-bar">
-      <div class="chore-bulk-left">
-        <button id="selectAllVisibleChoresBtn" class="secondary">Select This Kid's Week</button>
-        <button id="clearSelectedChoresBtn" class="secondary">Clear</button>
-        <span class="chore-bulk-count" id="selectedChoreCount">0 selected</span>
-      </div>
-      <div class="chore-bulk-actions">
-        <button id="bulkApproveChoresBtn" class="approve">Approve Selected</button>
-        <button id="bulkDeleteChoresBtn" class="danger">Delete Selected</button>
-      </div>
-    </div>
+    <div class="chore-week-view clean" id="choresBoard"></div>
 
-    <div class="chore-week-view" id="choresBoard"></div>
-
-    <details class="chore-admin-box">
-      <summary>Parent chore setup</summary>
-      <div class="form-grid">
-        <div><label>Kid</label><select id="chorePersonInput"><option>Quade</option><option>Grayson</option><option>Easton</option><option>Reese</option></select></div>
-        <div><label>Due Date</label><input id="choreDateInput" type="date" /></div>
-        <div><label>Repeat</label><select id="choreRepeatInput"><option value="none">No repeat</option><option value="daily">Daily</option><option value="weekdays">Weekdays</option><option value="weekly">Weekly</option></select></div>
-        <div><label>Repeat End Date <small>(optional)</small></label><input id="choreRepeatEndInput" type="date" /></div>
-        <div><label>Chore</label><input id="choreTextInput" placeholder="Clean room, trash, dishes..." /></div>
+    <div class="chore-parent-tools" id="choreParentTools">
+      <div class="chore-bulk-bar">
+        <div class="chore-bulk-left">
+          <button id="selectAllVisibleChoresBtn" class="secondary">Select This Kid's Week</button>
+          <button id="clearSelectedChoresBtn" class="secondary">Clear</button>
+          <span class="chore-bulk-count" id="selectedChoreCount">0 selected</span>
+        </div>
+        <div class="chore-bulk-actions">
+          <button id="bulkApproveChoresBtn" class="approve">Approve Selected</button>
+          <button id="bulkDeleteChoresBtn" class="danger">Delete Selected</button>
+        </div>
       </div>
-      <div style="margin-top:12px;">
-        <label>Bulk Import Chores</label>
-        <textarea id="bulkChoresInput" placeholder="One chore per line. Examples:
+
+      <details class="chore-admin-box" open>
+        <summary>Parent chore setup</summary>
+        <div class="form-grid">
+          <div><label>Kid</label><select id="chorePersonInput"><option>Quade</option><option>Grayson</option><option>Easton</option><option>Reese</option></select></div>
+          <div><label>Due Date</label><input id="choreDateInput" type="date" /></div>
+          <div><label>Repeat</label><select id="choreRepeatInput"><option value="none">No repeat</option><option value="daily">Daily</option><option value="weekdays">Weekdays</option><option value="weekly">Weekly</option></select></div>
+          <div><label>Repeat End Date <small>(optional)</small></label><input id="choreRepeatEndInput" type="date" /></div>
+          <div><label>Chore</label><input id="choreTextInput" placeholder="Clean room, trash, dishes..." /></div>
+        </div>
+        <div style="margin-top:12px;">
+          <label>Bulk Import Chores</label>
+          <textarea id="bulkChoresInput" placeholder="One chore per line. Examples:
 Clean room
 Quade | Take trash out | 2026-05-27 | weekly | 2026-08-15
 Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
-        <div class="bulk-help">Simple lines use the selected kid, due date, repeat, and repeat end date above. Advanced lines can use: Kid | Chore | Due Date | Repeat | Repeat End Date.</div>
-      </div>
-      <div class="panel-actions">
-        <button id="addChoreBtn">Add Chore</button>
-        <button id="bulkImportChoresBtn">Bulk Import</button>
-        <button id="resetTodayChoresBtn">Reset This Week</button>
-      </div>
-    </details>
+          <div class="bulk-help">Simple lines use the selected kid, due date, repeat, and repeat end date above. Advanced lines can use: Kid | Chore | Due Date | Repeat | Repeat End Date.</div>
+        </div>
+        <div class="panel-actions">
+          <button id="addChoreBtn">Add Chore</button>
+          <button id="bulkImportChoresBtn">Bulk Import</button>
+          <button id="resetTodayChoresBtn">Reset This Week</button>
+        </div>
+      </details>
+    </div>
 
     <div class="panel-actions">
       <button id="closeChores">Close</button>
@@ -1150,6 +1366,7 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
       chores: [],
       selectedChoreIds: new Set(),
       visibleChoreIds: [],
+      parentChoreMode: false,
       allowances: JSON.parse(localStorage.getItem("allowances") || JSON.stringify({ quade: 0, grayson: 0, easton: 5, reese: 0 })),
       eventDetails: []
     };
@@ -1274,6 +1491,7 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
     window.clearSelectedChores = clearSelectedChores;
     window.bulkApproveSelectedChores = bulkApproveSelectedChores;
     window.bulkDeleteSelectedChores = bulkDeleteSelectedChores;
+    window.toggleParentChoreMode = toggleParentChoreMode;
 
     function addDays(date, days) { const copy = new Date(date); copy.setDate(copy.getDate() + days); return copy; }
     function startOfWeek(date) { const d = new Date(date); const day = d.getDay(); d.setDate(d.getDate() - day); d.setHours(0, 0, 0, 0); return d; }
@@ -1818,65 +2036,92 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
       const earned = weekChores.filter(c => c.approved).length * perChore;
       const completedCount = weekChores.filter(c => c.completed).length;
       const approvedCount = weekChores.filter(c => c.approved).length;
+      const progress = weekChores.length ? Math.round((approvedCount / weekChores.length) * 100) : 0;
       state.visibleChoreIds = [...new Set(weekChores.map(c => c.id).filter(Boolean))];
       state.selectedChoreIds = new Set([...state.selectedChoreIds].filter(id => state.visibleChoreIds.includes(id)));
 
       el("choreWeekLabel").textContent = `${formatShortDate(weekStart)} - ${formatShortDate(weekEnd)}, ${weekEnd.getFullYear()}`;
 
-      const daysHtml = Array.from({ length: 7 }).map((_, i) => {
-        const day = addDays(weekStart, i);
-        const key = localDateKey(day);
-        const dayChores = weekChores.filter(c => (c.occurrenceDate || c.date) === key);
-        const dayLabel = day.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" });
-        const rows = dayChores.map(chore => {
-          const value = choreValue(chore);
-          return `
-            <div class="chore-row ${personKey} ${chore.completed ? "done" : ""} ${chore.approved ? "approved" : ""}">
-              <label class="chore-select-line">
-                <input class="chore-select-check" type="checkbox" ${state.selectedChoreIds.has(chore.id) ? "checked" : ""} onchange="toggleChoreSelection('${chore.id}', this.checked)">
-                <span>Select for parent action</span>
-              </label>
-              <label class="chore-title-line">
-                <input class="chore-check" type="checkbox" ${chore.completed ? "checked" : ""} onchange="toggleChoreDone('${chore.id}', this.checked)">
-                <span>${escapeHtml(chore.text)}</span>
-              </label>
-              <div class="chore-meta">
-                <span class="chore-chip">${chore.repeat === "none" ? "one-time" : chore.repeat}</span>
-                ${chore.repeat !== "none" && chore.repeatEndDate ? `<span class="chore-chip">ends ${formatLocalDate(chore.repeatEndDate)}</span>` : ""}
-                <span class="chore-chip">${money(value)}</span>
-                <span class="chore-chip">${chore.approved ? "parent approved" : chore.completed ? "done - needs parent approval" : "not done"}</span>
-              </div>
-              <div class="chore-actions">
-                <button class="approve" onclick="approveChore('${chore.id}')">Parent Approve</button>
+      const todayKey = localDateKey(new Date());
+      const tomorrowKey = localDateKey(addDays(new Date(), 1));
+      const sectionDefs = [
+        { title: "Today", match: c => (c.occurrenceDate || c.date) === todayKey },
+        { title: "Tomorrow", match: c => (c.occurrenceDate || c.date) === tomorrowKey },
+        { title: "Later This Week", match: c => (c.occurrenceDate || c.date) !== todayKey && (c.occurrenceDate || c.date) !== tomorrowKey }
+      ];
+
+      function rowHtml(chore) {
+        const dateKey = chore.occurrenceDate || chore.date;
+        const dayLabel = formatLocalDate(dateKey);
+        const value = choreValue(chore);
+        return `
+          <div class="kid-chore-row ${chore.completed ? "done" : ""} ${chore.approved ? "approved" : ""}">
+            ${state.parentChoreMode ? `
+              <input class="chore-select-check parent-select" type="checkbox" title="Select for parent action" ${state.selectedChoreIds.has(chore.id) ? "checked" : ""} onchange="toggleChoreSelection('${chore.id}', this.checked)">
+            ` : ""}
+            <label class="kid-chore-checkline">
+              <input class="kid-chore-checkbox" type="checkbox" ${chore.completed ? "checked" : ""} onchange="toggleChoreDone('${chore.id}', this.checked)">
+              <span class="kid-chore-name">${escapeHtml(chore.text)}</span>
+            </label>
+            <div class="kid-chore-status">
+              <span>${dayLabel}</span>
+              <span>${money(value)}</span>
+              <span>${chore.approved ? "Parent approved" : chore.completed ? "Done — needs approval" : "Not done"}</span>
+            </div>
+            ${state.parentChoreMode ? `
+              <div class="chore-actions parent-actions-inline">
+                <button class="approve" onclick="approveChore('${chore.id}')">Approve</button>
                 <button class="danger" onclick="deleteChore('${chore.id}')">Delete</button>
               </div>
-            </div>
-          `;
-        }).join("\n") || `<div class="empty">No chores for ${dayLabel}.</div>`;
-
-        return `
-          <div class="chore-day-section">
-            <div class="chore-day-title">${dayLabel}</div>
-            ${rows}
+            ` : ""}
           </div>
+        `;
+      }
+
+      const sectionsHtml = sectionDefs.map(section => {
+        const list = weekChores.filter(section.match);
+        const rows = list.length ? list.map(rowHtml).join("\n") : `<div class="empty clean-empty">No chores here.</div>`;
+        return `
+          <section class="kid-chore-section">
+            <div class="kid-chore-section-title">${section.title}</div>
+            <div class="kid-chore-list">${rows}</div>
+          </section>
         `;
       }).join("\n");
 
       el("choresBoard").innerHTML = `
-        <div class="kid-chore-card ${personKey}">
-          <h3>${getPersonIcon(personKey)} ${kid}'s Week</h3>
-          <div class="allowance-summary">
-            Weekly allowance: ${money(weeklyAllowance)} &nbsp; | &nbsp;
-            Chores this week: ${weekChores.length} &nbsp; | &nbsp;
-            Each chore: ${money(perChore)} &nbsp; | &nbsp;
-            Checked off: ${completedCount}/${weekChores.length} &nbsp; | &nbsp;
-            Parent approved: ${approvedCount}/${weekChores.length} &nbsp; | &nbsp;
-            Approved earned: ${money(earned)}
+        <div class="kid-summary-card ${personKey}">
+          <h3>${getPersonIcon(personKey)} ${kid}</h3>
+          <div class="kid-summary-lines">
+            <div><span>Weekly allowance</span><strong>${money(weeklyAllowance)}</strong></div>
+            <div><span>Checked off</span><strong>${completedCount}/${weekChores.length}</strong></div>
+            <div><span>Parent approved</span><strong>${approvedCount}/${weekChores.length}</strong></div>
+            <div class="earned-line"><span>Approved earned</span><strong>${money(earned)}</strong></div>
           </div>
-          ${daysHtml}
+          <div class="kid-progress"><div style="width:${progress}%"></div></div>
+        </div>
+        <div class="kid-checkoff-card">
+          ${sectionsHtml}
         </div>
       `;
+
+      const parentTools = el("choreParentTools");
+      if (parentTools) parentTools.classList.toggle("open", state.parentChoreMode);
+      const parentBtn = el("parentChoreModeBtn");
+      if (parentBtn) parentBtn.textContent = state.parentChoreMode ? "🔓 Exit Parent Mode" : "🔒 Parent Mode";
       updateBulkSelectionUi();
+    }
+
+    function toggleParentChoreMode() {
+      if (state.parentChoreMode) {
+        state.parentChoreMode = false;
+        state.selectedChoreIds.clear();
+        renderChores();
+        return;
+      }
+      if (!requireParentPin("enter parent mode")) return;
+      state.parentChoreMode = true;
+      renderChores();
     }
 
     function updateBulkSelectionUi() {
@@ -2173,6 +2418,7 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
       state.selectedChoreIds.clear();
       renderChores();
     });
+    el("parentChoreModeBtn").addEventListener("click", toggleParentChoreMode);
     el("selectAllVisibleChoresBtn").addEventListener("click", selectVisibleChores);
     el("clearSelectedChoresBtn").addEventListener("click", clearSelectedChores);
     el("bulkApproveChoresBtn").addEventListener("click", bulkApproveSelectedChores);
