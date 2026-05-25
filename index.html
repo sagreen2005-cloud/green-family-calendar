@@ -331,6 +331,49 @@
     .chore-week-controls button { border: 0; border-radius: 999px; background: #0f172a; color: white; padding: 10px 14px; font-weight: 900; cursor: pointer; }
     #choreWeekLabel { font-weight: 900; color: var(--muted); }
 
+    .chore-bulk-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #f8fafc;
+    }
+
+    .chore-bulk-left,
+    .chore-bulk-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .chore-bulk-count {
+      font-weight: 900;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .chore-bulk-bar button {
+      border: 0;
+      border-radius: 999px;
+      background: #0f172a;
+      color: white;
+      padding: 9px 12px;
+      font-weight: 900;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .chore-bulk-bar button.approve { background: #16a34a; }
+    .chore-bulk-bar button.danger { background: #ef4444; }
+    .chore-bulk-bar button.secondary { background: #475569; }
+    .chore-bulk-bar button:disabled { opacity: 0.45; cursor: not-allowed; }
+
     .chore-week-view {
       display: grid;
       grid-template-columns: 1fr;
@@ -408,13 +451,23 @@
       line-height: 1.25;
     }
 
-    .chore-check {
+    .chore-check,
+    .chore-select-check {
       width: 24px;
       height: 24px;
       margin: 0;
       flex: 0 0 auto;
       accent-color: #2563eb;
       cursor: pointer;
+    }
+
+    .chore-select-line {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
     }
 
     .bulk-help {
@@ -527,6 +580,7 @@
     body.night-mode .weather-box:hover { background: #1e293b; }
     body.night-mode .empty { color: #94a3b8; }
     body.night-mode .chore-row { background: rgba(15, 23, 42, 0.82); border-color: #334155; }
+    body.night-mode .chore-bulk-bar { background: rgba(15, 23, 42, 0.82); border-color: #334155; }
     body.night-mode .chore-chip { background: rgba(30, 41, 59, 0.9); color: #e5e7eb; border-color: #475569; }
     body.night-mode .event-meta,
     body.night-mode .event-time { color: #1f2937; }
@@ -958,6 +1012,18 @@
       </div>
     </div>
 
+    <div class="chore-bulk-bar">
+      <div class="chore-bulk-left">
+        <button id="selectAllVisibleChoresBtn" class="secondary">Select This Kid's Week</button>
+        <button id="clearSelectedChoresBtn" class="secondary">Clear</button>
+        <span class="chore-bulk-count" id="selectedChoreCount">0 selected</span>
+      </div>
+      <div class="chore-bulk-actions">
+        <button id="bulkApproveChoresBtn" class="approve">Approve Selected</button>
+        <button id="bulkDeleteChoresBtn" class="danger">Delete Selected</button>
+      </div>
+    </div>
+
     <div class="chore-week-view" id="choresBoard"></div>
 
     <details class="chore-admin-box">
@@ -1082,6 +1148,8 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
       meals: [],
       tasks: [],
       chores: [],
+      selectedChoreIds: new Set(),
+      visibleChoreIds: [],
       allowances: JSON.parse(localStorage.getItem("allowances") || JSON.stringify({ quade: 0, grayson: 0, easton: 5, reese: 0 })),
       eventDetails: []
     };
@@ -1201,6 +1269,11 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
     window.toggleChoreDone = toggleChoreDone;
     window.approveChore = approveChore;
     window.bulkImportChores = bulkImportChores;
+    window.toggleChoreSelection = toggleChoreSelection;
+    window.selectVisibleChores = selectVisibleChores;
+    window.clearSelectedChores = clearSelectedChores;
+    window.bulkApproveSelectedChores = bulkApproveSelectedChores;
+    window.bulkDeleteSelectedChores = bulkDeleteSelectedChores;
 
     function addDays(date, days) { const copy = new Date(date); copy.setDate(copy.getDate() + days); return copy; }
     function startOfWeek(date) { const d = new Date(date); const day = d.getDay(); d.setDate(d.getDate() - day); d.setHours(0, 0, 0, 0); return d; }
@@ -1724,6 +1797,7 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
       document.querySelectorAll(".kid-tab").forEach(btn => {
         btn.addEventListener("click", () => {
           state.activeChoreKid = btn.dataset.kid;
+          state.selectedChoreIds.clear();
           localStorage.setItem("activeChoreKid", state.activeChoreKid);
           renderChores();
         });
@@ -1744,6 +1818,8 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
       const earned = weekChores.filter(c => c.approved).length * perChore;
       const completedCount = weekChores.filter(c => c.completed).length;
       const approvedCount = weekChores.filter(c => c.approved).length;
+      state.visibleChoreIds = [...new Set(weekChores.map(c => c.id).filter(Boolean))];
+      state.selectedChoreIds = new Set([...state.selectedChoreIds].filter(id => state.visibleChoreIds.includes(id)));
 
       el("choreWeekLabel").textContent = `${formatShortDate(weekStart)} - ${formatShortDate(weekEnd)}, ${weekEnd.getFullYear()}`;
 
@@ -1756,6 +1832,10 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
           const value = choreValue(chore);
           return `
             <div class="chore-row ${personKey} ${chore.completed ? "done" : ""} ${chore.approved ? "approved" : ""}">
+              <label class="chore-select-line">
+                <input class="chore-select-check" type="checkbox" ${state.selectedChoreIds.has(chore.id) ? "checked" : ""} onchange="toggleChoreSelection('${chore.id}', this.checked)">
+                <span>Select for parent action</span>
+              </label>
               <label class="chore-title-line">
                 <input class="chore-check" type="checkbox" ${chore.completed ? "checked" : ""} onchange="toggleChoreDone('${chore.id}', this.checked)">
                 <span>${escapeHtml(chore.text)}</span>
@@ -1796,6 +1876,60 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
           ${daysHtml}
         </div>
       `;
+      updateBulkSelectionUi();
+    }
+
+    function updateBulkSelectionUi() {
+      const count = state.selectedChoreIds.size;
+      const countEl = el("selectedChoreCount");
+      if (countEl) countEl.textContent = `${count} selected`;
+      const approveBtn = el("bulkApproveChoresBtn");
+      const deleteBtn = el("bulkDeleteChoresBtn");
+      const clearBtn = el("clearSelectedChoresBtn");
+      if (approveBtn) approveBtn.disabled = count === 0;
+      if (deleteBtn) deleteBtn.disabled = count === 0;
+      if (clearBtn) clearBtn.disabled = count === 0;
+    }
+
+    function toggleChoreSelection(id, selected) {
+      if (!id) return;
+      if (selected) state.selectedChoreIds.add(id);
+      else state.selectedChoreIds.delete(id);
+      updateBulkSelectionUi();
+    }
+
+    function selectVisibleChores() {
+      state.visibleChoreIds.forEach(id => state.selectedChoreIds.add(id));
+      renderChores();
+    }
+
+    function clearSelectedChores() {
+      state.selectedChoreIds.clear();
+      renderChores();
+    }
+
+    async function bulkApproveSelectedChores() {
+      const ids = [...state.selectedChoreIds];
+      if (!ids.length) return;
+      if (!requireParentPin(`approve ${ids.length} selected chore${ids.length === 1 ? "" : "s"}`)) return;
+      await Promise.all(ids.map(id => updateDoc(doc(db, "chores", id), {
+        completed: true,
+        approved: true,
+        approvedAt: new Date().toISOString()
+      })));
+      state.selectedChoreIds.clear();
+      renderChores();
+    }
+
+    async function bulkDeleteSelectedChores() {
+      const ids = [...state.selectedChoreIds];
+      if (!ids.length) return;
+      if (!requireParentPin(`delete ${ids.length} selected chore${ids.length === 1 ? "" : "s"}`)) return;
+      const confirmed = window.confirm(`Delete ${ids.length} selected chore${ids.length === 1 ? "" : "s"}? This cannot be undone.`);
+      if (!confirmed) return;
+      await Promise.all(ids.map(id => deleteDoc(doc(db, "chores", id))));
+      state.selectedChoreIds.clear();
+      renderChores();
     }
 
     function parseBulkChoreLine(line, defaults) {
@@ -1899,6 +2033,8 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
       const confirmed = window.confirm("Delete this chore? This cannot be undone.");
       if (!confirmed) return;
       await deleteDoc(doc(db, "chores", id));
+      state.selectedChoreIds.delete(id);
+      updateBulkSelectionUi();
     }
 
     async function toggleChoreDone(id, completed) {
@@ -1918,6 +2054,8 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
         approved: true,
         approvedAt: new Date().toISOString()
       });
+      state.selectedChoreIds.delete(id);
+      updateBulkSelectionUi();
     }
 
     async function resetTodayChores() {
@@ -1992,6 +2130,8 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
 
       onSnapshot(collection(db, "chores"), snapshot => {
         state.chores = snapshot.docs.map(d => ({ id: d.id, ...d.data() })).filter(c => !isOlderThan15Days(c.repeatEndDate || c.date));
+        const existingIds = new Set(state.chores.map(c => c.id));
+        state.selectedChoreIds = new Set([...state.selectedChoreIds].filter(id => existingIds.has(id)));
         renderChores();
         renderCalendar();
       });
@@ -2020,16 +2160,23 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
     });
     el("prevChoreWeekBtn").addEventListener("click", () => {
       state.activeChoreWeekStart = localDateKey(addDays(parseLocalDate(state.activeChoreWeekStart), -7));
+      state.selectedChoreIds.clear();
       renderChores();
     });
     el("nextChoreWeekBtn").addEventListener("click", () => {
       state.activeChoreWeekStart = localDateKey(addDays(parseLocalDate(state.activeChoreWeekStart), 7));
+      state.selectedChoreIds.clear();
       renderChores();
     });
     el("currentChoreWeekBtn").addEventListener("click", () => {
       state.activeChoreWeekStart = weekKeyFromDate(new Date().toISOString().slice(0, 10));
+      state.selectedChoreIds.clear();
       renderChores();
     });
+    el("selectAllVisibleChoresBtn").addEventListener("click", selectVisibleChores);
+    el("clearSelectedChoresBtn").addEventListener("click", clearSelectedChores);
+    el("bulkApproveChoresBtn").addEventListener("click", bulkApproveSelectedChores);
+    el("bulkDeleteChoresBtn").addEventListener("click", bulkDeleteSelectedChores);
 
     el("settingsBtn").addEventListener("click", openSettings);
     el("weatherIcon").closest(".weather-box").addEventListener("click", () => {
