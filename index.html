@@ -1978,6 +1978,52 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
       return weeklyAllowance / weekChores.length;
     }
 
+    function choreOccurrenceKey(chore) {
+      return `${chore.id}__${chore.occurrenceDate || chore.date}`;
+    }
+
+    function parseChoreOccurrenceKey(key) {
+      const parts = String(key || "").split("__");
+      return { id: parts[0] || "", occurrenceDate: parts[1] || "" };
+    }
+
+    function getChoreOccurrenceStatus(chore) {
+      const dateKey = chore.occurrenceDate || chore.date;
+      const saved = chore.occurrences && chore.occurrences[dateKey];
+      if (saved) {
+        return {
+          completed: Boolean(saved.completed),
+          approved: Boolean(saved.approved),
+          completedAt: saved.completedAt || "",
+          approvedAt: saved.approvedAt || ""
+        };
+      }
+
+      // Old chores saved before this fix used one completed/approved flag for the whole repeating chore.
+      // Only use that old flag for non-repeating chores so one checked repeat does not check every date.
+      if (!chore.repeat || chore.repeat === "none") {
+        return {
+          completed: Boolean(chore.completed),
+          approved: Boolean(chore.approved),
+          completedAt: chore.completedAt || "",
+          approvedAt: chore.approvedAt || ""
+        };
+      }
+
+      return { completed: false, approved: false, completedAt: "", approvedAt: "" };
+    }
+
+    async function saveChoreOccurrenceStatus(id, occurrenceDate, changes) {
+      const chore = state.chores.find(c => c.id === id);
+      if (!chore || !occurrenceDate) return;
+      const occurrences = { ...(chore.occurrences || {}) };
+      occurrences[occurrenceDate] = {
+        ...(occurrences[occurrenceDate] || {}),
+        ...changes
+      };
+      await updateDoc(doc(db, "chores", id), { occurrences });
+    }
+
     function getChoresForDay(day) {
       return state.chores
         .filter(c => choreAppliesOnDate(c, day))
@@ -2033,11 +2079,11 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
       const weekChores = getChoresForWeek(kid, weekStartKey).sort((a, b) => (a.occurrenceDate || a.date || "").localeCompare(b.occurrenceDate || b.date || ""));
       const weeklyAllowance = Number(state.allowances[childKeyFromName(kid)] || 0);
       const perChore = weekChores.length ? weeklyAllowance / weekChores.length : 0;
-      const earned = weekChores.filter(c => c.approved).length * perChore;
-      const completedCount = weekChores.filter(c => c.completed).length;
-      const approvedCount = weekChores.filter(c => c.approved).length;
+      const completedCount = weekChores.filter(c => getChoreOccurrenceStatus(c).completed).length;
+      const approvedCount = weekChores.filter(c => getChoreOccurrenceStatus(c).approved).length;
+      const earned = approvedCount * perChore;
       const progress = weekChores.length ? Math.round((approvedCount / weekChores.length) * 100) : 0;
-      state.visibleChoreIds = [...new Set(weekChores.map(c => c.id).filter(Boolean))];
+      state.visibleChoreIds = weekChores.map(choreOccurrenceKey).filter(Boolean);
       state.selectedChoreIds = new Set([...state.selectedChoreIds].filter(id => state.visibleChoreIds.includes(id)));
 
       el("choreWeekLabel").textContent = `${formatShortDate(weekStart)} - ${formatShortDate(weekEnd)}, ${weekEnd.getFullYear()}`;
@@ -2052,25 +2098,27 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
 
       function rowHtml(chore) {
         const dateKey = chore.occurrenceDate || chore.date;
+        const occurrenceKey = choreOccurrenceKey(chore);
+        const status = getChoreOccurrenceStatus(chore);
         const dayLabel = formatLocalDate(dateKey);
         const value = choreValue(chore);
         return `
-          <div class="kid-chore-row ${chore.completed ? "done" : ""} ${chore.approved ? "approved" : ""}">
+          <div class="kid-chore-row ${status.completed ? "done" : ""} ${status.approved ? "approved" : ""}">
             ${state.parentChoreMode ? `
-              <input class="chore-select-check parent-select" type="checkbox" title="Select for parent action" ${state.selectedChoreIds.has(chore.id) ? "checked" : ""} onchange="toggleChoreSelection('${chore.id}', this.checked)">
+              <input class="chore-select-check parent-select" type="checkbox" title="Select for parent action" ${state.selectedChoreIds.has(occurrenceKey) ? "checked" : ""} onchange="toggleChoreSelection('${occurrenceKey}', this.checked)">
             ` : ""}
             <label class="kid-chore-checkline">
-              <input class="kid-chore-checkbox" type="checkbox" ${chore.completed ? "checked" : ""} onchange="toggleChoreDone('${chore.id}', this.checked)">
+              <input class="kid-chore-checkbox" type="checkbox" ${status.completed ? "checked" : ""} onchange="toggleChoreDone('${chore.id}', '${dateKey}', this.checked)">
               <span class="kid-chore-name">${escapeHtml(chore.text)}</span>
             </label>
             <div class="kid-chore-status">
               <span>${dayLabel}</span>
               <span>${money(value)}</span>
-              <span>${chore.approved ? "Parent approved" : chore.completed ? "Done — needs approval" : "Not done"}</span>
+              <span>${status.approved ? "Parent approved" : status.completed ? "Done — needs approval" : "Not done"}</span>
             </div>
             ${state.parentChoreMode ? `
               <div class="chore-actions parent-actions-inline">
-                <button class="approve" onclick="approveChore('${chore.id}')">Approve</button>
+                <button class="approve" onclick="approveChore('${chore.id}', '${dateKey}')">Approve</button>
                 <button class="danger" onclick="deleteChore('${chore.id}')">Delete</button>
               </div>
             ` : ""}
@@ -2154,14 +2202,18 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
     }
 
     async function bulkApproveSelectedChores() {
-      const ids = [...state.selectedChoreIds];
-      if (!ids.length) return;
-      if (!requireParentPin(`approve ${ids.length} selected chore${ids.length === 1 ? "" : "s"}`)) return;
-      await Promise.all(ids.map(id => updateDoc(doc(db, "chores", id), {
-        completed: true,
-        approved: true,
-        approvedAt: new Date().toISOString()
-      })));
+      const selected = [...state.selectedChoreIds];
+      if (!selected.length) return;
+      if (!requireParentPin(`approve ${selected.length} selected chore${selected.length === 1 ? "" : "s"}`)) return;
+      await Promise.all(selected.map(key => {
+        const parsed = parseChoreOccurrenceKey(key);
+        return saveChoreOccurrenceStatus(parsed.id, parsed.occurrenceDate, {
+          completed: true,
+          approved: true,
+          completedAt: new Date().toISOString(),
+          approvedAt: new Date().toISOString()
+        });
+      }));
       state.selectedChoreIds.clear();
       renderChores();
     }
@@ -2257,6 +2309,7 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
         repeatEndDate: chore.repeatEndDate,
         completed: false,
         approved: false,
+        occurrences: {},
         createdAt: new Date().toISOString()
       })));
 
@@ -2282,37 +2335,40 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
       updateBulkSelectionUi();
     }
 
-    async function toggleChoreDone(id, completed) {
-      if (!id) return;
-      await updateDoc(doc(db, "chores", id), {
+    async function toggleChoreDone(id, occurrenceDate, completed) {
+      if (!id || !occurrenceDate) return;
+      await saveChoreOccurrenceStatus(id, occurrenceDate, {
         completed,
-        approved: completed ? false : false,
-        completedAt: completed ? new Date().toISOString() : ""
+        approved: false,
+        completedAt: completed ? new Date().toISOString() : "",
+        approvedAt: ""
       });
     }
 
-    async function approveChore(id) {
-      if (!id) return;
+    async function approveChore(id, occurrenceDate) {
+      if (!id || !occurrenceDate) return;
       if (!requireParentPin("approve this chore")) return;
-      await updateDoc(doc(db, "chores", id), {
+      await saveChoreOccurrenceStatus(id, occurrenceDate, {
         completed: true,
         approved: true,
+        completedAt: new Date().toISOString(),
         approvedAt: new Date().toISOString()
       });
-      state.selectedChoreIds.delete(id);
+      state.selectedChoreIds.delete(`${id}__${occurrenceDate}`);
       updateBulkSelectionUi();
     }
 
     async function resetTodayChores() {
       if (!requireParentPin("reset this week’s chores")) return;
       const weekChores = getChoresForWeek(state.activeChoreKid || "Quade", state.activeChoreWeekStart || weekKeyFromDate(new Date().toISOString().slice(0, 10)));
-      const uniqueIds = [...new Set(weekChores.map(c => c.id).filter(Boolean))];
-      await Promise.all(uniqueIds.map(id => updateDoc(doc(db, "chores", id), {
+      await Promise.all(weekChores.map(chore => saveChoreOccurrenceStatus(chore.id, chore.occurrenceDate || chore.date, {
         completed: false,
         approved: false,
         completedAt: "",
         approvedAt: ""
       })));
+      state.selectedChoreIds.clear();
+      renderChores();
     }
 
     async function deleteMeal(index) {
@@ -2520,6 +2576,7 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
         repeatEndDate,
         completed: false,
         approved: false,
+        occurrences: {},
         createdAt: new Date().toISOString()
       });
       el("choreTextInput").value = "";
