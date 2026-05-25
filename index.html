@@ -1116,6 +1116,7 @@
           <button class="control-btn active" id="dayModeBtn">Day</button>
           <button class="control-btn" id="weekModeBtn">Week</button>
           <button class="control-btn primary" id="todayBtn">Today</button>
+          <button class="control-btn" id="addAppEventBtn">Add Event</button>
           <button class="control-btn" id="themeModeBtn" title="Auto night mode">🌙 Auto</button>
           <button class="control-btn" id="refreshBtn">Refresh</button>
         </div>
@@ -1189,6 +1190,25 @@
       <button id="closeMeals">Close</button>
     </div>
     <div class="simple-list" id="mealsList"></div>
+  </section>
+
+  <section class="panel" id="appEventPanel">
+    <h2>Add Calendar Event</h2>
+    <p>This event stays inside the family command center and syncs across devices through Firebase. It does not add anything to Google Calendar.</p>
+    <div class="form-grid">
+      <div><label>Assigned To</label><select id="appEventPersonInput"><option>Family</option><option>Mom</option><option>Dad</option><option>Quade</option><option>Grayson</option><option>Easton</option><option>Reese</option></select></div>
+      <div><label>Event Date</label><input id="appEventDateInput" type="date" /></div>
+      <div><label>Start Time</label><input id="appEventStartInput" type="time" /></div>
+      <div><label>End Time</label><input id="appEventEndInput" type="time" /></div>
+      <div><label>Event Title</label><input id="appEventTitleInput" placeholder="Practice, appointment, family activity..." /></div>
+      <div><label>All Day</label><select id="appEventAllDayInput"><option value="false">No</option><option value="true">Yes</option></select></div>
+      <div style="grid-column: 1 / -1;"><label>Note / Location</label><input id="appEventNoteInput" placeholder="Optional note, address, jersey color, reminder..." /></div>
+    </div>
+    <div class="panel-actions">
+      <button id="saveAppEventBtn">Save Event</button>
+      <button id="closeAppEventPanel">Close</button>
+    </div>
+    <div class="simple-list" id="appEventsList"></div>
   </section>
 
   <section class="panel" id="tasksPanel">
@@ -1289,8 +1309,10 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
       <div class="simple-item"><span><strong>Date:</strong> <span id="eventDetailDate"></span></span></div>
       <div class="simple-item"><span><strong>Time:</strong> <span id="eventDetailTime"></span></span></div>
       <div class="simple-item"><span><strong>Source:</strong> <span id="eventDetailSource"></span></span></div>
+      <div class="simple-item" id="eventDetailNoteRow"><span><strong>Note:</strong> <span id="eventDetailNote"></span></span></div>
     </div>
     <div class="panel-actions">
+      <button id="deleteAppEventDetailBtn" style="display:none;background:#ef4444;">Delete App Event</button>
       <button id="closeEventDetail">Close</button>
     </div>
   </section>
@@ -1361,6 +1383,7 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
         });
       })(),
       events: [],
+      appEvents: [],
       meals: [],
       tasks: [],
       chores: [],
@@ -1480,6 +1503,7 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
     }
 
     window.openEventDetail = openEventDetail;
+    window.deleteAppEvent = deleteAppEvent;
     window.deleteMeal = deleteMeal;
     window.deleteTask = deleteTask;
     window.deleteChore = deleteChore;
@@ -1740,6 +1764,23 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
         .map(t => ({ title: `${t.person}: ${t.text} ☑️`, assignedTo: t.person, person: detectPersonFromText(t.person), date: day.toISOString(), start: "", end: "", allDay: true, source: "task" }));
     }
 
+    function getAppEventsForDay(day) {
+      return state.appEvents
+        .filter(e => e.date && sameDay(new Date(e.date + "T00:00:00"), day))
+        .map(e => ({
+          id: e.id,
+          title: e.title || "Untitled Event",
+          note: e.note || "",
+          assignedTo: e.person || "Family",
+          person: detectPersonFromText(e.person || "Family"),
+          date: new Date(e.date + "T00:00:00").toISOString(),
+          start: e.allDay ? "" : (e.start || ""),
+          end: e.allDay ? "" : (e.end || ""),
+          allDay: Boolean(e.allDay),
+          source: "appEvent"
+        }));
+    }
+
     function visibleEvents(events) {
       // Chores are intentionally excluded from the calendar.
       // They live only in the Chores tab so the command center does not get flooded.
@@ -1812,7 +1853,8 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
         const dayEvents = state.events
           .filter(e => sameDay(new Date(e.date), day))
           .concat(getMealsForDay(day))
-          .concat(getTasksForDay(day));
+          .concat(getTasksForDay(day))
+          .concat(getAppEventsForDay(day));
 
         const filtered = visibleEvents(dayEvents);
         filtered.sort((a, b) => (a.start || "99:99").localeCompare(b.start || "99:99"));
@@ -1858,7 +1900,12 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
       el("eventDetailPerson").textContent = getEventPersonLabel(event);
       el("eventDetailDate").textContent = date.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
       el("eventDetailTime").textContent = event.start ? `${formatTime(event.start)} - ${formatTime(event.end)}` : "All day";
-      el("eventDetailSource").textContent = event.source === "google" ? "Google Calendar" : event.source === "meal" ? "Meal Plan" : event.source === "task" ? "Task" : event.source === "chore" ? "Chore" : "Event";
+      el("eventDetailSource").textContent = event.source === "google" ? "Google Calendar" : event.source === "appEvent" ? "Family App Event" : event.source === "meal" ? "Meal Plan" : event.source === "task" ? "Task" : event.source === "chore" ? "Chore" : "Event";
+      el("eventDetailNote").textContent = event.note || "None";
+      el("eventDetailNoteRow").style.display = event.note ? "flex" : "none";
+      const deleteBtn = el("deleteAppEventDetailBtn");
+      deleteBtn.style.display = event.source === "appEvent" && event.id ? "inline-block" : "none";
+      deleteBtn.dataset.eventId = event.id || "";
       el("eventDetailPanel").classList.add("open");
     }
 
@@ -2371,6 +2418,25 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
       renderChores();
     }
 
+    function renderAppEventsList() {
+      if (!el("appEventsList")) return;
+      const upcoming = [...state.appEvents]
+        .sort((a, b) => `${a.date || ""} ${a.start || "99:99"}`.localeCompare(`${b.date || ""} ${b.start || "99:99"}`))
+        .slice(0, 25);
+      el("appEventsList").innerHTML = upcoming.map(e => {
+        const personKey = detectPersonFromText(e.person || "Family");
+        const timeText = e.allDay ? "All day" : `${formatTime(e.start || "")} ${e.end ? "- " + formatTime(e.end) : ""}`.trim();
+        return `<div class="simple-item ${personKey}"><span><strong>${formatLocalDate(e.date)}</strong> — ${escapeHtml(e.person || "Family")}: ${escapeHtml(e.title || "Untitled")} <em>${timeText}</em></span><button onclick="deleteAppEvent('${e.id}')">Delete</button></div>`;
+      }).join("") || `<div class="simple-item">No app-only events added yet.</div>`;
+    }
+
+    async function deleteAppEvent(id) {
+      if (!id) return;
+      const ok = confirm("Delete this app-only calendar event?");
+      if (!ok) return;
+      await deleteDoc(doc(db, "appEvents", id));
+    }
+
     async function deleteMeal(index) {
       const item = state.meals[index];
       if (item?.id) await deleteDoc(doc(db, "meals", item.id));
@@ -2417,6 +2483,12 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
         }
       });
 
+      onSnapshot(collection(db, "appEvents"), snapshot => {
+        state.appEvents = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+        renderAppEventsList();
+        renderCalendar();
+      });
+
       onSnapshot(collection(db, "meals"), snapshot => {
         state.meals = snapshot.docs.map(d => ({ id: d.id, ...d.data() })).filter(m => !isOlderThan15Days(m.date));
         renderMeals();
@@ -2439,6 +2511,46 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
     }
 
     el("calendarBtn").addEventListener("click", () => { setActiveSide("calendarBtn"); renderCalendar(); });
+    el("addAppEventBtn").addEventListener("click", () => {
+      setActiveSide("calendarBtn");
+      if (!el("appEventDateInput").value) el("appEventDateInput").value = state.selectedDate.toISOString().slice(0, 10);
+      renderAppEventsList();
+      el("appEventPanel").classList.add("open");
+    });
+
+    el("saveAppEventBtn").addEventListener("click", async () => {
+      const title = el("appEventTitleInput").value.trim();
+      const date = el("appEventDateInput").value;
+      const allDay = el("appEventAllDayInput").value === "true";
+      const start = el("appEventStartInput").value;
+      const end = el("appEventEndInput").value;
+      if (!title || !date) return alert("Add an event title and date.");
+      if (!allDay && start && end && end < start) return alert("End time cannot be before start time.");
+      await addDoc(collection(db, "appEvents"), {
+        person: el("appEventPersonInput").value,
+        title,
+        date,
+        start: allDay ? "" : start,
+        end: allDay ? "" : end,
+        allDay,
+        note: el("appEventNoteInput").value.trim(),
+        createdAt: new Date().toISOString()
+      });
+      el("appEventTitleInput").value = "";
+      el("appEventStartInput").value = "";
+      el("appEventEndInput").value = "";
+      el("appEventNoteInput").value = "";
+    });
+
+    el("closeAppEventPanel").addEventListener("click", () => { el("appEventPanel").classList.remove("open"); setActiveSide("calendarBtn"); });
+
+    el("deleteAppEventDetailBtn").addEventListener("click", async () => {
+      const id = el("deleteAppEventDetailBtn").dataset.eventId;
+      if (!id) return;
+      await deleteAppEvent(id);
+      el("eventDetailPanel").classList.remove("open");
+    });
+
     el("tasksBtn").addEventListener("click", () => {
       setActiveSide("tasksBtn");
       renderTasks();
