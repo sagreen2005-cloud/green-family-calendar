@@ -1079,6 +1079,84 @@
       }
     }
 
+
+    .alert-list-card {
+      border: 2px solid #f97316;
+      background: #fff7ed;
+      border-radius: 16px;
+      padding: 14px;
+      display: grid;
+      gap: 8px;
+      font-weight: 900;
+    }
+
+    .alert-list-title { font-size: 18px; font-weight: 1000; color: #7c2d12; }
+    .alert-list-meta { color: #7c2d12; font-size: 13px; line-height: 1.35; }
+    .alert-list-message { color: #111827; font-size: 14px; line-height: 1.35; }
+
+    .alert-popup-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.48);
+      z-index: 80;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .alert-popup-backdrop.open { display: flex; }
+
+    .alert-popup {
+      width: min(92vw, 680px);
+      border: 6px solid #111827;
+      border-radius: 28px;
+      background: linear-gradient(135deg, #fef08a 0%, #fb923c 52%, #ef4444 100%);
+      color: #111827;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.42);
+      overflow: hidden;
+      animation: alertPulse 1.4s ease-in-out infinite alternate;
+    }
+
+    body.night .alert-popup {
+      background: linear-gradient(135deg, #fde047 0%, #fb923c 50%, #facc15 100%);
+      border-color: #ffffff;
+      color: #000000;
+    }
+
+    @keyframes alertPulse {
+      from { transform: scale(1); }
+      to { transform: scale(1.015); }
+    }
+
+    .alert-popup-top {
+      background: rgba(17, 24, 39, 0.92);
+      color: #ffffff;
+      padding: 16px 20px;
+      font-size: 24px;
+      font-weight: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .alert-popup-body { padding: 24px; }
+    .alert-popup-title { font-size: clamp(28px, 5vw, 48px); line-height: 1; font-weight: 1000; margin: 0 0 14px; text-transform: uppercase; }
+    .alert-popup-message { font-size: clamp(19px, 3vw, 28px); line-height: 1.25; font-weight: 900; margin-bottom: 18px; }
+    .alert-popup-meta { background: rgba(255,255,255,0.72); border: 2px solid rgba(17,24,39,0.28); border-radius: 18px; padding: 12px; font-size: 15px; font-weight: 1000; }
+    .alert-popup-actions { display: flex; gap: 10px; flex-wrap: wrap; padding: 0 24px 24px; }
+    .alert-popup-actions button { border: 0; border-radius: 16px; padding: 14px 18px; background: #111827; color: white; font-weight: 1000; font-size: 16px; cursor: pointer; }
+    .alert-popup-actions button.secondary { background: #ffffff; color: #111827; border: 2px solid #111827; }
+
+    @media (max-width: 600px) {
+      .alert-popup { width: 96vw; border-width: 4px; border-radius: 22px; }
+      .alert-popup-top { font-size: 19px; padding: 12px 14px; }
+      .alert-popup-body { padding: 18px; }
+      .alert-popup-actions { padding: 0 18px 18px; }
+      .alert-popup-actions button { flex: 1; min-width: 140px; }
+    }
+
   </style>
 </head>
 
@@ -1096,6 +1174,7 @@
       <button class="side-item" id="tasksBtn"><span>☑️</span><span>Tasks</span></button>
       <button class="side-item" id="mealsBtn"><span>🍽️</span><span>Meals</span></button>
       <button class="side-item" id="choresBtn"><span>🧹</span><span>Chores</span></button>
+      <button class="side-item" id="alertsBtn"><span>🚨</span><span>Alerts</span></button>
       <button class="side-item" id="settingsBtn"><span>⚙️</span><span>Settings</span></button>
     </aside>
 
@@ -1291,6 +1370,38 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
     </div>
   </section>
 
+
+  <section class="panel" id="alertsPanel">
+    <h2>Important Alerts</h2>
+    <p>Create high-contrast pop-up alerts for family reminders. Active alerts reappear every 5 minutes after being closed.</p>
+    <div class="form-grid">
+      <div><label>Alert Title</label><input id="alertTitleInput" placeholder="Dad is sleeping for work" /></div>
+      <div><label>Priority</label><select id="alertPriorityInput"><option value="high">High</option><option value="critical">Critical</option><option value="normal">Normal</option></select></div>
+      <div><label>Start Date</label><input id="alertStartDateInput" type="date" /></div>
+      <div><label>End Date</label><input id="alertEndDateInput" type="date" /></div>
+      <div><label>Start Time</label><input id="alertStartTimeInput" type="time" /></div>
+      <div><label>End Time</label><input id="alertEndTimeInput" type="time" /></div>
+      <div><label>Repeat</label><select id="alertRepeatInput"><option value="none">Does not repeat</option><option value="daily">Daily</option><option value="weekdays">Weekdays</option><option value="weekends">Weekends</option><option value="custom">Custom days</option></select></div>
+      <div><label>End Repeat Date</label><input id="alertRepeatEndInput" type="date" /></div>
+      <div style="grid-column: 1 / -1;"><label>Custom Days</label><div class="person-filter" id="alertCustomDays" style="max-height:none; overflow:visible; margin-top:5px;">
+        <button type="button" class="person-pill" data-day="0">Sun</button>
+        <button type="button" class="person-pill" data-day="1">Mon</button>
+        <button type="button" class="person-pill" data-day="2">Tue</button>
+        <button type="button" class="person-pill" data-day="3">Wed</button>
+        <button type="button" class="person-pill" data-day="4">Thu</button>
+        <button type="button" class="person-pill" data-day="5">Fri</button>
+        <button type="button" class="person-pill" data-day="6">Sat</button>
+      </div></div>
+      <div style="grid-column: 1 / -1;"><label>Message</label><textarea id="alertMessageInput" placeholder="Keep noise down. Text Mom first unless it is an emergency."></textarea></div>
+    </div>
+    <div class="panel-actions">
+      <button id="saveAlertBtn">Add Alert</button>
+      <button id="closeAlertsPanel">Close</button>
+    </div>
+    <h3>Current Alerts</h3>
+    <div class="simple-list" id="alertsList"></div>
+  </section>
+
   <section class="panel" id="weatherPanel">
     <h2>5-Day Weather</h2>
     <p id="weatherPanelSummary">Forecast for your selected weather location.</p>
@@ -1316,6 +1427,22 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
       <button id="closeEventDetail">Close</button>
     </div>
   </section>
+
+
+  <div class="alert-popup-backdrop" id="importantAlertPopup">
+    <div class="alert-popup">
+      <div class="alert-popup-top"><span>🚨 IMPORTANT ALERT</span><span id="alertPopupPriority">HIGH</span></div>
+      <div class="alert-popup-body">
+        <h1 class="alert-popup-title" id="alertPopupTitle">Alert</h1>
+        <div class="alert-popup-message" id="alertPopupMessage">Message</div>
+        <div class="alert-popup-meta" id="alertPopupMeta">Active now</div>
+      </div>
+      <div class="alert-popup-actions">
+        <button id="understandAlertBtn">I Understand</button>
+        <button class="secondary" id="snoozeAlertBtn">Snooze 5 Min</button>
+      </div>
+    </div>
+  </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
@@ -1384,6 +1511,9 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
       })(),
       events: [],
       appEvents: [],
+      importantAlerts: [],
+      alertDismissedUntil: {},
+      currentPopupAlertId: "",
       meals: [],
       tasks: [],
       chores: [],
@@ -1504,6 +1634,7 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
 
     window.openEventDetail = openEventDetail;
     window.deleteAppEvent = deleteAppEvent;
+    window.deleteImportantAlert = deleteImportantAlert;
     window.deleteMeal = deleteMeal;
     window.deleteTask = deleteTask;
     window.deleteChore = deleteChore;
@@ -1910,7 +2041,7 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
     }
 
     function setActiveSide(id) {
-      ["calendarBtn", "tasksBtn", "mealsBtn", "choresBtn", "settingsBtn"].forEach(btnId => el(btnId).classList.toggle("active", btnId === id));
+      ["calendarBtn", "tasksBtn", "mealsBtn", "choresBtn", "alertsBtn", "settingsBtn"].forEach(btnId => el(btnId).classList.toggle("active", btnId === id));
     }
 
     function populateAvatarSelects() {
@@ -2437,6 +2568,103 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
       await deleteDoc(doc(db, "appEvents", id));
     }
 
+
+    function selectedCustomAlertDays() {
+      return [...document.querySelectorAll("#alertCustomDays .person-pill.active")].map(btn => Number(btn.dataset.day));
+    }
+
+    function alertDateInRange(alert, now) {
+      const todayKey = localDateKey(now);
+      const startDate = alert.startDate || todayKey;
+      const hardEnd = alert.repeatEndDate || alert.endDate || "9999-12-31";
+      return todayKey >= startDate && todayKey <= hardEnd;
+    }
+
+    function alertRepeatMatches(alert, now) {
+      const repeat = alert.repeat || "none";
+      const day = now.getDay();
+      if (repeat === "daily") return true;
+      if (repeat === "weekdays") return day >= 1 && day <= 5;
+      if (repeat === "weekends") return day === 0 || day === 6;
+      if (repeat === "custom") return (alert.customDays || []).map(Number).includes(day);
+      return localDateKey(now) === (alert.startDate || localDateKey(now));
+    }
+
+    function alertTimeInRange(alert, now) {
+      const nowMinutes = now.getHours() * 60 + now.getMinutes();
+      const start = alert.startTime || "00:00";
+      const end = alert.endTime || "23:59";
+      const [sh, sm] = start.split(":").map(Number);
+      const [eh, em] = end.split(":").map(Number);
+      const startMinutes = (sh || 0) * 60 + (sm || 0);
+      const endMinutes = (eh || 23) * 60 + (em || 59);
+      if (endMinutes >= startMinutes) return nowMinutes >= startMinutes && nowMinutes <= endMinutes;
+      return nowMinutes >= startMinutes || nowMinutes <= endMinutes;
+    }
+
+    function isImportantAlertActive(alert, now = new Date()) {
+      if (alert.enabled === false) return false;
+      return alertDateInRange(alert, now) && alertRepeatMatches(alert, now) && alertTimeInRange(alert, now);
+    }
+
+    function formatAlertRepeat(alert) {
+      const repeat = alert.repeat || "none";
+      if (repeat === "custom") {
+        const labels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+        return (alert.customDays || []).map(d => labels[Number(d)]).join(", ") || "Custom";
+      }
+      return repeat === "none" ? "No repeat" : repeat.charAt(0).toUpperCase() + repeat.slice(1);
+    }
+
+    function renderAlertsList() {
+      if (!el("alertsList")) return;
+      const sorted = [...state.importantAlerts].sort((a, b) => `${a.startDate || ""} ${a.startTime || ""}`.localeCompare(`${b.startDate || ""} ${b.startTime || ""}`));
+      el("alertsList").innerHTML = sorted.map(alert => {
+        const active = isImportantAlertActive(alert);
+        return `<div class="alert-list-card">
+          <div class="alert-list-title">${active ? "🟢 ACTIVE — " : "⚪ "}${escapeHtml(alert.title || "Untitled Alert")}</div>
+          <div class="alert-list-message">${escapeHtml(alert.message || "")}</div>
+          <div class="alert-list-meta">${escapeHtml(alert.startDate || "")} ${formatTime(alert.startTime || "")} - ${formatTime(alert.endTime || "")} · Repeat: ${escapeHtml(formatAlertRepeat(alert))}${alert.repeatEndDate ? " · Ends: " + escapeHtml(formatLocalDate(alert.repeatEndDate)) : ""}</div>
+          <div><button onclick="deleteImportantAlert('${alert.id}')">Delete</button></div>
+        </div>`;
+      }).join("") || `<div class="simple-item">No important alerts added yet.</div>`;
+    }
+
+    async function deleteImportantAlert(id) {
+      if (!id) return;
+      if (!requireParentPin("delete this alert")) return;
+      const ok = confirm("Delete this important alert?");
+      if (!ok) return;
+      await deleteDoc(doc(db, "importantAlerts", id));
+    }
+
+    function showImportantAlert(alert) {
+      state.currentPopupAlertId = alert.id;
+      el("alertPopupPriority").textContent = String(alert.priority || "high").toUpperCase();
+      el("alertPopupTitle").textContent = alert.title || "Important Alert";
+      el("alertPopupMessage").textContent = alert.message || "";
+      el("alertPopupMeta").textContent = `Active ${formatLocalDate(alert.startDate || localDateKey(new Date()))} ${formatTime(alert.startTime || "00:00")} - ${formatTime(alert.endTime || "23:59")} · ${formatAlertRepeat(alert)}`;
+      el("importantAlertPopup").classList.add("open");
+    }
+
+    function dismissCurrentAlert() {
+      const id = state.currentPopupAlertId;
+      if (id) state.alertDismissedUntil[id] = Date.now() + 5 * 60 * 1000;
+      state.currentPopupAlertId = "";
+      el("importantAlertPopup").classList.remove("open");
+    }
+
+    function checkImportantAlerts() {
+      if (!state.importantAlerts.length) return;
+      if (el("importantAlertPopup").classList.contains("open")) return;
+      const now = new Date();
+      const active = state.importantAlerts
+        .filter(alert => isImportantAlertActive(alert, now))
+        .filter(alert => !state.alertDismissedUntil[alert.id] || Date.now() >= state.alertDismissedUntil[alert.id])
+        .sort((a, b) => (a.priority === "critical" ? -1 : 0) - (b.priority === "critical" ? -1 : 0));
+      if (active[0]) showImportantAlert(active[0]);
+    }
+
     async function deleteMeal(index) {
       const item = state.meals[index];
       if (item?.id) await deleteDoc(doc(db, "meals", item.id));
@@ -2489,6 +2717,12 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
         renderCalendar();
       });
 
+      onSnapshot(collection(db, "importantAlerts"), snapshot => {
+        state.importantAlerts = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+        renderAlertsList();
+        checkImportantAlerts();
+      });
+
       onSnapshot(collection(db, "meals"), snapshot => {
         state.meals = snapshot.docs.map(d => ({ id: d.id, ...d.data() })).filter(m => !isOlderThan15Days(m.date));
         renderMeals();
@@ -2511,6 +2745,55 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
     }
 
     el("calendarBtn").addEventListener("click", () => { setActiveSide("calendarBtn"); renderCalendar(); });
+    el("alertsBtn").addEventListener("click", () => {
+      setActiveSide("alertsBtn");
+      if (!el("alertStartDateInput").value) el("alertStartDateInput").value = new Date().toISOString().slice(0, 10);
+      if (!el("alertStartTimeInput").value) el("alertStartTimeInput").value = "07:00";
+      if (!el("alertEndTimeInput").value) el("alertEndTimeInput").value = "07:30";
+      renderAlertsList();
+      el("alertsPanel").classList.add("open");
+    });
+
+    document.querySelectorAll("#alertCustomDays .person-pill").forEach(btn => {
+      btn.addEventListener("click", () => btn.classList.toggle("active"));
+    });
+
+    el("saveAlertBtn").addEventListener("click", async () => {
+      const title = el("alertTitleInput").value.trim();
+      const message = el("alertMessageInput").value.trim();
+      const startDate = el("alertStartDateInput").value;
+      const endDate = el("alertEndDateInput").value;
+      const startTime = el("alertStartTimeInput").value;
+      const endTime = el("alertEndTimeInput").value;
+      const repeat = el("alertRepeatInput").value;
+      const repeatEndDate = el("alertRepeatEndInput").value;
+      const customDays = selectedCustomAlertDays();
+      if (!title || !message || !startDate || !startTime || !endTime) return alert("Add a title, message, start date, start time, and end time.");
+      if (endDate && endDate < startDate) return alert("End date cannot be before start date.");
+      if (repeatEndDate && repeatEndDate < startDate) return alert("End repeat date cannot be before start date.");
+      if (repeat === "custom" && customDays.length === 0) return alert("Select at least one custom repeat day.");
+      await addDoc(collection(db, "importantAlerts"), {
+        title,
+        message,
+        priority: el("alertPriorityInput").value,
+        startDate,
+        endDate,
+        startTime,
+        endTime,
+        repeat,
+        repeatEndDate,
+        customDays,
+        enabled: true,
+        createdAt: new Date().toISOString()
+      });
+      el("alertTitleInput").value = "";
+      el("alertMessageInput").value = "";
+    });
+
+    el("closeAlertsPanel").addEventListener("click", () => { el("alertsPanel").classList.remove("open"); setActiveSide("calendarBtn"); });
+    el("understandAlertBtn").addEventListener("click", dismissCurrentAlert);
+    el("snoozeAlertBtn").addEventListener("click", dismissCurrentAlert);
+
     el("addAppEventBtn").addEventListener("click", () => {
       setActiveSide("calendarBtn");
       if (!el("appEventDateInput").value) el("appEventDateInput").value = state.selectedDate.toISOString().slice(0, 10);
@@ -2714,8 +2997,10 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
     cleanupOldFirebaseItems();
     loadWeather();
     loadGoogleEvents();
+    setTimeout(checkImportantAlerts, 1200);
 
     setInterval(renderTop, 30000);
+    setInterval(checkImportantAlerts, 30000);
     setInterval(applyNightMode, 60 * 1000);
     setInterval(loadWeather, 30 * 60 * 1000);
     setInterval(loadGoogleEvents, 90000);
