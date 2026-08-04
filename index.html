@@ -1118,7 +1118,7 @@
       animation: alertPulse 1.4s ease-in-out infinite alternate;
     }
 
-    body.night .alert-popup {
+    body.night-mode .alert-popup {
       background: linear-gradient(135deg, #fde047 0%, #fb923c 50%, #facc15 100%);
       border-color: #ffffff;
       color: #000000;
@@ -1517,6 +1517,8 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
       meals: [],
       tasks: [],
       chores: [],
+      activeChoreKid: localStorage.getItem("activeChoreKid") || "Quade",
+      activeChoreWeekStart: "",
       selectedChoreIds: new Set(),
       visibleChoreIds: [],
       parentChoreMode: false,
@@ -1526,6 +1528,29 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
 
     const el = id => document.getElementById(id);
     const settingsDocRef = doc(db, "settings", "familyCalendar");
+
+    async function firestoreAction(label, action) {
+      try {
+        return await action();
+      } catch (error) {
+        console.error(`${label} failed`, error);
+        const code = error?.code ? ` (${error.code})` : "";
+        const message = error?.message || "Unknown Firebase error";
+        window.alert(`${label} failed${code}.\n\n${message}\n\nOpen the browser console for details.`);
+        throw error;
+      }
+    }
+
+    function dateKeyInTimezone(date = new Date()) {
+      const parts = new Intl.DateTimeFormat("en-US", {
+        timeZone: state.timezone,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+      }).formatToParts(date);
+      const get = type => (parts.find(p => p.type === type) || {}).value || "";
+      return `${get("year")}-${get("month")}-${get("day")}`;
+    }
 
     function cacheSharedSettings() {
       localStorage.setItem("familyName", state.familyName);
@@ -1944,7 +1969,7 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
           <span class="person-emoji">${p.icon}</span>${p.name}
         </button>
       `).join("\n");
-      document.querySelectorAll(".person-pill").forEach(btn => {
+      document.querySelectorAll("#personFilter .person-pill").forEach(btn => {
         btn.addEventListener("click", () => {
           state.activePerson = btn.dataset.key;
           localStorage.setItem("activePerson", state.activePerson);
@@ -2251,7 +2276,7 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
 
       const kid = state.activeChoreKid || "Quade";
       const personKey = detectPersonFromText(kid);
-      const weekStartKey = state.activeChoreWeekStart || weekKeyFromDate(new Date().toISOString().slice(0, 10));
+      const weekStartKey = state.activeChoreWeekStart || weekKeyFromDate(dateKeyInTimezone());
       const weekStart = parseLocalDate(weekStartKey);
       const weekEnd = addDays(weekStart, 6);
       const weekChores = getChoresForWeek(kid, weekStartKey).sort((a, b) => (a.occurrenceDate || a.date || "").localeCompare(b.occurrenceDate || b.date || ""));
@@ -2402,7 +2427,10 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
       if (!requireParentPin(`delete ${ids.length} selected chore${ids.length === 1 ? "" : "s"}`)) return;
       const confirmed = window.confirm(`Delete ${ids.length} selected chore${ids.length === 1 ? "" : "s"}? This cannot be undone.`);
       if (!confirmed) return;
-      await Promise.all(ids.map(id => deleteDoc(doc(db, "chores", id))));
+      const documentIds = [...new Set(ids.map(key => parseChoreOccurrenceKey(key).id).filter(Boolean))];
+      await firestoreAction("Delete selected chores", () =>
+        Promise.all(documentIds.map(id => deleteDoc(doc(db, "chores", id))))
+      );
       state.selectedChoreIds.clear();
       renderChores();
     }
@@ -2538,7 +2566,7 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
 
     async function resetTodayChores() {
       if (!requireParentPin("reset this week’s chores")) return;
-      const weekChores = getChoresForWeek(state.activeChoreKid || "Quade", state.activeChoreWeekStart || weekKeyFromDate(new Date().toISOString().slice(0, 10)));
+      const weekChores = getChoresForWeek(state.activeChoreKid || "Quade", state.activeChoreWeekStart || weekKeyFromDate(dateKeyInTimezone()));
       await Promise.all(weekChores.map(chore => saveChoreOccurrenceStatus(chore.id, chore.occurrenceDate || chore.date, {
         completed: false,
         approved: false,
@@ -2715,13 +2743,13 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
         state.appEvents = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
         renderAppEventsList();
         renderCalendar();
-      });
+      }, error => console.error("appEvents listener failed", error));
 
       onSnapshot(collection(db, "importantAlerts"), snapshot => {
         state.importantAlerts = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
         renderAlertsList();
         checkImportantAlerts();
-      });
+      }, error => console.error("importantAlerts listener failed", error));
 
       onSnapshot(collection(db, "meals"), snapshot => {
         state.meals = snapshot.docs.map(d => ({ id: d.id, ...d.data() })).filter(m => !isOlderThan15Days(m.date));
@@ -2733,21 +2761,23 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
         state.tasks = snapshot.docs.map(d => ({ id: d.id, ...d.data() })).filter(t => !isOlderThan15Days(t.date));
         renderTasks();
         renderCalendar();
-      });
+      }, error => console.error("tasks listener failed", error));
 
       onSnapshot(collection(db, "chores"), snapshot => {
         state.chores = snapshot.docs.map(d => ({ id: d.id, ...d.data() })).filter(c => !isOlderThan15Days(c.repeatEndDate || c.date));
         const existingIds = new Set(state.chores.map(c => c.id));
-        state.selectedChoreIds = new Set([...state.selectedChoreIds].filter(id => existingIds.has(id)));
+        state.selectedChoreIds = new Set(
+          [...state.selectedChoreIds].filter(key => existingIds.has(parseChoreOccurrenceKey(key).id))
+        );
         renderChores();
         renderCalendar();
-      });
+      }, error => console.error("chores listener failed", error));
     }
 
     el("calendarBtn").addEventListener("click", () => { setActiveSide("calendarBtn"); renderCalendar(); });
     el("alertsBtn").addEventListener("click", () => {
       setActiveSide("alertsBtn");
-      if (!el("alertStartDateInput").value) el("alertStartDateInput").value = new Date().toISOString().slice(0, 10);
+      if (!el("alertStartDateInput").value) el("alertStartDateInput").value = dateKeyInTimezone();
       if (!el("alertStartTimeInput").value) el("alertStartTimeInput").value = "07:00";
       if (!el("alertEndTimeInput").value) el("alertEndTimeInput").value = "07:30";
       renderAlertsList();
@@ -2772,7 +2802,7 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
       if (endDate && endDate < startDate) return alert("End date cannot be before start date.");
       if (repeatEndDate && repeatEndDate < startDate) return alert("End repeat date cannot be before start date.");
       if (repeat === "custom" && customDays.length === 0) return alert("Select at least one custom repeat day.");
-      await addDoc(collection(db, "importantAlerts"), {
+      await firestoreAction("Add alert", () => addDoc(collection(db, "importantAlerts"), {
         title,
         message,
         priority: el("alertPriorityInput").value,
@@ -2785,7 +2815,7 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
         customDays,
         enabled: true,
         createdAt: new Date().toISOString()
-      });
+      }));
       el("alertTitleInput").value = "";
       el("alertMessageInput").value = "";
     });
@@ -2809,7 +2839,7 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
       const end = el("appEventEndInput").value;
       if (!title || !date) return alert("Add an event title and date.");
       if (!allDay && start && end && end < start) return alert("End time cannot be before start time.");
-      await addDoc(collection(db, "appEvents"), {
+      await firestoreAction("Save calendar event", () => addDoc(collection(db, "appEvents"), {
         person: el("appEventPersonInput").value,
         title,
         date,
@@ -2818,7 +2848,7 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
         allDay,
         note: el("appEventNoteInput").value.trim(),
         createdAt: new Date().toISOString()
-      });
+      }));
       el("appEventTitleInput").value = "";
       el("appEventStartInput").value = "";
       el("appEventEndInput").value = "";
@@ -2837,20 +2867,20 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
     el("tasksBtn").addEventListener("click", () => {
       setActiveSide("tasksBtn");
       renderTasks();
-      if (!el("taskDateInput").value) el("taskDateInput").value = new Date().toISOString().slice(0, 10);
+      if (!el("taskDateInput").value) el("taskDateInput").value = dateKeyInTimezone();
       el("tasksPanel").classList.add("open");
     });
     el("mealsBtn").addEventListener("click", () => {
       setActiveSide("mealsBtn");
       renderMeals();
-      if (!el("mealDateInput").value) el("mealDateInput").value = new Date().toISOString().slice(0, 10);
+      if (!el("mealDateInput").value) el("mealDateInput").value = dateKeyInTimezone();
       el("mealsPanel").classList.add("open");
     });
     el("choresBtn").addEventListener("click", () => {
       setActiveSide("choresBtn");
-      if (!state.activeChoreWeekStart) state.activeChoreWeekStart = weekKeyFromDate(new Date().toISOString().slice(0, 10));
+      if (!state.activeChoreWeekStart) state.activeChoreWeekStart = weekKeyFromDate(dateKeyInTimezone());
       renderChores();
-      if (!el("choreDateInput").value) el("choreDateInput").value = new Date().toISOString().slice(0, 10);
+      if (!el("choreDateInput").value) el("choreDateInput").value = dateKeyInTimezone();
       el("chorePersonInput").value = state.activeChoreKid || "Quade";
       el("choresPanel").classList.add("open");
     });
@@ -2865,7 +2895,7 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
       renderChores();
     });
     el("currentChoreWeekBtn").addEventListener("click", () => {
-      state.activeChoreWeekStart = weekKeyFromDate(new Date().toISOString().slice(0, 10));
+      state.activeChoreWeekStart = weekKeyFromDate(dateKeyInTimezone());
       state.selectedChoreIds.clear();
       renderChores();
     });
@@ -2934,7 +2964,9 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
       const text = el("mealTextInput").value.trim();
       const date = el("mealDateInput").value;
       if (!text || !date) return;
-      await addDoc(collection(db, "meals"), { date, text, createdAt: new Date().toISOString() });
+      await firestoreAction("Add meal", () =>
+        addDoc(collection(db, "meals"), { date, text, createdAt: new Date().toISOString() })
+      );
       el("mealTextInput").value = "";
       el("mealDateInput").value = "";
     });
@@ -2945,7 +2977,9 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
       const text = el("taskTextInput").value.trim();
       const date = el("taskDateInput").value;
       if (!text || !date) return;
-      await addDoc(collection(db, "tasks"), { person: el("taskPersonInput").value, text, date, createdAt: new Date().toISOString() });
+      await firestoreAction("Add task", () =>
+        addDoc(collection(db, "tasks"), { person: el("taskPersonInput").value, text, date, createdAt: new Date().toISOString() })
+      );
       el("taskTextInput").value = "";
       el("taskDateInput").value = "";
     });
@@ -2963,7 +2997,7 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
         window.alert("Repeat end date cannot be before the due date.");
         return;
       }
-      await addDoc(collection(db, "chores"), {
+      await firestoreAction("Add chore", () => addDoc(collection(db, "chores"), {
         person,
         text,
         date,
@@ -2973,7 +3007,7 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
         approved: false,
         occurrences: {},
         createdAt: new Date().toISOString()
-      });
+      }));
       el("choreTextInput").value = "";
       el("choreRepeatEndInput").value = "";
     });
