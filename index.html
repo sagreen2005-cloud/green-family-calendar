@@ -122,7 +122,7 @@
     .date-line { display: flex; align-items: center; gap: 14px; min-width: 0; }
     .today-date { font-size: 24px; font-weight: 900; white-space: nowrap; }
     .clock { font-size: 22px; font-weight: 900; color: var(--ink); white-space: nowrap; }
-    .family-title { color: var(--muted); font-weight: 900; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .family-title { color: var(--muted); font-weight: 900; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor:pointer; }
 
     .controls {
       grid-area: controls;
@@ -1175,6 +1175,7 @@
       <button class="side-item" id="mealsBtn"><span>🍽️</span><span>Meals</span></button>
       <button class="side-item" id="choresBtn"><span>🧹</span><span>Chores</span></button>
       <button class="side-item" id="alertsBtn"><span>🚨</span><span>Alerts</span></button>
+      <button class="side-item" id="chatBtn"><span>💬</span><span>Chat</span></button>
       <button class="side-item" id="settingsBtn"><span>⚙️</span><span>Settings</span></button>
     </aside>
 
@@ -1402,6 +1403,47 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
     <div class="simple-list" id="alertsList"></div>
   </section>
 
+
+  <section class="panel" id="profilePanel">
+    <h2>Family Profiles & Status</h2>
+    <p>Select who is using this device and update that person's current status.</p>
+    <div class="form-grid">
+      <div><label>Current Profile</label><select id="currentProfileInput"></select></div>
+      <div><label>Status</label><select id="profileStatusInput">
+        <option>Home</option>
+        <option>Work</option>
+        <option>School</option>
+        <option>Practice</option>
+        <option>Church</option>
+        <option>Out</option>
+        <option>Sleeping</option>
+        <option>Do Not Disturb</option>
+        <option>Other</option>
+      </select></div>
+      <div><label>Return / Until Time</label><input id="profileUntilInput" type="time" /></div>
+      <div><label>Status Note</label><input id="profileNoteInput" placeholder="Home around 6:30, soccer until 8..." /></div>
+    </div>
+    <div class="panel-actions">
+      <button id="saveProfileStatusBtn">Save Status</button>
+      <button id="closeProfilePanel">Close</button>
+    </div>
+    <h3>Family Status</h3>
+    <div class="simple-list" id="familyStatusList"></div>
+  </section>
+
+  <section class="panel" id="chatPanel">
+    <h2>Family Chat</h2>
+    <p>Messages sync across devices in real time through Firebase.</p>
+    <div class="simple-list" id="chatMessagesList" style="max-height:55vh; overflow:auto;"></div>
+    <div class="form-grid" style="margin-top:12px;">
+      <div style="grid-column:1 / -1;"><label>Message</label><input id="chatMessageInput" placeholder="Type a family message..." /></div>
+    </div>
+    <div class="panel-actions">
+      <button id="sendChatMessageBtn">Send</button>
+      <button id="closeChatPanel">Close</button>
+    </div>
+  </section>
+
   <section class="panel" id="weatherPanel">
     <h2>5-Day Weather</h2>
     <p id="weatherPanelSummary">Forecast for your selected weather location.</p>
@@ -1519,6 +1561,9 @@ const auth = getAuth(firebaseApp);
       events: [],
       appEvents: [],
       importantAlerts: [],
+      profiles: [],
+      chatMessages: [],
+      currentProfile: localStorage.getItem("currentProfile") || "Dad",
       alertDismissedUntil: {},
       currentPopupAlertId: "",
       meals: [],
@@ -2073,7 +2118,7 @@ const auth = getAuth(firebaseApp);
     }
 
     function setActiveSide(id) {
-      ["calendarBtn", "tasksBtn", "mealsBtn", "choresBtn", "alertsBtn", "settingsBtn"].forEach(btnId => el(btnId).classList.toggle("active", btnId === id));
+      ["calendarBtn", "tasksBtn", "mealsBtn", "choresBtn", "alertsBtn", "chatBtn", "settingsBtn"].forEach(btnId => el(btnId).classList.toggle("active", btnId === id));
     }
 
     function populateAvatarSelects() {
@@ -2084,6 +2129,60 @@ const auth = getAuth(firebaseApp);
         input.innerHTML = options.map(option => `<option value="${option}" ${option === person.icon ? "selected" : ""}>${option} ${person.name}</option>`).join("\n");
         if (!options.includes(person.icon)) input.insertAdjacentHTML("afterbegin", `<option value="${person.icon}" selected>${person.icon} ${person.name}</option>`);
       });
+    }
+
+
+    function familyProfileNames() {
+      return state.people
+        .filter(p => ["mom", "dad", "quade", "grayson", "easton", "reese"].includes(p.key))
+        .map(p => p.name);
+    }
+
+    function populateCurrentProfileSelect() {
+      const select = el("currentProfileInput");
+      if (!select) return;
+      const names = familyProfileNames();
+      if (!names.includes(state.currentProfile)) state.currentProfile = names[0] || "Dad";
+      select.innerHTML = names.map(name => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join("");
+      select.value = state.currentProfile;
+    }
+
+    function renderFamilyStatus() {
+      const list = el("familyStatusList");
+      if (!list) return;
+      const names = familyProfileNames();
+      list.innerHTML = names.map(name => {
+        const profile = state.profiles.find(p => p.name === name) || {};
+        const status = profile.status || "No status";
+        const until = profile.until ? ` · until ${formatTime(profile.until)}` : "";
+        const note = profile.note ? `<div style="margin-top:4px;color:var(--muted);">${escapeHtml(profile.note)}</div>` : "";
+        return `<div class="simple-item ${detectPersonFromText(name)}"><span><strong>${escapeHtml(name)}</strong> — ${escapeHtml(status)}${until}${note}</span></div>`;
+      }).join("");
+    }
+
+    function openProfilePanel() {
+      populateCurrentProfileSelect();
+      const profile = state.profiles.find(p => p.name === state.currentProfile) || {};
+      el("profileStatusInput").value = profile.status || "Home";
+      el("profileUntilInput").value = profile.until || "";
+      el("profileNoteInput").value = profile.note || "";
+      renderFamilyStatus();
+      el("profilePanel").classList.add("open");
+    }
+
+    function renderChatMessages() {
+      const list = el("chatMessagesList");
+      if (!list) return;
+      const items = [...state.chatMessages]
+        .sort((a,b) => String(a.createdAt || "").localeCompare(String(b.createdAt || "")))
+        .slice(-100);
+      list.innerHTML = items.map(msg => {
+        const when = msg.createdAt ? new Date(msg.createdAt).toLocaleString("en-US", { month:"short", day:"numeric", hour:"numeric", minute:"2-digit" }) : "";
+        return `<div class="simple-item ${detectPersonFromText(msg.sender || "")}">
+          <span><strong>${escapeHtml(msg.sender || "Family")}</strong> <small>${escapeHtml(when)}</small><div style="margin-top:4px;">${escapeHtml(msg.text || "")}</div></span>
+        </div>`;
+      }).join("") || `<div class="simple-item">No messages yet.</div>`;
+      list.scrollTop = list.scrollHeight;
     }
 
     function openSettings() {
@@ -2746,6 +2845,16 @@ const auth = getAuth(firebaseApp);
         }
       });
 
+      onSnapshot(collection(db, "profiles"), snapshot => {
+        state.profiles = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+        renderFamilyStatus();
+      }, error => console.error("profiles listener failed", error));
+
+      onSnapshot(collection(db, "chatMessages"), snapshot => {
+        state.chatMessages = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+        renderChatMessages();
+      }, error => console.error("chatMessages listener failed", error));
+
       onSnapshot(collection(db, "appEvents"), snapshot => {
         state.appEvents = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
         renderAppEventsList();
@@ -2789,6 +2898,67 @@ const auth = getAuth(firebaseApp);
       if (!el("alertEndTimeInput").value) el("alertEndTimeInput").value = "07:30";
       renderAlertsList();
       el("alertsPanel").classList.add("open");
+    });
+
+
+    el("chatBtn").addEventListener("click", () => {
+      setActiveSide("chatBtn");
+      renderChatMessages();
+      el("chatPanel").classList.add("open");
+    });
+
+    el("closeChatPanel").addEventListener("click", () => {
+      el("chatPanel").classList.remove("open");
+      setActiveSide("calendarBtn");
+    });
+
+    el("sendChatMessageBtn").addEventListener("click", async () => {
+      const text = el("chatMessageInput").value.trim();
+      if (!text) return;
+      await firestoreAction("Send message", () => addDoc(collection(db, "chatMessages"), {
+        sender: state.currentProfile || "Family",
+        text,
+        createdAt: new Date().toISOString()
+      }));
+      el("chatMessageInput").value = "";
+    });
+
+    el("chatMessageInput").addEventListener("keydown", event => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        el("sendChatMessageBtn").click();
+      }
+    });
+
+    el("familyTitle").addEventListener("click", () => {
+      openProfilePanel();
+    });
+
+    el("closeProfilePanel").addEventListener("click", () => {
+      el("profilePanel").classList.remove("open");
+    });
+
+    el("currentProfileInput").addEventListener("change", () => {
+      state.currentProfile = el("currentProfileInput").value;
+      localStorage.setItem("currentProfile", state.currentProfile);
+      const profile = state.profiles.find(p => p.name === state.currentProfile) || {};
+      el("profileStatusInput").value = profile.status || "Home";
+      el("profileUntilInput").value = profile.until || "";
+      el("profileNoteInput").value = profile.note || "";
+    });
+
+    el("saveProfileStatusBtn").addEventListener("click", async () => {
+      const name = el("currentProfileInput").value;
+      state.currentProfile = name;
+      localStorage.setItem("currentProfile", state.currentProfile);
+      const profileId = normalize(name).replace(/[^a-z0-9]+/g, "-");
+      await firestoreAction("Save profile status", () => setDoc(doc(db, "profiles", profileId), {
+        name,
+        status: el("profileStatusInput").value,
+        until: el("profileUntilInput").value,
+        note: el("profileNoteInput").value.trim(),
+        updatedAt: new Date().toISOString()
+      }, { merge: true }));
     });
 
     document.querySelectorAll("#alertCustomDays .person-pill").forEach(btn => {
