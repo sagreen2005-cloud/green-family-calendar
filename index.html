@@ -1448,6 +1448,12 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
     import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, getDocs, updateDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
+import {
+  getAuth,
+  signInAnonymously,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+
     const firebaseConfig = {
       apiKey: "AIzaSyBegJ4GeYNkzyrB2mvMs_I3ovRfUizk_gE",
       authDomain: "green-family-calendar-ae701.firebaseapp.com",
@@ -1457,8 +1463,9 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
       appId: "1:641077645916:web:59b86a64650159b5b8cc99"
     };
 
-    const firebaseApp = initializeApp(firebaseConfig);
-    const db = getFirestore(firebaseApp);
+   const firebaseApp = initializeApp(firebaseConfig);
+const db = getFirestore(firebaseApp);
+const auth = getAuth(firebaseApp);
 
     const DEFAULT_GOOGLE_API_KEY = "AIzaSyAvvYpUgcIcKId9BMvdyTr3Kbq6S1D9WgY";
     const DEFAULT_CALENDAR_IDS = ["sagreen2005@gmail.com", "ratgreen2010@gmail.com"];
@@ -3026,19 +3033,49 @@ Grayson, Skim pool, 2026-05-27, daily, 2026-08-15"></textarea>
     });
 
     renderTop();
-    renderCalendar();
-    subscribeFirebase();
-    cleanupOldFirebaseItems();
-    loadWeather();
-    loadGoogleEvents();
-    setTimeout(checkImportantAlerts, 1200);
+renderCalendar();
+loadWeather();
+loadGoogleEvents();
 
-    setInterval(renderTop, 30000);
-    setInterval(checkImportantAlerts, 30000);
-    setInterval(applyNightMode, 60 * 1000);
-    setInterval(loadWeather, 30 * 60 * 1000);
-    setInterval(loadGoogleEvents, 90000);
-    setInterval(cleanupOldFirebaseItems, 6 * 60 * 60 * 1000);
+let firebaseStarted = false;
+
+onAuthStateChanged(auth, async user => {
+  if (user) {
+    console.log("Firebase signed in:", user.uid);
+
+    if (!firebaseStarted) {
+      firebaseStarted = true;
+
+      subscribeFirebase();
+      cleanupOldFirebaseItems();
+
+      setInterval(
+        cleanupOldFirebaseItems,
+        6 * 60 * 60 * 1000
+      );
+    }
+  } else {
+    try {
+      console.log("Signing into Firebase anonymously...");
+      await signInAnonymously(auth);
+    } catch (error) {
+      console.error("Firebase sign-in failed:", error);
+
+      alert(
+        "Family Calendar could not sign into Firebase.\n\n" +
+        (error.message || error)
+      );
+    }
+  }
+});
+
+setTimeout(checkImportantAlerts, 1200);
+
+setInterval(renderTop, 30000);
+setInterval(checkImportantAlerts, 30000);
+setInterval(applyNightMode, 60 * 1000);
+setInterval(loadWeather, 30 * 60 * 1000);
+setInterval(loadGoogleEvents, 90000);
   </script>
 </body>
 </html>
